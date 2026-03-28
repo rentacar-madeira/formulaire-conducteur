@@ -972,7 +972,10 @@
         }
         
         function populateFormWithExistingData(data) {
-            // Populate all fields
+            // Campos que ficam SEMPRE bloqueados (não editáveis)
+            const camposBloqueados = ['reference_agence', 'email'];
+
+            // Todos os campos a preencher
             const fields = {
                 'reference_agence': data.reference_agence,
                 'email': data.email,
@@ -995,8 +998,10 @@
                     input.value = value;
                     input.disabled = true;
                     
-                    // Add edit icon
-                    addEditIcon(fieldId);
+                    // Só adiciona ícone de edição nos campos que NÃO são bloqueados
+                    if (!camposBloqueados.includes(fieldId)) {
+                        addEditIcon(fieldId);
+                    }
                 }
             }
             
