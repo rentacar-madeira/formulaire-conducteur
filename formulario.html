@@ -1042,6 +1042,10 @@
             dateInputs.forEach(input => {
                 input.addEventListener('click', function() {
                     if (!this.disabled) {
+                        // Bloquear se for cliente existente e datas ainda não carregadas
+                        if (clientType === 'existant' && !isExistingClientData) {
+                            return;
+                        }
                         currentInputId = this.id;
                         openCalendar();
                     }
