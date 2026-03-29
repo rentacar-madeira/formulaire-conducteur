@@ -1060,7 +1060,15 @@
             const email = document.getElementById('email').value.trim();
             
             if (ref && email && email.includes('@')) {
-                unlockSection('datesSection');
+                if (clientType !== 'existant') {
+                    unlockSection('datesSection');
+                }
+            }
+            // Garantir que TUDO fica bloqueado no modo modifier
+            if (clientType === 'existant') {
+                ['datesSection','personalInfoSection','idDocSection','licenseSection'].forEach(id => {
+                    document.getElementById(id).classList.add('locked');
+                });
             }
         }
         
