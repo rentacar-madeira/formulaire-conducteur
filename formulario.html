@@ -989,7 +989,7 @@
             const email = document.getElementById('email').value.trim();
             
             if (!ref || !email) {
-                alert('⚠️ Veuillez remplir la référence et l\'email');
+                alert('⚠️ Veuillez remplir la référence agence et l\'adresse email.');
                 return;
             }
             
@@ -1581,7 +1581,7 @@
         
         // Clear Form
         function clearForm() {
-            if (confirm('Êtes-vous sûr de vouloir effacer tous les champs?')) {
+            if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) {
                 document.getElementById('driverForm').reset();
                 // Reset phone
                 selectedIndicatif = '';
