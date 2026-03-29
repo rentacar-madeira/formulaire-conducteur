@@ -662,11 +662,35 @@
                     
                     <div class="form-group">
                         <label for="telephone">Téléphone *</label>
-                        <span class="hint">Format international (commence par +)</span>
-                        <input type="tel" id="telephone" name="telephone" 
-                               value="+" 
-                               pattern="\+[0-9]{7,15}" 
-                               required>
+                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 10px; align-items: start;">
+                            <div>
+                                <input type="text" id="indicatif_search" placeholder="🔍 Pays..." 
+                                       autocomplete="off"
+                                       oninput="filterIndicatifs(this.value)"
+                                       onfocus="document.getElementById('indicatif_dropdown').style.display='block'"
+                                       style="width:100%; margin-bottom:4px;">
+                                <select id="indicatif" name="indicatif" required size="1"
+                                        style="width:100%; display:none;">
+                                </select>
+                                <div id="indicatif_dropdown" style="display:none; position:absolute; z-index:999; background:white; border:2px solid #e0e0e0; border-radius:8px; max-height:200px; overflow-y:auto; width:200px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                                </div>
+                                <div id="indicatif_selected" style="padding:8px 12px; background:#f0f4f8; border-radius:6px; font-size:14px; color:#2C5F8D; font-weight:600; min-height:38px; display:flex; align-items:center;">
+                                    Sélectionnez un pays
+                                </div>
+                            </div>
+                            <div>
+                                <input type="tel" id="telephone_numero" name="telephone_numero"
+                                       placeholder="Numéro de téléphone"
+                                       pattern="[0-9]{5,15}"
+                                       oninput="this.value=this.value.replace(/\D/g,'')"
+                                       onfocus="checkIndicatif()"
+                                       style="width:100%;">
+                                <input type="hidden" id="telephone" name="telephone">
+                                <div id="tel_error" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">
+                                    ⚠️ Veuillez d'abord sélectionner l'indicatif du pays.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -754,9 +778,7 @@
                     <h3>⚠️ Informations importantes</h3>
                     <ul>
                         <li>Tous les champs marqués d'un astérisque (*) sont obligatoires</li>
-                        <li>Les dates doivent être au format JJ/MM/AAAA</li>
                         <li>Les documents (carte d'identité et permis) doivent être valides pendant toute la durée de la location</li>
-                        <li>Le numéro de téléphone doit commencer par le code pays (ex: +351 pour Portugal)</li>
                     </ul>
                 </div>
                 
@@ -879,7 +901,7 @@
             // Personal info
             const nomInput = document.getElementById('nom_complet');
             const adresseInput = document.getElementById('adresse_complete');
-            const telInput = document.getElementById('telephone');
+            const telInput = document.getElementById('telephone_numero');
             
             nomInput.addEventListener('input', checkPersonalInfoSection);
             adresseInput.addEventListener('input', checkPersonalInfoSection);
@@ -917,9 +939,9 @@
         function checkPersonalInfoSection() {
             const nom = document.getElementById('nom_complet').value.trim();
             const adresse = document.getElementById('adresse_complete').value.trim();
-            const tel = document.getElementById('telephone').value.trim();
+            const tel = document.getElementById('telephone_numero').value.trim();
             
-            if (nom && adresse && tel.length > 5) {
+            if (nom && adresse && tel.length > 4 && selectedIndicatif) {
                 unlockSection('idDocSection');
             }
         }
@@ -989,7 +1011,9 @@
         }
         
         function populateFormWithExistingData(data) {
-            // Populate all fields
+            // Campos que ficam SEMPRE bloqueados (não editáveis)
+            const camposBloqueados = ['reference_agence', 'email'];
+
             const fields = {
                 'reference_agence': data.reference_agence,
                 'email': data.email,
@@ -997,7 +1021,6 @@
                 'date_restitution': data.date_restitution,
                 'nom_complet': data.nom_complet,
                 'adresse_complete': data.adresse_complete,
-                'telephone': data.telephone,
                 'numero_document': data.numero_document,
                 'date_emission_id': data.date_emission_id,
                 'date_expiration_id': data.date_expiration_id,
@@ -1011,9 +1034,42 @@
                 if (input && value) {
                     input.value = value;
                     input.disabled = true;
-                    
-                    // Add edit icon
-                    addEditIcon(fieldId);
+                    if (!camposBloqueados.includes(fieldId)) {
+                        addEditIcon(fieldId);
+                    }
+                }
+            }
+
+            // Handle telephone separately — split indicatif from number
+            if (data.telephone) {
+                const tel = data.telephone.toString();
+                // Find matching country code
+                const match = COUNTRIES.find(c => tel.startsWith(c.code));
+                if (match) {
+                    selectedIndicatif = match.code;
+                    document.getElementById('indicatif_selected').textContent = match.name + ' ' + match.code;
+                    document.getElementById('indicatif_selected').style.color = '#2C5F8D';
+                    document.getElementById('telephone_numero').value = tel.substring(match.code.length);
+                } else {
+                    document.getElementById('telephone_numero').value = tel;
+                }
+                document.getElementById('telephone').value = tel;
+                document.getElementById('telephone_numero').disabled = true;
+                // Add edit icon for phone
+                const numInput = document.getElementById('telephone_numero');
+                const wrapper = numInput.parentElement;
+                if (!wrapper.querySelector('.edit-icon')) {
+                    const icon = document.createElement('span');
+                    icon.className = 'edit-icon';
+                    icon.innerHTML = '✏️';
+                    icon.style.cssText = 'position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:18px; opacity:0.6;';
+                    icon.onclick = function() {
+                        numInput.disabled = false;
+                        numInput.focus();
+                        this.remove();
+                    };
+                    wrapper.style.position = 'relative';
+                    wrapper.appendChild(icon);
                 }
             }
             
@@ -1054,6 +1110,9 @@
             'date_emission_permis':   'Date d\'Émission — Permis de Conduire',
             'date_expiration_permis': 'Date d\'Expiration — Permis de Conduire'
         };
+
+        // Fields where past dates are allowed
+        const ALLOW_PAST = ['date_emission_id','date_expiration_id','date_emission_permis','date_expiration_permis'];
 
         // Sequence: after selecting date_prise, auto-open date_restitution
         const NEXT_CALENDAR = {
@@ -1108,6 +1167,7 @@
             const curYear  = today.getFullYear();
             const selYear  = currentCalendarDate.getFullYear();
             const selMonth = currentCalendarDate.getMonth();
+            const allowPast = ALLOW_PAST.includes(currentInputId);
 
             // Months
             monthSel.innerHTML = '';
@@ -1119,9 +1179,11 @@
                 monthSel.appendChild(opt);
             });
 
-            // Years — current year up to +10
+            // Years
             yearSel.innerHTML = '';
-            for (let y = curYear; y <= curYear + 10; y++) {
+            const startYear = allowPast ? curYear - 50 : curYear;
+            const endYear   = curYear + 10;
+            for (let y = startYear; y <= endYear; y++) {
                 const opt = document.createElement('option');
                 opt.value = y;
                 opt.textContent = y;
@@ -1155,10 +1217,11 @@
 
         function changeMonth(delta) {
             const today = new Date();
+            const allowPast = ALLOW_PAST.includes(currentInputId);
             const newDate = new Date(currentCalendarDate.getFullYear(),
                                      currentCalendarDate.getMonth() + delta, 1);
-            // Don't go before current month
-            if (newDate < new Date(today.getFullYear(), today.getMonth(), 1)) return;
+            // Don't go before current month unless field allows past dates
+            if (!allowPast && newDate < new Date(today.getFullYear(), today.getMonth(), 1)) return;
             currentCalendarDate = newDate;
             populateSelects();
             renderCalendar();
@@ -1216,7 +1279,8 @@
             dayDiv.className = 'calendar-day';
             dayDiv.textContent = date.getDate();
 
-            const isPast = date < today;
+            const allowPast = ALLOW_PAST.includes(currentInputId);
+            const isPast = !allowPast && date < today;
 
             if (isOtherMonth || isPast) {
                 dayDiv.classList.add(isOtherMonth ? 'other-month' : 'disabled');
@@ -1285,29 +1349,119 @@
             }
         }
         
-        // Phone Validation
+        // Phone / Country Code
+        const COUNTRIES = [
+            {name:'Afghanistan',code:'+93'},{name:'Afrique du Sud',code:'+27'},{name:'Albanie',code:'+355'},
+            {name:'Algérie',code:'+213'},{name:'Allemagne',code:'+49'},{name:'Andorre',code:'+376'},
+            {name:'Angola',code:'+244'},{name:'Arabie Saoudite',code:'+966'},{name:'Argentine',code:'+54'},
+            {name:'Arménie',code:'+374'},{name:'Australie',code:'+61'},{name:'Autriche',code:'+43'},
+            {name:'Azerbaïdjan',code:'+994'},{name:'Bahreïn',code:'+973'},{name:'Bangladesh',code:'+880'},
+            {name:'Belgique',code:'+32'},{name:'Bénin',code:'+229'},{name:'Biélorussie',code:'+375'},
+            {name:'Bolivie',code:'+591'},{name:'Bosnie-Herzégovine',code:'+387'},{name:'Brésil',code:'+55'},
+            {name:'Bulgarie',code:'+359'},{name:'Burkina Faso',code:'+226'},{name:'Cameroun',code:'+237'},
+            {name:'Canada',code:'+1'},{name:'Cap-Vert',code:'+238'},{name:'Chili',code:'+56'},
+            {name:'Chine',code:'+86'},{name:'Chypre',code:'+357'},{name:'Colombie',code:'+57'},
+            {name:'Congo',code:'+242'},{name:'Corée du Sud',code:'+82'},{name:'Costa Rica',code:'+506'},
+            {name:'Côte d\'Ivoire',code:'+225'},{name:'Croatie',code:'+385'},{name:'Cuba',code:'+53'},
+            {name:'Danemark',code:'+45'},{name:'Égypte',code:'+20'},{name:'Émirats arabes unis',code:'+971'},
+            {name:'Équateur',code:'+593'},{name:'Espagne',code:'+34'},{name:'Estonie',code:'+372'},
+            {name:'États-Unis',code:'+1'},{name:'Éthiopie',code:'+251'},{name:'Finlande',code:'+358'},
+            {name:'France',code:'+33'},{name:'Gabon',code:'+241'},{name:'Géorgie',code:'+995'},
+            {name:'Ghana',code:'+233'},{name:'Grèce',code:'+30'},{name:'Guatemala',code:'+502'},
+            {name:'Guinée',code:'+224'},{name:'Haïti',code:'+509'},{name:'Honduras',code:'+504'},
+            {name:'Hong Kong',code:'+852'},{name:'Hongrie',code:'+36'},{name:'Inde',code:'+91'},
+            {name:'Indonésie',code:'+62'},{name:'Irak',code:'+964'},{name:'Iran',code:'+98'},
+            {name:'Irlande',code:'+353'},{name:'Islande',code:'+354'},{name:'Israël',code:'+972'},
+            {name:'Italie',code:'+39'},{name:'Jamaïque',code:'+1876'},{name:'Japon',code:'+81'},
+            {name:'Jordanie',code:'+962'},{name:'Kazakhstan',code:'+7'},{name:'Kenya',code:'+254'},
+            {name:'Kosovo',code:'+383'},{name:'Koweït',code:'+965'},{name:'Lettonie',code:'+371'},
+            {name:'Liban',code:'+961'},{name:'Libye',code:'+218'},{name:'Liechtenstein',code:'+423'},
+            {name:'Lituanie',code:'+370'},{name:'Luxembourg',code:'+352'},{name:'Macédoine du Nord',code:'+389'},
+            {name:'Madagascar',code:'+261'},{name:'Malaisie',code:'+60'},{name:'Mali',code:'+223'},
+            {name:'Malte',code:'+356'},{name:'Maroc',code:'+212'},{name:'Maurice',code:'+230'},
+            {name:'Mauritanie',code:'+222'},{name:'Mexique',code:'+52'},{name:'Moldavie',code:'+373'},
+            {name:'Monaco',code:'+377'},{name:'Mongolie',code:'+976'},{name:'Monténégro',code:'+382'},
+            {name:'Mozambique',code:'+258'},{name:'Myanmar',code:'+95'},{name:'Namibie',code:'+264'},
+            {name:'Népal',code:'+977'},{name:'Nicaragua',code:'+505'},{name:'Niger',code:'+227'},
+            {name:'Nigéria',code:'+234'},{name:'Norvège',code:'+47'},{name:'Nouvelle-Zélande',code:'+64'},
+            {name:'Oman',code:'+968'},{name:'Ouganda',code:'+256'},{name:'Pakistan',code:'+92'},
+            {name:'Palestine',code:'+970'},{name:'Panama',code:'+507'},{name:'Paraguay',code:'+595'},
+            {name:'Pays-Bas',code:'+31'},{name:'Pérou',code:'+51'},{name:'Philippines',code:'+63'},
+            {name:'Pologne',code:'+48'},{name:'Portugal',code:'+351'},{name:'Qatar',code:'+974'},
+            {name:'République dominicaine',code:'+1809'},{name:'République tchèque',code:'+420'},
+            {name:'Roumanie',code:'+40'},{name:'Royaume-Uni',code:'+44'},{name:'Russie',code:'+7'},
+            {name:'Rwanda',code:'+250'},{name:'Saint-Marin',code:'+378'},{name:'Sénégal',code:'+221'},
+            {name:'Serbie',code:'+381'},{name:'Singapour',code:'+65'},{name:'Slovaquie',code:'+421'},
+            {name:'Slovénie',code:'+386'},{name:'Somalie',code:'+252'},{name:'Soudan',code:'+249'},
+            {name:'Sri Lanka',code:'+94'},{name:'Suède',code:'+46'},{name:'Suisse',code:'+41'},
+            {name:'Syrie',code:'+963'},{name:'Taïwan',code:'+886'},{name:'Tanzanie',code:'+255'},
+            {name:'Thaïlande',code:'+66'},{name:'Togo',code:'+228'},{name:'Tunisie',code:'+216'},
+            {name:'Turquie',code:'+90'},{name:'Ukraine',code:'+380'},{name:'Uruguay',code:'+598'},
+            {name:'Venezuela',code:'+58'},{name:'Vietnam',code:'+84'},{name:'Yémen',code:'+967'},
+            {name:'Zambie',code:'+260'},{name:'Zimbabwe',code:'+263'}
+        ];
+
+        let selectedIndicatif = '';
+
         function initializePhoneValidation() {
-            const phoneInput = document.getElementById('telephone');
-            
-            phoneInput.addEventListener('input', function(e) {
-                let value = this.value;
-                
-                if (!value.startsWith('+')) {
-                    value = '+' + value.replace(/\+/g, '');
-                }
-                
-                value = '+' + value.substring(1).replace(/\D/g, '');
-                this.value = value;
-            });
-            
-            phoneInput.addEventListener('keydown', function(e) {
-                if ((e.key === 'Backspace' || e.key === 'Delete') && this.value === '+') {
-                    e.preventDefault();
-                }
-                if (this.selectionStart === 0 && this.selectionEnd === 0 && e.key === 'Backspace') {
-                    e.preventDefault();
+            const dropdown = document.getElementById('indicatif_dropdown');
+            renderDropdown(COUNTRIES);
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.form-group')) {
+                    dropdown.style.display = 'none';
                 }
             });
+
+            // Update hidden telephone field when number changes
+            document.getElementById('telephone_numero').addEventListener('input', function() {
+                updateTelephoneHidden();
+            });
+        }
+
+        function renderDropdown(list) {
+            const dropdown = document.getElementById('indicatif_dropdown');
+            dropdown.innerHTML = '';
+            list.forEach(c => {
+                const item = document.createElement('div');
+                item.style.cssText = 'padding:8px 12px; cursor:pointer; font-size:13px; border-bottom:1px solid #f0f0f0;';
+                item.textContent = c.name + ' (' + c.code + ')';
+                item.onmouseover = function() { this.style.background='#e3f2fd'; };
+                item.onmouseout  = function() { this.style.background='white'; };
+                item.onclick = function() {
+                    selectedIndicatif = c.code;
+                    document.getElementById('indicatif_selected').textContent = c.name + ' ' + c.code;
+                    document.getElementById('indicatif_selected').style.color = '#2C5F8D';
+                    document.getElementById('indicatif_search').value = '';
+                    dropdown.style.display = 'none';
+                    document.getElementById('tel_error').style.display = 'none';
+                    document.getElementById('telephone_numero').focus();
+                    updateTelephoneHidden();
+                };
+                dropdown.appendChild(item);
+            });
+        }
+
+        function filterIndicatifs(query) {
+            const filtered = COUNTRIES.filter(c =>
+                c.name.toLowerCase().includes(query.toLowerCase()) ||
+                c.code.includes(query)
+            );
+            renderDropdown(filtered);
+            document.getElementById('indicatif_dropdown').style.display = 'block';
+        }
+
+        function checkIndicatif() {
+            if (!selectedIndicatif) {
+                document.getElementById('tel_error').style.display = 'block';
+                document.getElementById('telephone_numero').blur();
+            }
+        }
+
+        function updateTelephoneHidden() {
+            const num = document.getElementById('telephone_numero').value;
+            document.getElementById('telephone').value = selectedIndicatif + num;
         }
         
         // Address Validation
@@ -1375,7 +1529,14 @@
         function clearForm() {
             if (confirm('Êtes-vous sûr de vouloir effacer tous les champs?')) {
                 document.getElementById('driverForm').reset();
-                document.getElementById('telephone').value = '+';
+                // Reset phone
+                selectedIndicatif = '';
+                document.getElementById('telephone_numero').value = '';
+                document.getElementById('telephone').value = '';
+                document.getElementById('indicatif_selected').textContent = 'Sélectionnez un pays';
+                document.getElementById('indicatif_selected').style.color = '#999';
+                document.getElementById('indicatif_search').value = '';
+                document.getElementById('tel_error').style.display = 'none';
                 
                 // Reset client type
                 clientType = null;
