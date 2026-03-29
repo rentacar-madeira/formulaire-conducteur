@@ -241,71 +241,109 @@
         .calendar-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             justify-content: center;
             align-items: center;
         }
-        
-        .calendar-overlay.active {
-            display: flex;
-        }
-        
+        .calendar-overlay.active { display: flex; }
+
         .calendar-container {
             background: white;
             border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 400px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 340px;
             width: 90%;
             position: relative;
         }
-        
+
+        .calendar-field-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #2C5F8D;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+        }
+
+        .calendar-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: #f0f0f0;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            color: #666;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .calendar-close:hover { background: #e0e0e0; color: #333; }
+
         .calendar-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 16px;
         }
-        
+
         .calendar-nav {
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
             transition: background 0.2s;
+            color: #2C5F8D;
+            line-height: 1;
         }
-        
-        .calendar-nav:hover {
-            background: #f0f0f0;
-        }
-        
+        .calendar-nav:hover { background: #e3f2fd; }
+
         .calendar-month-year {
-            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .cal-select {
+            font-size: 15px;
             font-weight: 700;
             color: #2C5F8D;
+            background: #f0f4f8;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 8px;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            text-align: center;
         }
-        
+        .cal-select:hover { background: #e3f2fd; }
+        .cal-select:focus { outline: 2px solid #2C5F8D; }
+
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+            gap: 4px;
         }
-        
+
         .calendar-day-header {
             text-align: center;
-            font-weight: 600;
-            font-size: 12px;
-            color: #666;
-            padding: 8px 0;
+            font-weight: 700;
+            font-size: 11px;
+            color: #888;
+            padding: 6px 0;
         }
-        
+
         .calendar-day {
             aspect-ratio: 1;
             display: flex;
@@ -313,53 +351,28 @@
             justify-content: center;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             transition: all 0.2s;
             border: 1px solid transparent;
         }
-        
         .calendar-day:hover:not(.disabled):not(.other-month) {
             background: #e3f2fd;
             border-color: #2C5F8D;
         }
-        
         .calendar-day.selected {
             background: #2C5F8D;
             color: white;
             font-weight: 700;
         }
-        
         .calendar-day.disabled {
-            color: #ccc;
+            color: #d0d0d0;
             cursor: not-allowed;
+            background: none;
         }
-        
-        .calendar-day.other-month {
-            color: #ccc;
-        }
-        
+        .calendar-day.other-month { color: #d0d0d0; cursor: default; }
         .calendar-day.today {
             border: 2px solid #2C5F8D;
-            font-weight: 600;
-        }
-        
-        .calendar-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-        
-        .calendar-close:hover {
-            background: #f0f0f0;
-            color: #333;
+            font-weight: 700;
         }
         
         /* Date inputs with calendar icon */
@@ -767,9 +780,13 @@
     <div class="calendar-overlay" id="calendarOverlay">
         <div class="calendar-container">
             <button class="calendar-close" onclick="closeCalendar()">✕</button>
+            <div class="calendar-field-title" id="calendarFieldTitle"></div>
             <div class="calendar-header">
                 <button type="button" class="calendar-nav" onclick="changeMonth(-1)">‹</button>
-                <div class="calendar-month-year" id="calendarMonthYear"></div>
+                <div class="calendar-month-year">
+                    <select class="cal-select" id="calMonthSelect" onchange="changeMonthSelect(this.value)"></select>
+                    <select class="cal-select" id="calYearSelect" onchange="changeYearSelect(this.value)"></select>
+                </div>
                 <button type="button" class="calendar-nav" onclick="changeMonth(1)">›</button>
             </div>
             <div class="calendar-grid" id="calendarGrid"></div>
@@ -830,27 +847,17 @@
             });
         }
         
-function handleClientTypeChange(type) {
+        function handleClientTypeChange(type) {
             const refEmailSection = document.getElementById('refEmailSection');
             const searchBtn = document.getElementById('searchBtn');
-            const datesSection = document.getElementById('datesSection');
             
+            // Unlock reference/email section
             refEmailSection.classList.remove('locked');
             
             if (type === 'existant') {
                 searchBtn.style.display = 'block';
-                // Manter sempre bloqueado para cliente existente
-                datesSection.classList.add('locked');
-                // Adicionar listener para garantir que fica sempre bloqueado
-                datesSection.addEventListener('click', function(e) {
-                    if (clientType === 'existant' && !isExistingClientData) {
-                        e.stopPropagation();
-                        e.preventDefault();
-                    }
-                }, true);
             } else {
                 searchBtn.style.display = 'none';
-                datesSection.classList.remove('locked');
             }
         }
         
@@ -893,13 +900,7 @@ function handleClientTypeChange(type) {
             const email = document.getElementById('email').value.trim();
             
             if (ref && email && email.includes('@')) {
-                if (clientType !== 'existant') {
-                    unlockSection('datesSection');
-                }
-            }
-            // Garantir que datas ficam sempre bloqueadas para cliente existente
-            if (clientType === 'existant') {
-                document.getElementById('datesSection').classList.add('locked');
+                unlockSection('datesSection');
             }
         }
         
@@ -955,7 +956,7 @@ function handleClientTypeChange(type) {
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('✅ Email de confirmation envoyé à ' + email + '\n\nVeuillez vérifier votre boîte de réception et cliquer sur le lien pour continuer.\n\nSi vous ne recevez pas l\'email, veuillez vérifier votre dossier SPAM.\nSi le problème persiste, contactez-nous à : officefnc@pto.travel');
+                    alert('✅ Email de confirmation envoyé à ' + email + '\n\nVeuillez vérifier votre boîte de réception et cliquer sur le lien pour continuer.');
                 } else {
                     alert('❌ Aucun client trouvé avec cette référence et cet email.');
                 }
@@ -988,10 +989,7 @@ function handleClientTypeChange(type) {
         }
         
         function populateFormWithExistingData(data) {
-            // Campos que ficam SEMPRE bloqueados (não editáveis)
-            const camposBloqueados = ['reference_agence', 'email'];
-
-            // Todos os campos a preencher
+            // Populate all fields
             const fields = {
                 'reference_agence': data.reference_agence,
                 'email': data.email,
@@ -1014,10 +1012,8 @@ function handleClientTypeChange(type) {
                     input.value = value;
                     input.disabled = true;
                     
-                    // Só adiciona ícone de edição nos campos que NÃO são bloqueados
-                    if (!camposBloqueados.includes(fieldId)) {
-                        addEditIcon(fieldId);
-                    }
+                    // Add edit icon
+                    addEditIcon(fieldId);
                 }
             }
             
@@ -1050,139 +1046,223 @@ function handleClientTypeChange(type) {
         }
         
         // Calendar Functions
+        const FIELD_LABELS = {
+            'date_prise':             'Date de Prise en Charge',
+            'date_restitution':       'Date de Restitution',
+            'date_emission_id':       'Date d\'Émission — Pièce d\'Identité',
+            'date_expiration_id':     'Date d\'Expiration — Pièce d\'Identité',
+            'date_emission_permis':   'Date d\'Émission — Permis de Conduire',
+            'date_expiration_permis': 'Date d\'Expiration — Permis de Conduire'
+        };
+
+        // Sequence: after selecting date_prise, auto-open date_restitution
+        const NEXT_CALENDAR = {
+            'date_prise': 'date_restitution'
+        };
+
+        const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin',
+                           'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
         function initializeDateInputs() {
             const dateInputs = document.querySelectorAll('.date-input input');
-            
             dateInputs.forEach(input => {
                 input.addEventListener('click', function() {
                     if (!this.disabled) {
-                        // Bloquear se for cliente existente e datas ainda não carregadas
-                        if (clientType === 'existant' && !isExistingClientData) {
-                            return;
-                        }
+                        if (clientType === 'existant' && !isExistingClientData) return;
                         currentInputId = this.id;
                         openCalendar();
                     }
                 });
             });
         }
-        
+
         function openCalendar() {
             const overlay = document.getElementById('calendarOverlay');
             overlay.classList.add('active');
-            
+
+            // Set field title
+            const titleEl = document.getElementById('calendarFieldTitle');
+            titleEl.textContent = FIELD_LABELS[currentInputId] || currentInputId;
+
+            // Set calendar to current value or today
             const input = document.getElementById(currentInputId);
-            if (input.value) {
+            if (input.value && input.value.length === 10) {
                 const parts = input.value.split('/');
-                if (parts.length === 3) {
-                    currentCalendarDate = new Date(parts[2], parseInt(parts[1]) - 1, parts[0]);
-                }
+                currentCalendarDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+            } else {
+                currentCalendarDate = new Date();
             }
-            
+
+            populateSelects();
             renderCalendar();
         }
-        
+
         function closeCalendar() {
             document.getElementById('calendarOverlay').classList.remove('active');
         }
-        
-        function changeMonth(delta) {
-            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+
+        function populateSelects() {
+            const monthSel = document.getElementById('calMonthSelect');
+            const yearSel  = document.getElementById('calYearSelect');
+            const today    = new Date();
+            const curYear  = today.getFullYear();
+            const selYear  = currentCalendarDate.getFullYear();
+            const selMonth = currentCalendarDate.getMonth();
+
+            // Months
+            monthSel.innerHTML = '';
+            MONTHS_FR.forEach((m, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.textContent = m;
+                if (i === selMonth) opt.selected = true;
+                monthSel.appendChild(opt);
+            });
+
+            // Years — current year up to +10
+            yearSel.innerHTML = '';
+            for (let y = curYear; y <= curYear + 10; y++) {
+                const opt = document.createElement('option');
+                opt.value = y;
+                opt.textContent = y;
+                if (y === selYear) opt.selected = true;
+                yearSel.appendChild(opt);
+            }
+        }
+
+        function changeMonthSelect(val) {
+            currentCalendarDate.setMonth(parseInt(val));
+            // If navigating back before today, snap to today
+            const today = new Date();
+            if (currentCalendarDate.getFullYear() === today.getFullYear() &&
+                currentCalendarDate.getMonth() < today.getMonth()) {
+                currentCalendarDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                document.getElementById('calMonthSelect').value = currentCalendarDate.getMonth();
+            }
             renderCalendar();
         }
-        
+
+        function changeYearSelect(val) {
+            currentCalendarDate.setFullYear(parseInt(val));
+            const today = new Date();
+            if (currentCalendarDate.getFullYear() === today.getFullYear() &&
+                currentCalendarDate.getMonth() < today.getMonth()) {
+                currentCalendarDate.setMonth(today.getMonth());
+                document.getElementById('calMonthSelect').value = today.getMonth();
+            }
+            renderCalendar();
+        }
+
+        function changeMonth(delta) {
+            const today = new Date();
+            const newDate = new Date(currentCalendarDate.getFullYear(),
+                                     currentCalendarDate.getMonth() + delta, 1);
+            // Don't go before current month
+            if (newDate < new Date(today.getFullYear(), today.getMonth(), 1)) return;
+            currentCalendarDate = newDate;
+            populateSelects();
+            renderCalendar();
+        }
+
         function renderCalendar() {
-            const monthYear = document.getElementById('calendarMonthYear');
             const grid = document.getElementById('calendarGrid');
-            
-            const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
-                          'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-            
-            monthYear.textContent = months[currentCalendarDate.getMonth()] + ' ' + currentCalendarDate.getFullYear();
-            
-            // Clear grid
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
             grid.innerHTML = '';
-            
-            // Day headers
-            const dayHeaders = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+            // Day headers — starting Monday
+            const dayHeaders = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
             dayHeaders.forEach(day => {
                 const header = document.createElement('div');
                 header.className = 'calendar-day-header';
                 header.textContent = day;
                 grid.appendChild(header);
             });
-            
-            // Get first day of month
-            const firstDay = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), 1);
-            const lastDay = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + 1, 0);
-            
-            // Previous month days
-            const firstDayOfWeek = firstDay.getDay();
-            for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-                const prevDate = new Date(firstDay);
-                prevDate.setDate(prevDate.getDate() - i - 1);
-                addCalendarDay(prevDate, true);
+
+            const year  = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+            const firstDay = new Date(year, month, 1);
+            const lastDay  = new Date(year, month + 1, 0);
+
+            // Monday-based: Sunday(0)→6, Monday(1)→0, ..., Saturday(6)→5
+            let startDow = firstDay.getDay(); // 0=Sun
+            startDow = (startDow === 0) ? 6 : startDow - 1;
+
+            // Previous month filler days
+            for (let i = startDow - 1; i >= 0; i--) {
+                const d = new Date(year, month, -i);
+                addCalendarDay(d, true, today);
             }
-            
+
             // Current month days
             for (let day = 1; day <= lastDay.getDate(); day++) {
-                const date = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth(), day);
-                addCalendarDay(date, false);
+                const d = new Date(year, month, day);
+                addCalendarDay(d, false, today);
             }
-            
-            // Next month days
-            const remainingCells = 42 - grid.children.length + 7;
-            for (let i = 1; i <= remainingCells; i++) {
-                const nextDate = new Date(lastDay);
-                nextDate.setDate(nextDate.getDate() + i);
-                addCalendarDay(nextDate, true);
+
+            // Next month filler to complete grid (multiple of 7)
+            const totalCells = grid.children.length - 7; // minus headers
+            const remaining  = (7 - (totalCells % 7)) % 7;
+            for (let i = 1; i <= remaining; i++) {
+                const d = new Date(year, month + 1, i);
+                addCalendarDay(d, true, today);
             }
         }
-        
-        function addCalendarDay(date, isOtherMonth) {
-            const grid = document.getElementById('calendarGrid');
+
+        function addCalendarDay(date, isOtherMonth, today) {
+            const grid   = document.getElementById('calendarGrid');
             const dayDiv = document.createElement('div');
             dayDiv.className = 'calendar-day';
             dayDiv.textContent = date.getDate();
-            
-            if (isOtherMonth) {
-                dayDiv.classList.add('other-month');
-            }
-            
-            // Check if today
-            const today = new Date();
-            if (date.toDateString() === today.toDateString()) {
-                dayDiv.classList.add('today');
-            }
-            
-            // Check if selected
-            const input = document.getElementById(currentInputId);
-            if (input.value) {
-                const parts = input.value.split('/');
-                const selectedDate = new Date(parts[2], parseInt(parts[1]) - 1, parts[0]);
-                if (date.toDateString() === selectedDate.toDateString()) {
-                    dayDiv.classList.add('selected');
+
+            const isPast = date < today;
+
+            if (isOtherMonth || isPast) {
+                dayDiv.classList.add(isOtherMonth ? 'other-month' : 'disabled');
+            } else {
+                // Check today
+                if (date.toDateString() === today.toDateString()) {
+                    dayDiv.classList.add('today');
                 }
+
+                // Check selected
+                const input = document.getElementById(currentInputId);
+                if (input && input.value && input.value.length === 10) {
+                    const parts = input.value.split('/');
+                    const sel = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
+                    if (date.toDateString() === sel.toDateString()) {
+                        dayDiv.classList.add('selected');
+                    }
+                }
+
+                dayDiv.addEventListener('click', function() { selectDate(date); });
             }
-            
-            dayDiv.addEventListener('click', function() {
-                selectDate(date);
-            });
-            
+
             grid.appendChild(dayDiv);
         }
-        
+
         function selectDate(date) {
             const input = document.getElementById(currentInputId);
-            const day = String(date.getDate()).padStart(2, '0');
+            const day   = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            
+            const year  = date.getFullYear();
             input.value = `${day}/${month}/${year}`;
-            closeCalendar();
-            
-            // Trigger validation
             input.dispatchEvent(new Event('change'));
+
+            // Check if there's a next calendar to open automatically
+            const nextId = NEXT_CALENDAR[currentInputId];
+            closeCalendar();
+
+            if (nextId) {
+                const nextInput = document.getElementById(nextId);
+                if (nextInput && !nextInput.disabled) {
+                    setTimeout(() => {
+                        currentInputId = nextId;
+                        openCalendar();
+                    }, 200);
+                }
+            }
         }
         
         // Calculate Days
