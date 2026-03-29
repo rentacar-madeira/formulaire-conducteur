@@ -1639,8 +1639,7 @@
         async function submitToSheets() {
             const form = document.getElementById('driverForm');
             if (!form.checkValidity()) {
-                alert('Veuillez remplir tous les champs obligatoires avant de continuer.');
-                form.reportValidity();
+                alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués d\'un *).');
                 return;
             }
             
