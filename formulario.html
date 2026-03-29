@@ -2021,8 +2021,6 @@
         
         // Submit to Google Sheets
         async function submitToSheets() {
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.innerHTML = '<span class="spinner"></span> Vérification...';
 
             // Highlight empty fields in red
             const hasEmpty = highlightEmptyFields();
@@ -2179,9 +2177,11 @@
                 alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.');
             } finally {
                 if (!formSubmitted) {
+                    const submitBtn = document.getElementById('submitBtn');
                     submitBtn.innerHTML = '✅ Envoyer';
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
                 }
             }
     </script>
