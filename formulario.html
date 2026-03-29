@@ -885,7 +885,10 @@
             const email = document.getElementById('email').value.trim();
             
             if (ref && email && email.includes('@')) {
-                unlockSection('datesSection');
+                // Só desbloqueia as datas se for novo cliente
+                if (clientType !== 'existant') {
+                    unlockSection('datesSection');
+                }
             }
         }
         
