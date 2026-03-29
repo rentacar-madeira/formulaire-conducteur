@@ -2137,7 +2137,6 @@
             };
             
             const submitBtn = document.getElementById('submitBtn');
-            const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
             submitBtn.disabled = true;
             
@@ -2179,10 +2178,12 @@
                 console.error('Error:', error);
                 alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.');
             } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                if (!formSubmitted) {
+                    submitBtn.innerHTML = '✅ Envoyer';
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                }
             }
-        }
     </script>
 </body>
 </html>
