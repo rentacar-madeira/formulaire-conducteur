@@ -531,13 +531,16 @@
         @media print {
             @page {
                 size: A4;
-                margin: 15mm;
+                margin: 10mm;
             }
-            
-            body {
-                background: white;
-                padding: 0;
-            }
+
+            body { font-size: 12px; }
+            .header { padding: 20px; }
+            .header h1 { font-size: 22px; }
+            .form-content { padding: 20px; }
+            .form-section { padding: 12px; margin-bottom: 12px; }
+            .form-group { margin-bottom: 10px; }
+            .info-box, .days-display { display: none !important; }
             
             .container {
                 box-shadow: none;
@@ -1627,11 +1630,18 @@
         // Export to PDF
        let formSubmitted = false;
 
+        function getPdfTitle() {
+            const ref = document.getElementById('reference_agence').value || 'Ref';
+            const nom = document.getElementById('nom_complet').value || 'Client';
+            return 'Ref. ' + ref + ' - ' + nom + ' - Formulaire du Conducteur - Location de Voiture';
+        }
+
         function exportToPDF() {
             if (!formSubmitted) {
                 alert('⚠️ Veuillez d\'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF.');
                 return;
             }
+            document.title = getPdfTitle();
             window.print();
         }
         
@@ -1706,8 +1716,9 @@
                 document.getElementById('pdf_hint').style.color = '#2e7d32';
 
                 // Pop-up de confirmação com opção de guardar PDF
-                const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\nVoulez-vous sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Sauvegarder plus tard via le bouton PDF');
+                const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre dossier SPAM.\n\nVoulez-vous également sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Vous pouvez sauvegarder plus tard via le bouton PDF');
                 if (savePDF) {
+                    document.title = getPdfTitle();
                     window.print();
                 }
                 
