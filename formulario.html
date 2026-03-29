@@ -940,6 +940,11 @@
             if (keepRef)   document.getElementById('reference_agence').value = refVal;
             if (keepEmail) document.getElementById('email').value = emailVal;
 
+            // Re-apply modifier mode after clear
+            document.querySelector('input[value="existant"]').checked = true;
+            document.querySelectorAll('.client-type-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('existantClientBtn').classList.add('active');
+            clientType = 'existant';
             handleClientTypeChange('existant');
         }
 
@@ -1037,7 +1042,15 @@
             const email = document.getElementById('email').value.trim();
             
             if (ref && email && email.includes('@')) {
-                unlockSection('datesSection');
+                if (clientType !== 'existant') {
+                    unlockSection('datesSection');
+                }
+            }
+            // Garantir que TUDO fica bloqueado no modo modifier
+            if (clientType === 'existant') {
+                ['datesSection','personalInfoSection','idDocSection','licenseSection'].forEach(id => {
+                    document.getElementById(id).classList.add('locked');
+                });
             }
         }
         
