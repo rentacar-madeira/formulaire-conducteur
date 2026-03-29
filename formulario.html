@@ -591,7 +591,12 @@
                         
                         <div class="form-group">
                             <label for="email">📧 Email *</label>
-                            <input type="email" id="email" name="email" required>
+                            <div style="position:relative;">
+                                <input type="text" id="email" name="email" required autocomplete="off"
+                                       oninput="handleEmailInput(this.value)"
+                                       onblur="setTimeout(()=>closeEmailDropdown(),200)">
+                                <div id="email_dropdown" style="display:none; position:absolute; z-index:999; background:white; border:2px solid #2C5F8D; border-radius:8px; max-height:200px; overflow-y:auto; width:100%; box-shadow:0 8px 20px rgba(0,0,0,0.15); top:100%; margin-top:4px;"></div>
+                            </div>
                             <div id="email_incompatible" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">
                                 ⚠️ Cet email n'est pas associé à cette référence. Veuillez corriger l'email et cliquer sur "Rechercher".
                             </div>
@@ -1013,7 +1018,52 @@
             submitBtn.innerHTML = '✅ Envoyer';
             document.getElementById('submit_hint').style.display = 'none';
         }
-        
+
+        const EMAIL_DOMAINS = [
+            '@gmail.com', '@hotmail.com', '@hotmail.fr', '@outlook.com', '@outlook.fr',
+            '@yahoo.com', '@yahoo.fr', '@orange.fr', '@sfr.fr', '@free.fr',
+            '@laposte.net', '@wanadoo.fr', '@bbox.fr', '@numericable.fr',
+            '@live.com', '@live.fr', '@msn.com', '@icloud.com', '@me.com',
+            '@protonmail.com', '@proton.me', '@gmx.com', '@gmx.fr',
+            '@pto.travel', '@sapo.pt', '@mail.pt'
+        ];
+
+        function handleEmailInput(value) {
+            const dropdown = document.getElementById('email_dropdown');
+            if (!value || !value.includes('@')) {
+                dropdown.style.display = 'none';
+                return;
+            }
+            const atIndex = value.indexOf('@');
+            const beforeAt = value.substring(0, atIndex);
+            const afterAt  = value.substring(atIndex + 1);
+            const filtered = EMAIL_DOMAINS.filter(d =>
+                d.toLowerCase().includes(afterAt.toLowerCase()) || afterAt === ''
+            );
+            if (filtered.length === 0) {
+                dropdown.style.display = 'none';
+                return;
+            }
+            dropdown.innerHTML = '';
+            filtered.forEach(domain => {
+                const item = document.createElement('div');
+                item.style.cssText = 'padding:9px 12px; cursor:pointer; font-size:13px; border-bottom:1px solid #f5f5f5;';
+                item.textContent = beforeAt + domain;
+                item.onmouseover = function() { this.style.background = '#e3f2fd'; };
+                item.onmouseout  = function() { this.style.background = 'white'; };
+                item.onclick = function() {
+                    document.getElementById('email').value = beforeAt + domain;
+                    dropdown.style.display = 'none';
+                };
+                dropdown.appendChild(item);
+            });
+            dropdown.style.display = 'block';
+        }
+
+        function closeEmailDropdown() {
+            document.getElementById('email_dropdown').style.display = 'none';
+        }
+
         // Form Validation and Progressive Unlocking
         function initializeFormValidation() {
             const refInput = document.getElementById('reference_agence');
