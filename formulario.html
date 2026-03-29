@@ -527,41 +527,22 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Print styles */
+        /* Print styles — Voucher layout */
         @media print {
             @page {
                 size: A4;
-                margin: 10mm;
+                margin: 12mm;
             }
 
-            body { font-size: 12px; }
-            .header { padding: 20px; }
-            .header h1 { font-size: 22px; }
-            .form-content { padding: 20px; }
-            .form-section { padding: 12px; margin-bottom: 12px; }
-            .form-group { margin-bottom: 10px; }
-            .info-box, .days-display { display: none !important; }
-            
-            .container {
-                box-shadow: none;
-                max-width: 100%;
-            }
-            
-            .button-group,
-            .search-btn,
-            .client-type-section,
-            .edit-icon {
-                display: none !important;
-            }
-            
-            .form-section.locked {
-                opacity: 1;
-                pointer-events: auto;
-                background: white;
-            }
-            
-            .form-section.locked::before {
-                display: none;
+            /* Hide everything by default */
+            body > * { display: none !important; }
+
+            /* Show only the voucher */
+            #print-voucher { display: block !important; }
+
+            #print-voucher {
+                font-family: 'Inter', sans-serif;
+                color: #1a1a1a;
             }
         }
     </style>
@@ -665,7 +646,7 @@
                     
                     <div class="form-group">
                         <label for="telephone">Téléphone *</label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start;">
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: start;">
                             <div style="position:relative;">
                                 <div id="indicatif_box" onclick="toggleIndicatifDropdown()"
                                      style="width:100%; padding:12px 36px 12px 16px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; background:#fafafa; cursor:pointer; min-height:46px; display:flex; align-items:center; color:#999; user-select:none;">
@@ -778,20 +759,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- RGPD Consent -->
-                <div class="form-group" style="margin-top: 24px; padding: 20px; border: 2px solid #e0e0e0; border-radius: 12px; background: #fafafa;">
-                    <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
-                        <input type="checkbox" id="rgpd_consent" name="rgpd_consent" required
-                               style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
-                        <span style="font-size: 13px; color: #444; line-height: 1.6;">
-                            En cochant cette case, je confirme avoir lu et accepté que mes données personnelles (nom, adresse, contacts, pièce d'identité et permis de conduire) soient utilisées exclusivement dans le cadre de ma réservation de location de voiture — notamment par la société de location et le réceptif local — et ce, à des fins strictement opérationnelles. Ces données ne seront en aucun cas utilisées à des fins commerciales ou partagées avec des tiers extérieurs à la prestation.
-                        </span>
-                    </label>
-                    <div id="rgpd_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">
-                        ⚠️ Vous devez accepter les conditions pour continuer.
-                    </div>
-                </div>
                 
                 <!-- Info Box -->
                 <div class="info-box">
@@ -802,14 +769,14 @@
                     </ul>
                 </div>
                 
-               <!-- Buttons -->
+                <!-- Buttons -->
                 <div class="button-group">
                     <button type="button" class="btn btn-secondary" onclick="clearForm()">
                         🗑️ Effacer
                     </button>
                     <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                        <button type="button" class="btn btn-secondary" onclick="exportToPDF()" id="pdfBtn" disabled
-                                style="width:100%; opacity:0.5; cursor:not-allowed;">
+                        <button type="button" class="btn btn-secondary" onclick="exportToPDF()" id="pdfBtn"
+                                style="width:100%; opacity:0.5; cursor:not-allowed;" disabled>
                             📄 Sauvegarder une copie PDF
                         </button>
                         <span id="pdf_hint" style="font-size:11px; color:#999; text-align:center;">
@@ -824,6 +791,9 @@
         </div>
     </div>
     
+    <!-- Print Voucher (hidden, only shown when printing) -->
+    <div id="print-voucher" style="display:none;"></div>
+
     <!-- Calendar Overlay -->
     <div class="calendar-overlay" id="calendarOverlay">
         <div class="calendar-container">
@@ -992,7 +962,7 @@
             const email = document.getElementById('email').value.trim();
             
             if (!ref || !email) {
-                alert('⚠️ Veuillez remplir la référence agence et l\'adresse email.');
+                alert('⚠️ Veuillez remplir la référence et l\'email');
                 return;
             }
             
@@ -1584,7 +1554,7 @@
         
         // Clear Form
         function clearForm() {
-            if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) {
+            if (confirm('Êtes-vous sûr de vouloir effacer tous les champs?')) {
                 document.getElementById('driverForm').reset();
                 // Reset phone
                 selectedIndicatif = '';
@@ -1597,8 +1567,6 @@
                 document.getElementById('indicatif_box').style.borderColor = '#e0e0e0';
                 document.getElementById('indicatif_search').value = '';
                 document.getElementById('tel_error').style.display = 'none';
-                document.getElementById('rgpd_consent').checked = false;
-                document.getElementById('rgpd_error').style.display = 'none';
                 
                 // Reset client type
                 clientType = null;
@@ -1627,8 +1595,153 @@
             }
         }
         
-        // Export to PDF
-       let formSubmitted = false;
+        // Highlight empty required fields in red
+        function highlightEmptyFields() {
+            let hasEmpty = false;
+            const required = document.querySelectorAll('input[required], textarea[required]');
+            required.forEach(input => {
+                if (!input.value || input.value.trim() === '' || input.value === '+') {
+                    input.classList.add('error');
+                    hasEmpty = true;
+                } else {
+                    input.classList.remove('error');
+                }
+            });
+            // Check indicatif
+            if (!selectedIndicatif) {
+                document.getElementById('indicatif_box').style.borderColor = '#dc3545';
+                hasEmpty = true;
+            }
+            // Check RGPD
+            if (!document.getElementById('rgpd_consent').checked) {
+                document.getElementById('rgpd_error').style.display = 'block';
+                hasEmpty = true;
+            }
+            return hasEmpty;
+        }
+
+        // Generate voucher HTML for printing
+        function generateVoucher() {
+            const ref  = document.getElementById('reference_agence').value;
+            const nom  = document.getElementById('nom_complet').value;
+            const tel  = document.getElementById('telephone').value;
+            const email = document.getElementById('email').value;
+            const adr  = document.getElementById('adresse_complete').value.replace(/\n/g, '<br>');
+            const dp   = document.getElementById('date_prise').value;
+            const dr   = document.getElementById('date_restitution').value;
+            const jours= document.getElementById('daysCount').textContent;
+            const ndoc = document.getElementById('numero_document').value;
+            const eid  = document.getElementById('date_emission_id').value;
+            const expid= document.getElementById('date_expiration_id').value;
+            const nperm= document.getElementById('numero_permis').value;
+            const epm  = document.getElementById('date_emission_permis').value;
+            const exppm= document.getElementById('date_expiration_permis').value;
+            const today= new Date().toLocaleDateString('fr-FR');
+
+            return `
+            <div style="font-family:'Inter',sans-serif; max-width:720px; margin:0 auto; color:#1a1a1a;">
+
+                <!-- Header -->
+                <div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:28px 32px; border-radius:12px 12px 0 0; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:22px; font-weight:700; letter-spacing:-0.5px;">🚗 Formulaire du Conducteur</div>
+                        <div style="font-size:13px; opacity:0.85; margin-top:4px;">Location de Voiture — Récapitulatif</div>
+                    </div>
+                    <div style="text-align:right; font-size:12px; opacity:0.8;">
+                        <div>Réf. <strong style="font-size:16px;">${ref}</strong></div>
+                        <div style="margin-top:4px;">Émis le ${today}</div>
+                    </div>
+                </div>
+
+                <!-- Client name banner -->
+                <div style="background:#e8f4fd; padding:14px 32px; border-left:4px solid #2C5F8D; font-size:16px; font-weight:600; color:#2C5F8D;">
+                    ${nom}
+                </div>
+
+                <!-- Body -->
+                <div style="border:1px solid #e0e0e0; border-top:none; border-radius:0 0 12px 12px; padding:24px 32px;">
+
+                    <!-- Période de location -->
+                    <div style="margin-bottom:20px;">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px; padding-bottom:4px; border-bottom:2px solid #e8f4fd;">
+                            📅 Période de Location
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+                            <div style="background:#f8f9fa; padding:10px 14px; border-radius:8px;">
+                                <div style="font-size:10px; color:#888; margin-bottom:2px;">Prise en charge</div>
+                                <div style="font-weight:600; font-size:14px;">${dp}</div>
+                            </div>
+                            <div style="background:#f8f9fa; padding:10px 14px; border-radius:8px;">
+                                <div style="font-size:10px; color:#888; margin-bottom:2px;">Restitution</div>
+                                <div style="font-weight:600; font-size:14px;">${dr}</div>
+                            </div>
+                            <div style="background:#e8f4fd; padding:10px 14px; border-radius:8px;">
+                                <div style="font-size:10px; color:#2C5F8D; margin-bottom:2px;">Durée</div>
+                                <div style="font-weight:700; font-size:14px; color:#2C5F8D;">${jours} jour(s)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informations personnelles -->
+                    <div style="margin-bottom:20px;">
+                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px; padding-bottom:4px; border-bottom:2px solid #e8f4fd;">
+                            👤 Informations Personnelles
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            <div>
+                                <div style="font-size:10px; color:#888; margin-bottom:2px;">Adresse</div>
+                                <div style="font-size:13px;">${adr}</div>
+                            </div>
+                            <div>
+                                <div style="font-size:10px; color:#888; margin-bottom:2px;">Téléphone</div>
+                                <div style="font-size:13px; font-weight:600;">${tel}</div>
+                                <div style="font-size:10px; color:#888; margin-top:8px; margin-bottom:2px;">E-mail</div>
+                                <div style="font-size:13px;">${email}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documents -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+                        <div style="background:#f8f9fa; padding:14px; border-radius:8px;">
+                            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px;">🪪 Pièce d'Identité</div>
+                            <div style="font-size:10px; color:#888; margin-bottom:2px;">Numéro</div>
+                            <div style="font-weight:600; margin-bottom:8px;">${ndoc}</div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                                <div>
+                                    <div style="font-size:10px; color:#888; margin-bottom:2px;">Émission</div>
+                                    <div style="font-size:13px;">${eid}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:10px; color:#888; margin-bottom:2px;">Expiration</div>
+                                    <div style="font-size:13px; font-weight:600;">${expid}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background:#f8f9fa; padding:14px; border-radius:8px;">
+                            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px;">🚘 Permis de Conduire</div>
+                            <div style="font-size:10px; color:#888; margin-bottom:2px;">Numéro</div>
+                            <div style="font-weight:600; margin-bottom:8px;">${nperm}</div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                                <div>
+                                    <div style="font-size:10px; color:#888; margin-bottom:2px;">Émission</div>
+                                    <div style="font-size:13px;">${epm}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:10px; color:#888; margin-bottom:2px;">Expiration</div>
+                                    <div style="font-size:13px; font-weight:600;">${exppm}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer note -->
+                    <div style="background:#fff3cd; border-left:4px solid #ffc107; padding:12px 16px; border-radius:4px; font-size:11px; color:#856404;">
+                        Ces informations ont été transmises au prestataire de location. En cas d'erreur, veuillez contacter : officefnc@pto.travel
+                    </div>
+                </div>
+            </div>`;
+        }
 
         function getPdfTitle() {
             const ref = document.getElementById('reference_agence').value || 'Ref';
@@ -1636,23 +1749,28 @@
             return 'Ref. ' + ref + ' - ' + nom + ' - Formulaire du Conducteur - Location de Voiture';
         }
 
+        let formSubmitted = false;
+
+        // Export to PDF
         function exportToPDF() {
             if (!formSubmitted) {
                 alert('⚠️ Veuillez d\'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF.');
                 return;
             }
+            document.getElementById('print-voucher').innerHTML = generateVoucher();
             document.title = getPdfTitle();
             window.print();
         }
         
         // Submit to Google Sheets
         async function submitToSheets() {
-            const form = document.getElementById('driverForm');
-            if (!form.checkValidity()) {
-                alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués d\'un *).');
+            // Highlight empty fields in red
+            const hasEmpty = highlightEmptyFields();
+            if (hasEmpty) {
+                alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).');
                 return;
             }
-            
+
             const validId = validateExpirationDate('date_expiration_id', 'error_expiration_id');
             const validPermis = validateExpirationDate('date_expiration_permis', 'error_expiration_permis');
             
@@ -1668,7 +1786,7 @@
                 return;
             }
             document.getElementById('rgpd_error').style.display = 'none';
-            
+
             // Collect form data
             const formData = {
                 client_type: clientType,
@@ -1696,18 +1814,16 @@
             submitBtn.disabled = true;
             
             try {
-                const response = await fetch(GOOGLE_SHEETS_URL, {
+                await fetch(GOOGLE_SHEETS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
-                
+
                 formSubmitted = true;
 
-                // Ativar botão PDF
+                // Activer bouton PDF
                 const pdfBtn = document.getElementById('pdfBtn');
                 pdfBtn.disabled = false;
                 pdfBtn.style.opacity = '1';
@@ -1715,9 +1831,10 @@
                 document.getElementById('pdf_hint').textContent = '✅ Formulaire envoyé — vous pouvez maintenant sauvegarder';
                 document.getElementById('pdf_hint').style.color = '#2e7d32';
 
-                // Pop-up de confirmação com opção de guardar PDF
-                const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre dossier SPAM.\n\nVoulez-vous également sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Vous pouvez sauvegarder plus tard via le bouton PDF');
+                // Pop-up avec option PDF
+                const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre dossier SPAM.\n\nVoulez-vous sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Sauvegarder plus tard via le bouton PDF');
                 if (savePDF) {
+                    document.getElementById('print-voucher').innerHTML = generateVoucher();
                     document.title = getPdfTitle();
                     window.print();
                 }
