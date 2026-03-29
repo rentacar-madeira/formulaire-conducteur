@@ -2021,8 +2021,6 @@
         
         // Submit to Google Sheets
         async function submitToSheets() {
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.innerHTML = '<span class="spinner"></span> Vérification...';
             // Highlight empty fields in red
             const hasEmpty = highlightEmptyFields();
             if (hasEmpty) {
@@ -2052,27 +2050,18 @@
                         switchToModifierMode(true, true);
                         document.getElementById('both_found_msg').style.display = 'block';
                         alert('⚠️ Vos informations existent déjà dans notre système.\n\nUn lien de modification a été envoyé à votre adresse email.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.');
-                        submitBtn.disabled = false;
-                        submitBtn.style.opacity = '1';
-                        submitBtn.innerHTML = '✅ Envoyer';
                         return;
                     } else if (refData.exists && !emailData.exists) {
                         // Ref found, email not matching
                         switchToModifierMode(true, false);
                         document.getElementById('email_incompatible').style.display = 'block';
                         alert('⚠️ Cette référence existe déjà dans notre système mais l\'email ne correspond pas.\n\nVeuillez corriger votre email et cliquer sur "Rechercher".');
-                        submitBtn.disabled = false;
-                        submitBtn.style.opacity = '1';
-                        submitBtn.innerHTML = '✅ Envoyer';
                         return;
                     } else if (!refData.exists && emailData.exists) {
                         // Email found, ref not matching
                         switchToModifierMode(false, true);
                         document.getElementById('ref_incompatible').style.display = 'block';
                         alert('⚠️ Cet email existe déjà dans notre système mais la référence ne correspond pas.\n\nVeuillez corriger votre référence et cliquer sur "Rechercher".');
-                        submitBtn.disabled = false;
-                        submitBtn.style.opacity = '1';
-                        submitBtn.innerHTML = '✅ Envoyer';
                         return;
                     }
                     // Neither found — proceed normally
@@ -2086,9 +2075,6 @@
             
             if (!validId || !validPermis) {
                 alert('⚠️ Attention: Les dates d\'expiration des documents doivent être postérieures à la date de restitution du véhicule.');
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Envoyer';
                 return;
             }
 
@@ -2096,10 +2082,7 @@
             if (!document.getElementById('rgpd_consent').checked) {
                 document.getElementById('rgpd_error').style.display = 'block';
                 document.getElementById('rgpd_consent').scrollIntoView({ behavior: 'smooth' });
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Envoyer';
-                return;  // ← o return do RGPD
+                return;
             }
             document.getElementById('rgpd_error').style.display = 'none';
 
@@ -2107,10 +2090,7 @@
             if (!document.getElementById('accuracy_consent').checked) {
                 document.getElementById('accuracy_error').style.display = 'block';
                 document.getElementById('accuracy_consent').scrollIntoView({ behavior: 'smooth' });
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Envoyer';
-                return;  // ← o return do accuracy
+                return;
             }
             document.getElementById('accuracy_error').style.display = 'none';
 
@@ -2136,6 +2116,7 @@
             };
             
             const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
             submitBtn.disabled = true;
             
@@ -2177,13 +2158,8 @@
                 console.error('Error:', error);
                 alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.');
             } finally {
-                if (!formSubmitted) {
-                    const submitBtn = document.getElementById('submitBtn');
-                    submitBtn.innerHTML = '✅ Envoyer';
-                    submitBtn.disabled = false;
-                    submitBtn.style.opacity = '1';
-                    submitBtn.style.cursor = 'pointer';
-                }
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
             }
     </script>
 </body>
