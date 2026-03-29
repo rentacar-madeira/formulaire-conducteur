@@ -795,6 +795,20 @@
                         ⚠️ Vous devez accepter les conditions pour continuer.
                     </div>
                 </div>
+
+                <!-- Accuracy Confirmation -->
+                <div class="form-group" style="margin-top: 16px; padding: 20px; border: 2px solid #e0e0e0; border-radius: 12px; background: #fafafa;">
+                    <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
+                        <input type="checkbox" id="accuracy_consent" name="accuracy_consent"
+                               style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
+                        <span style="font-size: 13px; color: #444; line-height: 1.6;">
+                            En cochant cette case, je certifie sur l'honneur que toutes les informations fournies dans ce formulaire sont exactes, complètes et conformes à mes documents officiels. Je comprends que toute information inexacte ou incomplète pourra entraîner le refus de la mise à disposition du véhicule lors de la remise des clés. Les informations transmises devront correspondre en tout point aux documents présentés au moment de la prise en charge du véhicule.
+                        </span>
+                    </label>
+                    <div id="accuracy_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">
+                        ⚠️ Vous devez certifier l'exactitude des informations pour continuer.
+                    </div>
+                </div>
                 
                 <!-- Buttons -->
                 <div class="button-group">
@@ -870,12 +884,15 @@
             const token = urlParams.get('token');
             
             if (ref && token) {
-                // Auto-select existing client
+                // Auto-select modifier and disable nouveau
                 document.querySelector('input[value="existant"]').checked = true;
+                document.querySelector('input[value="nouveau"]').disabled = true;
+                document.getElementById('nouveauClientBtn').style.opacity = '0.4';
+                document.getElementById('nouveauClientBtn').style.pointerEvents = 'none';
+                document.getElementById('existantClientBtn').classList.add('active');
+                clientType = 'existant';
                 handleClientTypeChange('existant');
                 document.getElementById('reference_agence').value = ref;
-                
-                // Fetch client data
                 fetchExistingClientData(ref, token);
             }
         }
@@ -940,11 +957,6 @@
             if (keepRef)   document.getElementById('reference_agence').value = refVal;
             if (keepEmail) document.getElementById('email').value = emailVal;
 
-            // Re-apply modifier mode after clear
-            document.querySelector('input[value="existant"]').checked = true;
-            document.querySelectorAll('.client-type-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('existantClientBtn').classList.add('active');
-            clientType = 'existant';
             handleClientTypeChange('existant');
         }
 
@@ -974,6 +986,8 @@
             document.getElementById('both_found_msg').style.display = 'none';
             document.getElementById('rgpd_consent').checked = false;
             document.getElementById('rgpd_error').style.display = 'none';
+            document.getElementById('accuracy_consent').checked = false;
+            document.getElementById('accuracy_error').style.display = 'none';
             formSubmitted = false;
             const pdfBtn = document.getElementById('pdfBtn');
             pdfBtn.disabled = true;
@@ -1042,15 +1056,7 @@
             const email = document.getElementById('email').value.trim();
             
             if (ref && email && email.includes('@')) {
-                if (clientType !== 'existant') {
-                    unlockSection('datesSection');
-                }
-            }
-            // Garantir que TUDO fica bloqueado no modo modifier
-            if (clientType === 'existant') {
-                ['datesSection','personalInfoSection','idDocSection','licenseSection'].forEach(id => {
-                    document.getElementById(id).classList.add('locked');
-                });
+                unlockSection('datesSection');
             }
         }
         
@@ -1468,7 +1474,67 @@
             const day   = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const year  = date.getFullYear();
-            input.value = `${day}/${month}/${year}`;
+            const dateStr = `${day}/${month}/${year}`;
+
+            // Validate date logic before accepting
+            if (currentInputId === 'date_prise') {
+                const restitution = document.getElementById('date_restitution').value;
+                if (restitution && restitution.length === 10) {
+                    const dr = parseDateString(restitution);
+                    if (dr && date > dr) {
+                        alert('⚠️ La date de prise en charge ne peut pas être postérieure à la date de restitution.');
+                        return;
+                    }
+                }
+            }
+            if (currentInputId === 'date_restitution') {
+                const prise = document.getElementById('date_prise').value;
+                if (prise && prise.length === 10) {
+                    const dp = parseDateString(prise);
+                    if (dp && date < dp) {
+                        alert('⚠️ La date de restitution doit être égale ou postérieure à la date de prise en charge.');
+                        return;
+                    }
+                }
+            }
+            if (currentInputId === 'date_expiration_id') {
+                const emission = document.getElementById('date_emission_id').value;
+                const restitution = document.getElementById('date_restitution').value;
+                if (emission && emission.length === 10) {
+                    const de = parseDateString(emission);
+                    if (de && date <= de) {
+                        alert('⚠️ La date d\'expiration doit être postérieure à la date d\'émission.');
+                        return;
+                    }
+                }
+                if (restitution && restitution.length === 10) {
+                    const dr = parseDateString(restitution);
+                    if (dr && date <= dr) {
+                        alert('⚠️ La date d\'expiration du document doit être postérieure à la date de restitution.');
+                        return;
+                    }
+                }
+            }
+            if (currentInputId === 'date_expiration_permis') {
+                const emission = document.getElementById('date_emission_permis').value;
+                const restitution = document.getElementById('date_restitution').value;
+                if (emission && emission.length === 10) {
+                    const de = parseDateString(emission);
+                    if (de && date <= de) {
+                        alert('⚠️ La date d\'expiration doit être postérieure à la date d\'émission.');
+                        return;
+                    }
+                }
+                if (restitution && restitution.length === 10) {
+                    const dr = parseDateString(restitution);
+                    if (dr && date <= dr) {
+                        alert('⚠️ La date d\'expiration du permis doit être postérieure à la date de restitution.');
+                        return;
+                    }
+                }
+            }
+
+            input.value = dateStr;
             input.dispatchEvent(new Event('change'));
 
             // Check if there's a next calendar to open automatically
@@ -1744,6 +1810,12 @@
                 document.getElementById('rgpd_error').style.display = 'block';
                 hasEmpty = true;
             }
+            // Check accuracy
+            const accuracy = document.getElementById('accuracy_consent');
+            if (accuracy && !accuracy.checked) {
+                document.getElementById('accuracy_error').style.display = 'block';
+                hasEmpty = true;
+            }
             return hasEmpty;
         }
 
@@ -1953,6 +2025,14 @@
                 return;
             }
             document.getElementById('rgpd_error').style.display = 'none';
+
+            // Verificar exactidão das informações
+            if (!document.getElementById('accuracy_consent').checked) {
+                document.getElementById('accuracy_error').style.display = 'block';
+                document.getElementById('accuracy_consent').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+            document.getElementById('accuracy_error').style.display = 'none';
 
             // Collect form data
             const formData = {
