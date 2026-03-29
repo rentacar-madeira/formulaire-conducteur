@@ -2021,6 +2021,10 @@
         
         // Submit to Google Sheets
         async function submitToSheets() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerHTML = '<span class="spinner"></span> Vérification...';
+            // Highlight empty fields in red
+            const hasEmpty = highlightEmptyFields();
 
             // Highlight empty fields in red
             const hasEmpty = highlightEmptyFields();
