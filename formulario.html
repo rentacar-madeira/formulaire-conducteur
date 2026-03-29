@@ -768,6 +768,20 @@
                         <li>Les documents (carte d'identité et permis) doivent être valides pendant toute la durée de la location</li>
                     </ul>
                 </div>
+
+                <!-- RGPD Consent -->
+                <div class="form-group" style="margin-top: 24px; padding: 20px; border: 2px solid #e0e0e0; border-radius: 12px; background: #fafafa;">
+                    <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
+                        <input type="checkbox" id="rgpd_consent" name="rgpd_consent"
+                               style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
+                        <span style="font-size: 13px; color: #444; line-height: 1.6;">
+                            En cochant cette case, je confirme avoir lu et accepté que mes données personnelles (nom, adresse, contacts, pièce d'identité et permis de conduire) soient utilisées exclusivement dans le cadre de ma réservation de location de voiture — notamment par la société de location et le réceptif local — et ce, à des fins strictement opérationnelles. Ces données ne seront en aucun cas utilisées à des fins commerciales ou partagées avec des tiers extérieurs à la prestation.
+                        </span>
+                    </label>
+                    <div id="rgpd_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">
+                        ⚠️ Vous devez accepter les conditions pour continuer.
+                    </div>
+                </div>
                 
                 <!-- Buttons -->
                 <div class="button-group">
@@ -1592,6 +1606,19 @@
                 // Clear errors
                 document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
                 document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+
+                // Reset RGPD
+                document.getElementById('rgpd_consent').checked = false;
+                document.getElementById('rgpd_error').style.display = 'none';
+
+                // Reset PDF button
+                formSubmitted = false;
+                const pdfBtn = document.getElementById('pdfBtn');
+                pdfBtn.disabled = true;
+                pdfBtn.style.opacity = '0.5';
+                pdfBtn.style.cursor = 'not-allowed';
+                document.getElementById('pdf_hint').textContent = 'Disponible après l\'envoi du formulaire';
+                document.getElementById('pdf_hint').style.color = '#999';
             }
         }
         
@@ -1600,6 +1627,8 @@
             let hasEmpty = false;
             const required = document.querySelectorAll('input[required], textarea[required]');
             required.forEach(input => {
+                // Skip hidden fields and checkboxes
+                if (input.type === 'hidden' || input.type === 'checkbox' || input.type === 'radio') return;
                 if (!input.value || input.value.trim() === '' || input.value === '+') {
                     input.classList.add('error');
                     hasEmpty = true;
@@ -1611,9 +1640,12 @@
             if (!selectedIndicatif) {
                 document.getElementById('indicatif_box').style.borderColor = '#dc3545';
                 hasEmpty = true;
+            } else {
+                document.getElementById('indicatif_box').style.borderColor = '#2C5F8D';
             }
             // Check RGPD
-            if (!document.getElementById('rgpd_consent').checked) {
+            const rgpd = document.getElementById('rgpd_consent');
+            if (rgpd && !rgpd.checked) {
                 document.getElementById('rgpd_error').style.display = 'block';
                 hasEmpty = true;
             }
