@@ -531,18 +531,19 @@
         @media print {
             @page {
                 size: A4;
-                margin: 12mm;
+                margin: 0;
             }
-
-            /* Hide everything by default */
             body > * { display: none !important; }
-
-            /* Show only the voucher */
             #print-voucher { display: block !important; }
-
             #print-voucher {
                 font-family: 'Inter', sans-serif;
                 color: #1a1a1a;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                padding: 12mm;
+                box-sizing: border-box;
             }
         }
     </style>
@@ -638,8 +639,11 @@
                     <div class="days-display" id="daysDisplay">
                         📊 Durée de location: <span id="daysCount">0</span> jour(s)
                     </div>
+                    <div id="same_date_warning" style="display:none; margin-top:8px; padding:10px 14px; background:#fff8e1; border-left:4px solid #ffc107; border-radius:4px; font-size:13px; color:#856404;">
+                        ℹ️ Les dates de prise en charge et de restitution sont identiques. Si c'est correct, la durée est comptabilisée comme 1 jour. Sinon, veuillez corriger.
+                    </div>
                 </div>
-                
+
                 <!-- Personal Info Section -->
                 <div class="form-section locked" id="personalInfoSection">
                     <div class="section-title">👤 Informations Personnelles</div>
@@ -1495,6 +1499,42 @@
                         alert('⚠️ La date de restitution doit être égale ou postérieure à la date de prise en charge.');
                         return;
                     }
+                    if (dp && date.toDateString() === dp.toDateString()) {
+                        document.getElementById('same_date_warning').style.display = 'block';
+                    } else {
+                        document.getElementById('same_date_warning').style.display = 'none';
+                    }
+                }
+            }
+            if (currentInputId === 'date_prise') {
+                const restitution = document.getElementById('date_restitution').value;
+                if (restitution && restitution.length === 10) {
+                    const dr = parseDateString(restitution);
+                    if (dr && date.toDateString() === dr.toDateString()) {
+                        document.getElementById('same_date_warning').style.display = 'block';
+                    } else {
+                        document.getElementById('same_date_warning').style.display = 'none';
+                    }
+                }
+            }
+            if (currentInputId === 'date_emission_id') {
+                const prise = document.getElementById('date_prise').value;
+                if (prise && prise.length === 10) {
+                    const dp = parseDateString(prise);
+                    if (dp && date >= dp) {
+                        alert('⚠️ La date d\'émission de la pièce d\'identité doit être antérieure à la date de prise en charge.');
+                        return;
+                    }
+                }
+            }
+            if (currentInputId === 'date_emission_permis') {
+                const prise = document.getElementById('date_prise').value;
+                if (prise && prise.length === 10) {
+                    const dp = parseDateString(prise);
+                    if (dp && date >= dp) {
+                        alert('⚠️ La date d\'émission du permis de conduire doit être antérieure à la date de prise en charge.');
+                        return;
+                    }
                 }
             }
             if (currentInputId === 'date_expiration_id') {
@@ -1564,8 +1604,8 @@
                 const date1 = new Date(parts1[2], parseInt(parts1[1]) - 1, parts1[0]);
                 const date2 = new Date(parts2[2], parseInt(parts2[1]) - 1, parts2[0]);
                 
-                const diffTime = Math.abs(date2 - date1);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const diffTime = date2 - date1;
+                const diffDays = diffTime === 0 ? 1 : Math.ceil(Math.abs(diffTime) / (1000 * 60 * 60 * 24));
                 
                 document.getElementById('daysCount').textContent = diffDays;
                 document.getElementById('daysDisplay').classList.add('show');
@@ -1838,7 +1878,7 @@
             const today= new Date().toLocaleDateString('fr-FR');
 
             return `
-            <div style="font-family:'Inter',sans-serif; max-width:720px; margin:0; color:#1a1a1a; padding-top:0;">
+            <div style="font-family:'Inter',sans-serif; max-width:100%; margin:0; color:#1a1a1a;">
 
                 <!-- Header -->
                 <div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:28px 32px; border-radius:12px 12px 0 0; display:flex; justify-content:space-between; align-items:center;">
