@@ -799,14 +799,20 @@
                     </ul>
                 </div>
                 
-                <!-- Buttons -->
+               <!-- Buttons -->
                 <div class="button-group">
                     <button type="button" class="btn btn-secondary" onclick="clearForm()">
                         🗑️ Effacer
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="exportToPDF()">
-                        📄 Exporter PDF
-                    </button>
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <button type="button" class="btn btn-secondary" onclick="exportToPDF()" id="pdfBtn" disabled
+                                style="width:100%; opacity:0.5; cursor:not-allowed;">
+                            📄 Sauvegarder une copie PDF
+                        </button>
+                        <span id="pdf_hint" style="font-size:11px; color:#999; text-align:center;">
+                            Disponible après l'envoi du formulaire
+                        </span>
+                    </div>
                     <button type="button" class="btn btn-primary" onclick="submitToSheets()" id="submitBtn">
                         ✅ Envoyer
                     </button>
@@ -1619,22 +1625,13 @@
         }
         
         // Export to PDF
+       let formSubmitted = false;
+
         function exportToPDF() {
-            const form = document.getElementById('driverForm');
-            if (!form.checkValidity()) {
-                alert('Veuillez remplir tous les champs obligatoires.');
-                form.reportValidity();
+            if (!formSubmitted) {
+                alert('⚠️ Veuillez d\'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF.');
                 return;
             }
-            
-            const validId = validateExpirationDate('date_expiration_id', 'error_expiration_id');
-            const validPermis = validateExpirationDate('date_expiration_permis', 'error_expiration_permis');
-            
-            if (!validId || !validPermis) {
-                alert('⚠️ Attention: Les dates d\'expiration des documents doivent être postérieures à la date de restitution du véhicule.');
-                return;
-            }
-            
             window.print();
         }
         
@@ -1699,10 +1696,20 @@
                     body: JSON.stringify(formData)
                 });
                 
-                alert('✅ Formulaire envoyé avec succès!');
-                
-                if (confirm('Voulez-vous effacer le formulaire?')) {
-                    clearForm();
+                formSubmitted = true;
+
+                // Ativar botão PDF
+                const pdfBtn = document.getElementById('pdfBtn');
+                pdfBtn.disabled = false;
+                pdfBtn.style.opacity = '1';
+                pdfBtn.style.cursor = 'pointer';
+                document.getElementById('pdf_hint').textContent = '✅ Formulaire envoyé — vous pouvez maintenant sauvegarder';
+                document.getElementById('pdf_hint').style.color = '#2e7d32';
+
+                // Pop-up de confirmação com opção de guardar PDF
+                const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\nVoulez-vous sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Sauvegarder plus tard via le bouton PDF');
+                if (savePDF) {
+                    window.print();
                 }
                 
             } catch (error) {
