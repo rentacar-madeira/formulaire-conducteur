@@ -662,25 +662,28 @@
                     
                     <div class="form-group">
                         <label for="telephone">Téléphone *</label>
-                        <div style="display: grid; grid-template-columns: 200px 1fr; gap: 10px; align-items: start;">
-                            <div>
-                                <input type="text" id="indicatif_search" placeholder="🔍 Pays..." 
-                                       autocomplete="off"
-                                       oninput="filterIndicatifs(this.value)"
-                                       onfocus="document.getElementById('indicatif_dropdown').style.display='block'"
-                                       style="width:100%; margin-bottom:4px;">
-                                <select id="indicatif" name="indicatif" required size="1"
-                                        style="width:100%; display:none;">
-                                </select>
-                                <div id="indicatif_dropdown" style="display:none; position:absolute; z-index:999; background:white; border:2px solid #e0e0e0; border-radius:8px; max-height:200px; overflow-y:auto; width:200px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: start;">
+                            <div style="position:relative;">
+                                <div id="indicatif_box" onclick="toggleIndicatifDropdown()"
+                                     style="width:100%; padding:12px 36px 12px 16px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; background:#fafafa; cursor:pointer; min-height:46px; display:flex; align-items:center; color:#999; user-select:none;">
+                                    <span id="indicatif_label">Sélectionner l'indicatif du pays</span>
                                 </div>
-                                <div id="indicatif_selected" style="padding:8px 12px; background:#f0f4f8; border-radius:6px; font-size:14px; color:#2C5F8D; font-weight:600; min-height:38px; display:flex; align-items:center;">
-                                    Sélectionnez un pays
+                                <span id="indicatif_clear" onclick="clearIndicatif(event)" 
+                                      style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:16px; color:#999; font-weight:bold; z-index:2;">✕</span>
+                                <div id="indicatif_dropdown" style="display:none; position:absolute; z-index:999; background:white; border:2px solid #2C5F8D; border-radius:8px; max-height:220px; overflow-y:auto; width:100%; box-shadow:0 8px 20px rgba(0,0,0,0.15); top:100%; margin-top:4px;">
+                                    <div style="padding:8px; border-bottom:1px solid #e0e0e0; position:sticky; top:0; background:white;">
+                                        <input type="text" id="indicatif_search" placeholder="🔍 Rechercher un pays..."
+                                               autocomplete="off"
+                                               oninput="filterIndicatifs(this.value)"
+                                               onclick="event.stopPropagation()"
+                                               style="width:100%; padding:8px; border:1px solid #e0e0e0; border-radius:6px; font-size:13px;">
+                                    </div>
+                                    <div id="indicatif_list"></div>
                                 </div>
                             </div>
                             <div>
                                 <input type="tel" id="telephone_numero" name="telephone_numero"
-                                       placeholder="Numéro de téléphone"
+                                       placeholder="N° tél."
                                        pattern="[0-9]{5,15}"
                                        oninput="this.value=this.value.replace(/\D/g,'')"
                                        onfocus="checkIndicatif()"
@@ -1047,8 +1050,11 @@
                 const match = COUNTRIES.find(c => tel.startsWith(c.code));
                 if (match) {
                     selectedIndicatif = match.code;
-                    document.getElementById('indicatif_selected').textContent = match.name + ' ' + match.code;
-                    document.getElementById('indicatif_selected').style.color = '#2C5F8D';
+                    document.getElementById('indicatif_label').textContent = match.code + ' — ' + match.name;
+                    document.getElementById('indicatif_label').style.color = '#2C5F8D';
+                    document.getElementById('indicatif_label').style.fontWeight = '600';
+                    document.getElementById('indicatif_clear').style.display = 'block';
+                    document.getElementById('indicatif_box').style.borderColor = '#2C5F8D';
                     document.getElementById('telephone_numero').value = tel.substring(match.code.length);
                 } else {
                     document.getElementById('telephone_numero').value = tel;
@@ -1182,7 +1188,7 @@
             // Years
             yearSel.innerHTML = '';
             const startYear = allowPast ? curYear - 50 : curYear;
-            const endYear   = curYear + 10;
+            const endYear   = curYear + 30;
             for (let y = startYear; y <= endYear; y++) {
                 const opt = document.createElement('option');
                 opt.value = y;
@@ -1404,13 +1410,12 @@
         let selectedIndicatif = '';
 
         function initializePhoneValidation() {
-            const dropdown = document.getElementById('indicatif_dropdown');
-            renderDropdown(COUNTRIES);
+            renderIndicatifList(COUNTRIES);
 
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (!e.target.closest('.form-group')) {
-                    dropdown.style.display = 'none';
+                if (!e.target.closest('#indicatif_box') && !e.target.closest('#indicatif_dropdown')) {
+                    document.getElementById('indicatif_dropdown').style.display = 'none';
                 }
             });
 
@@ -1420,36 +1425,65 @@
             });
         }
 
-        function renderDropdown(list) {
-            const dropdown = document.getElementById('indicatif_dropdown');
-            dropdown.innerHTML = '';
+        function toggleIndicatifDropdown() {
+            const dd = document.getElementById('indicatif_dropdown');
+            const isOpen = dd.style.display === 'block';
+            if (isOpen) {
+                dd.style.display = 'none';
+            } else {
+                // Reset search and show all countries
+                document.getElementById('indicatif_search').value = '';
+                renderIndicatifList(COUNTRIES);
+                dd.style.display = 'block';
+                setTimeout(() => document.getElementById('indicatif_search').focus(), 50);
+            }
+        }
+
+        function renderIndicatifList(list) {
+            const container = document.getElementById('indicatif_list');
+            container.innerHTML = '';
             list.forEach(c => {
                 const item = document.createElement('div');
-                item.style.cssText = 'padding:8px 12px; cursor:pointer; font-size:13px; border-bottom:1px solid #f0f0f0;';
-                item.textContent = c.name + ' (' + c.code + ')';
+                item.style.cssText = 'padding:9px 12px; cursor:pointer; font-size:13px; border-bottom:1px solid #f5f5f5; display:flex; justify-content:space-between; align-items:center;';
+                item.innerHTML = '<span>' + c.name + '</span><span style="color:#2C5F8D; font-weight:600;">' + c.code + '</span>';
                 item.onmouseover = function() { this.style.background='#e3f2fd'; };
                 item.onmouseout  = function() { this.style.background='white'; };
-                item.onclick = function() {
+                item.onclick = function(e) {
+                    e.stopPropagation();
                     selectedIndicatif = c.code;
-                    document.getElementById('indicatif_selected').textContent = c.name + ' ' + c.code;
-                    document.getElementById('indicatif_selected').style.color = '#2C5F8D';
-                    document.getElementById('indicatif_search').value = '';
-                    dropdown.style.display = 'none';
+                    document.getElementById('indicatif_label').textContent = c.code + ' — ' + c.name;
+                    document.getElementById('indicatif_label').style.color = '#2C5F8D';
+                    document.getElementById('indicatif_label').style.fontWeight = '600';
+                    document.getElementById('indicatif_clear').style.display = 'block';
+                    document.getElementById('indicatif_box').style.borderColor = '#2C5F8D';
+                    document.getElementById('indicatif_dropdown').style.display = 'none';
                     document.getElementById('tel_error').style.display = 'none';
-                    document.getElementById('telephone_numero').focus();
                     updateTelephoneHidden();
+                    document.getElementById('telephone_numero').focus();
                 };
-                dropdown.appendChild(item);
+                container.appendChild(item);
             });
         }
 
         function filterIndicatifs(query) {
-            const filtered = COUNTRIES.filter(c =>
-                c.name.toLowerCase().includes(query.toLowerCase()) ||
-                c.code.includes(query)
-            );
-            renderDropdown(filtered);
-            document.getElementById('indicatif_dropdown').style.display = 'block';
+            const filtered = query
+                ? COUNTRIES.filter(c =>
+                    c.name.toLowerCase().includes(query.toLowerCase()) ||
+                    c.code.includes(query))
+                : COUNTRIES;
+            renderIndicatifList(filtered);
+        }
+
+        function clearIndicatif(e) {
+            e.stopPropagation();
+            selectedIndicatif = '';
+            document.getElementById('indicatif_label').textContent = 'Sélectionner l\'indicatif du pays';
+            document.getElementById('indicatif_label').style.color = '#999';
+            document.getElementById('indicatif_label').style.fontWeight = 'normal';
+            document.getElementById('indicatif_clear').style.display = 'none';
+            document.getElementById('indicatif_box').style.borderColor = '#e0e0e0';
+            document.getElementById('telephone').value = '';
+            updateTelephoneHidden();
         }
 
         function checkIndicatif() {
@@ -1533,8 +1567,11 @@
                 selectedIndicatif = '';
                 document.getElementById('telephone_numero').value = '';
                 document.getElementById('telephone').value = '';
-                document.getElementById('indicatif_selected').textContent = 'Sélectionnez un pays';
-                document.getElementById('indicatif_selected').style.color = '#999';
+                document.getElementById('indicatif_label').textContent = 'Sélectionner l\'indicatif du pays';
+                document.getElementById('indicatif_label').style.color = '#999';
+                document.getElementById('indicatif_label').style.fontWeight = 'normal';
+                document.getElementById('indicatif_clear').style.display = 'none';
+                document.getElementById('indicatif_box').style.borderColor = '#e0e0e0';
                 document.getElementById('indicatif_search').value = '';
                 document.getElementById('tel_error').style.display = 'none';
                 
