@@ -531,22 +531,18 @@
         @media print {
             @page {
                 size: A4;
-                margin: 0;
+                margin: 12mm;
             }
 
             /* Hide everything by default */
             body > * { display: none !important; }
+
+            /* Show only the voucher */
             #print-voucher { display: block !important; }
 
             #print-voucher {
                 font-family: 'Inter', sans-serif;
                 color: #1a1a1a;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                padding: 12mm;
-                box-sizing: border-box;
             }
         }
     </style>
@@ -587,11 +583,20 @@
                         <div class="form-group">
                             <label for="reference_agence">Référence Agence *</label>
                             <input type="text" id="reference_agence" name="reference_agence" required>
+                            <div id="ref_incompatible" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">
+                                ⚠️ Cette référence n'est pas associée à cet email. Veuillez corriger la référence et cliquer sur "Rechercher".
+                            </div>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">📧 Email *</label>
                             <input type="email" id="email" name="email" required>
+                            <div id="email_incompatible" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">
+                                ⚠️ Cet email n'est pas associé à cette référence. Veuillez corriger l'email et cliquer sur "Rechercher".
+                            </div>
+                            <div id="both_found_msg" style="display:none; color:#2e7d32; font-size:12px; margin-top:4px; font-weight:500;">
+                                ✅ Référence et email reconnus. Un lien de modification a été envoyé à votre adresse email.
+                            </div>
                         </div>
                     </div>
                     
@@ -896,14 +901,87 @@
             const refEmailSection = document.getElementById('refEmailSection');
             const searchBtn = document.getElementById('searchBtn');
             
-            // Unlock reference/email section
             refEmailSection.classList.remove('locked');
-            
+
             if (type === 'existant') {
                 searchBtn.style.display = 'block';
+                // Lock ALL other sections — only ref/email + rechercher active
+                ['datesSection','personalInfoSection','idDocSection','licenseSection'].forEach(id => {
+                    document.getElementById(id).classList.add('locked');
+                });
+                // Disable submit and PDF buttons
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('submitBtn').style.opacity = '0.5';
+                document.getElementById('pdfBtn').disabled = true;
+                document.getElementById('pdfBtn').style.opacity = '0.5';
             } else {
                 searchBtn.style.display = 'none';
+                // For nouveau: only unlock dates after ref+email filled (handled by checkRefEmailSection)
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('submitBtn').style.opacity = '1';
             }
+        }
+
+        // Helper: reset to modifier mode with only ref or email pre-filled
+        function switchToModifierMode(keepRef, keepEmail) {
+            // Switch radio
+            document.querySelector('input[value="existant"]').checked = true;
+            document.querySelectorAll('.client-type-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('existantClientBtn').classList.add('active');
+            clientType = 'existant';
+
+            const refVal   = document.getElementById('reference_agence').value;
+            const emailVal = document.getElementById('email').value;
+
+            // Clear entire form
+            clearFormSilent();
+
+            // Restore what we want to keep
+            if (keepRef)   document.getElementById('reference_agence').value = refVal;
+            if (keepEmail) document.getElementById('email').value = emailVal;
+
+            handleClientTypeChange('existant');
+        }
+
+        // Clear form without confirm dialog
+        function clearFormSilent() {
+            document.getElementById('driverForm').reset();
+            selectedIndicatif = '';
+            document.getElementById('telephone_numero').value = '';
+            document.getElementById('telephone').value = '';
+            document.getElementById('indicatif_label').textContent = 'Sélectionner l\'indicatif du pays';
+            document.getElementById('indicatif_label').style.color = '#999';
+            document.getElementById('indicatif_label').style.fontWeight = 'normal';
+            document.getElementById('indicatif_clear').style.display = 'none';
+            document.getElementById('indicatif_box').style.borderColor = '#e0e0e0';
+            document.getElementById('indicatif_search').value = '';
+            clientType = null;
+            isExistingClientData = false;
+            document.querySelectorAll('.client-type-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.form-section').forEach(section => section.classList.add('locked'));
+            document.querySelectorAll('.edit-icon').forEach(icon => icon.remove());
+            document.querySelectorAll('input, textarea').forEach(input => { input.disabled = false; });
+            document.getElementById('daysDisplay').classList.remove('show');
+            document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
+            document.getElementById('ref_incompatible').style.display = 'none';
+            document.getElementById('email_incompatible').style.display = 'none';
+            document.getElementById('both_found_msg').style.display = 'none';
+            document.getElementById('rgpd_consent').checked = false;
+            document.getElementById('rgpd_error').style.display = 'none';
+            formSubmitted = false;
+            const pdfBtn = document.getElementById('pdfBtn');
+            pdfBtn.disabled = true;
+            pdfBtn.style.opacity = '0.5';
+            pdfBtn.style.cursor = 'not-allowed';
+            document.getElementById('pdf_hint').textContent = 'Disponible après l\'envoi du formulaire';
+            document.getElementById('pdf_hint').style.color = '#999';
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+            submitBtn.innerHTML = '✅ Envoyer';
+            document.getElementById('submit_hint').style.display = 'none';
         }
         
         // Form Validation and Progressive Unlocking
@@ -999,13 +1077,18 @@
         
         // Search Existing Client
         document.getElementById('searchBtn').addEventListener('click', async function() {
-            const ref = document.getElementById('reference_agence').value.trim();
+            const ref   = document.getElementById('reference_agence').value.trim();
             const email = document.getElementById('email').value.trim();
             
             if (!ref || !email) {
-                alert('⚠️ Veuillez remplir la référence et l\'email');
+                alert('⚠️ Veuillez remplir la référence agence et l\'adresse email.');
                 return;
             }
+
+            // Hide previous messages
+            document.getElementById('ref_incompatible').style.display = 'none';
+            document.getElementById('email_incompatible').style.display = 'none';
+            document.getElementById('both_found_msg').style.display = 'none';
             
             this.innerHTML = '<span class="spinner"></span> Recherche...';
             this.disabled = true;
@@ -1015,9 +1098,30 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('✅ Email de confirmation envoyé à ' + email + '\n\nVeuillez vérifier votre boîte de réception et cliquer sur le lien pour continuer.');
+                    // Both ref AND email found together
+                    document.getElementById('both_found_msg').style.display = 'block';
+                    alert('✅ Référence et email reconnus.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.');
                 } else {
-                    alert('❌ Aucun client trouvé avec cette référence et cet email.');
+                    // Check ref and email separately
+                    const [refResp, emailResp] = await Promise.all([
+                        fetch(GOOGLE_SHEETS_URL + '?action=checkRef&ref=' + encodeURIComponent(ref)),
+                        fetch(GOOGLE_SHEETS_URL + '?action=checkEmail&email=' + encodeURIComponent(email))
+                    ]);
+                    const refData   = await refResp.json();
+                    const emailData = await emailResp.json();
+
+                    if (refData.exists && !emailData.exists) {
+                        // Ref found, email not matching
+                        document.getElementById('email').value = '';
+                        document.getElementById('email_incompatible').style.display = 'block';
+                    } else if (!refData.exists && emailData.exists) {
+                        // Email found, ref not matching
+                        document.getElementById('reference_agence').value = '';
+                        document.getElementById('ref_incompatible').style.display = 'block';
+                    } else {
+                        // Neither found
+                        alert('❌ Aucun dossier trouvé avec cette référence et cet email.\n\nSi vous remplissez ce formulaire pour la première fois, veuillez sélectionner "Remplir le formulaire".');
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -1595,57 +1699,8 @@
         
         // Clear Form
         function clearForm() {
-            if (confirm('Êtes-vous sûr de vouloir effacer tous les champs?')) {
-                document.getElementById('driverForm').reset();
-                // Reset phone
-                selectedIndicatif = '';
-                document.getElementById('telephone_numero').value = '';
-                document.getElementById('telephone').value = '';
-                document.getElementById('indicatif_label').textContent = 'Sélectionner l\'indicatif du pays';
-                document.getElementById('indicatif_label').style.color = '#999';
-                document.getElementById('indicatif_label').style.fontWeight = 'normal';
-                document.getElementById('indicatif_clear').style.display = 'none';
-                document.getElementById('indicatif_box').style.borderColor = '#e0e0e0';
-                document.getElementById('indicatif_search').value = '';
-                document.getElementById('tel_error').style.display = 'none';
-                
-                // Reset client type
-                clientType = null;
-                isExistingClientData = false;
-                document.querySelectorAll('.client-type-btn').forEach(btn => btn.classList.remove('active'));
-                
-                // Lock all sections
-                document.querySelectorAll('.form-section').forEach(section => {
-                    section.classList.add('locked');
-                });
-                
-                // Remove edit icons
-                document.querySelectorAll('.edit-icon').forEach(icon => icon.remove());
-                
-                // Enable all inputs
-                document.querySelectorAll('input, textarea').forEach(input => {
-                    input.disabled = false;
-                });
-                
-                // Hide days display
-                document.getElementById('daysDisplay').classList.remove('show');
-                
-                // Clear errors
-                document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-                document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
-
-                // Reset RGPD
-                document.getElementById('rgpd_consent').checked = false;
-                document.getElementById('rgpd_error').style.display = 'none';
-
-                // Reset PDF button
-                formSubmitted = false;
-                const pdfBtn = document.getElementById('pdfBtn');
-                pdfBtn.disabled = true;
-                pdfBtn.style.opacity = '0.5';
-                pdfBtn.style.cursor = 'not-allowed';
-                document.getElementById('pdf_hint').textContent = 'Disponible après l\'envoi du formulaire';
-                document.getElementById('pdf_hint').style.color = '#999';
+            if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) {
+                clearFormSilent();
             }
         }
         
@@ -1701,14 +1756,20 @@
             <div style="font-family:'Inter',sans-serif; max-width:720px; margin:0; color:#1a1a1a; padding-top:0;">
 
                 <!-- Header -->
-                <div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:24px 32px; border-radius:12px 12px 0 0; text-align:center;">
-                    <div style="font-size:20px; font-weight:700; letter-spacing:-0.5px;">🚗 Formulaire du Conducteur — Location de Voiture</div>
+                <div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:28px 32px; border-radius:12px 12px 0 0; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:22px; font-weight:700; letter-spacing:-0.5px;">🚗 Formulaire du Conducteur</div>
+                        <div style="font-size:13px; opacity:0.85; margin-top:4px;">Location de Voiture — Récapitulatif</div>
+                    </div>
+                    <div style="text-align:right; font-size:12px; opacity:0.8;">
+                        <div>Réf. <strong style="font-size:16px;">${ref}</strong></div>
+                        <div style="margin-top:4px;">Émis le ${today}</div>
+                    </div>
                 </div>
 
                 <!-- Client name banner -->
-                <div style="background:#e8f4fd; padding:14px 32px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:16px; font-weight:700; color:#2C5F8D; border-left:4px solid #2C5F8D; padding-left:12px;">${nom}</span>
-                    <span style="font-size:13px; font-weight:700; color:#1a1a1a;">Réf. ${ref}</span>
+                <div style="background:#e8f4fd; padding:14px 32px; border-left:4px solid #2C5F8D; font-size:16px; font-weight:600; color:#2C5F8D;">
+                    ${nom}
                 </div>
 
                 <!-- Body -->
@@ -1793,9 +1854,6 @@
                         Ces informations ont été transmises au prestataire de location. En cas d'erreur, veuillez remplir à nouveau le formulaire en sélectionnant "Modifier le formulaire" afin de modifier les champs nécessaires :<br>
                         <a href="https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html" style="color:#856404;">https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html</a>
                     </div>
-                   <div style="margin-top:16px; padding-top:12px; border-top:1px solid #e0e0e0; font-size:10px; color:#aaa;">
-                        <span>Émis le ${today}</span>
-                    </div>
                 </div>
             </div>`;
         }
@@ -1833,18 +1891,35 @@
                 const ref   = document.getElementById('reference_agence').value.trim();
                 const email = document.getElementById('email').value.trim();
                 try {
-                    const checkResp = await fetch(GOOGLE_SHEETS_URL + '?action=search&ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email));
-                    const checkData = await checkResp.json();
-                    if (checkData.success) {
-                        alert('⚠️ Vos informations ont déjà été envoyées précédemment pour cette référence.\n\nSi vous souhaitez modifier vos données, veuillez sélectionner «\u00a0Modifier le formulaire\u00a0» et utiliser votre référence et adresse email.');
-                        // Auto-switch to existant
-                        document.querySelector('input[value="existant"]').checked = true;
-                        document.querySelectorAll('.client-type-btn').forEach(b => b.classList.remove('active'));
-                        document.getElementById('existantClientBtn').classList.add('active');
-                        clientType = 'existant';
-                        handleClientTypeChange('existant');
+                    const [refResp, emailResp] = await Promise.all([
+                        fetch(GOOGLE_SHEETS_URL + '?action=checkRef&ref=' + encodeURIComponent(ref)),
+                        fetch(GOOGLE_SHEETS_URL + '?action=checkEmail&email=' + encodeURIComponent(email))
+                    ]);
+                    const refData   = await refResp.json();
+                    const emailData = await emailResp.json();
+
+                    if (refData.exists && emailData.exists) {
+                        // Both found — send email and switch to modifier
+                        const searchResp = await fetch(GOOGLE_SHEETS_URL + '?action=search&ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email));
+                        await searchResp.json();
+                        switchToModifierMode(true, true);
+                        document.getElementById('both_found_msg').style.display = 'block';
+                        alert('⚠️ Vos informations existent déjà dans notre système.\n\nUn lien de modification a été envoyé à votre adresse email.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.');
+                        return;
+                    } else if (refData.exists && !emailData.exists) {
+                        // Ref found, email not matching
+                        switchToModifierMode(true, false);
+                        document.getElementById('email_incompatible').style.display = 'block';
+                        alert('⚠️ Cette référence existe déjà dans notre système mais l\'email ne correspond pas.\n\nVeuillez corriger votre email et cliquer sur "Rechercher".');
+                        return;
+                    } else if (!refData.exists && emailData.exists) {
+                        // Email found, ref not matching
+                        switchToModifierMode(false, true);
+                        document.getElementById('ref_incompatible').style.display = 'block';
+                        alert('⚠️ Cet email existe déjà dans notre système mais la référence ne correspond pas.\n\nVeuillez corriger votre référence et cliquer sur "Rechercher".');
                         return;
                     }
+                    // Neither found — proceed normally
                 } catch(e) {
                     // If check fails, continue with submission
                 }
