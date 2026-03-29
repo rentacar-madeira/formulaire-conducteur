@@ -2021,13 +2021,20 @@
         
         // Submit to Google Sheets
         async function submitToSheets() {
+            const submitBtn = document.getElementById('submitBtn');
+
             // Highlight empty fields in red
             const hasEmpty = highlightEmptyFields();
             if (hasEmpty) {
                 alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).');
                 return;
             }
-            
+
+            // Bloquear imediatamente após validação passar
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.7';
+            submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
+
             // Check for duplicate if nouveau client
             if (clientType === 'nouveau') {
                 const ref   = document.getElementById('reference_agence').value.trim();
@@ -2041,7 +2048,6 @@
                     const emailData = await emailResp.json();
 
                     if (refData.exists && emailData.exists) {
-                        // Both found — send email and switch to modifier
                         const searchResp = await fetch(GOOGLE_SHEETS_URL + '?action=search&ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email));
                         await searchResp.json();
                         switchToModifierMode(true, true);
@@ -2049,19 +2055,16 @@
                         alert('⚠️ Vos informations existent déjà dans notre système.\n\nUn lien de modification a été envoyé à votre adresse email.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.');
                         return;
                     } else if (refData.exists && !emailData.exists) {
-                        // Ref found, email not matching
                         switchToModifierMode(true, false);
                         document.getElementById('email_incompatible').style.display = 'block';
                         alert('⚠️ Cette référence existe déjà dans notre système mais l\'email ne correspond pas.\n\nVeuillez corriger votre email et cliquer sur "Rechercher".');
                         return;
                     } else if (!refData.exists && emailData.exists) {
-                        // Email found, ref not matching
                         switchToModifierMode(false, true);
                         document.getElementById('ref_incompatible').style.display = 'block';
                         alert('⚠️ Cet email existe déjà dans notre système mais la référence ne correspond pas.\n\nVeuillez corriger votre référence et cliquer sur "Rechercher".');
                         return;
                     }
-                    // Neither found — proceed normally
                 } catch(e) {
                     // If check fails, continue with submission
                 }
@@ -2072,21 +2075,28 @@
             
             if (!validId || !validPermis) {
                 alert('⚠️ Attention: Les dates d\'expiration des documents doivent être postérieures à la date de restitution du véhicule.');
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.innerHTML = '✅ Envoyer';
                 return;
             }
 
-            // Verificar consentimento RGPD
             if (!document.getElementById('rgpd_consent').checked) {
                 document.getElementById('rgpd_error').style.display = 'block';
                 document.getElementById('rgpd_consent').scrollIntoView({ behavior: 'smooth' });
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.innerHTML = '✅ Envoyer';
                 return;
             }
             document.getElementById('rgpd_error').style.display = 'none';
 
-            // Verificar exactidão das informações
             if (!document.getElementById('accuracy_consent').checked) {
                 document.getElementById('accuracy_error').style.display = 'block';
                 document.getElementById('accuracy_consent').scrollIntoView({ behavior: 'smooth' });
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.innerHTML = '✅ Envoyer';
                 return;
             }
             document.getElementById('accuracy_error').style.display = 'none';
@@ -2111,12 +2121,7 @@
                 date_expiration_permis: document.getElementById('date_expiration_permis').value,
                 timestamp: new Date().toLocaleString('fr-FR')
             };
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
-            submitBtn.disabled = true;
-            
+
             try {
                 await fetch(GOOGLE_SHEETS_URL, {
                     method: 'POST',
@@ -2127,15 +2132,12 @@
 
                 formSubmitted = true;
 
-                // Bloquer le bouton Envoyer définitivement
-                const submitBtn2 = document.getElementById('submitBtn');
-                submitBtn2.disabled = true;
-                submitBtn2.style.opacity = '0.5';
-                submitBtn2.style.cursor = 'not-allowed';
-                submitBtn2.innerHTML = '✅ Formulaire envoyé';
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.5';
+                submitBtn.style.cursor = 'not-allowed';
+                submitBtn.innerHTML = '✅ Formulaire envoyé';
                 document.getElementById('submit_hint').style.display = 'block';
 
-                // Activer bouton PDF
                 const pdfBtn = document.getElementById('pdfBtn');
                 pdfBtn.disabled = false;
                 pdfBtn.style.opacity = '1';
@@ -2143,7 +2145,6 @@
                 document.getElementById('pdf_hint').textContent = '✅ Formulaire envoyé — vous pouvez maintenant sauvegarder';
                 document.getElementById('pdf_hint').style.color = '#2e7d32';
 
-                // Pop-up avec option PDF
                 const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre dossier SPAM.\n\nVoulez-vous sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Sauvegarder plus tard via le bouton PDF');
                 if (savePDF) {
                     document.getElementById('print-voucher').innerHTML = generateVoucher();
@@ -2154,9 +2155,15 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.');
-            } finally {
-                submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.innerHTML = '✅ Envoyer';
+            } finally {
+                if (!formSubmitted) {
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.innerHTML = '✅ Envoyer';
+                }
             }
         }
     </script>
