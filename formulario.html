@@ -830,7 +830,7 @@
             });
         }
         
-        function handleClientTypeChange(type) {
+function handleClientTypeChange(type) {
             const refEmailSection = document.getElementById('refEmailSection');
             const searchBtn = document.getElementById('searchBtn');
             const datesSection = document.getElementById('datesSection');
@@ -839,7 +839,15 @@
             
             if (type === 'existant') {
                 searchBtn.style.display = 'block';
+                // Manter sempre bloqueado para cliente existente
                 datesSection.classList.add('locked');
+                // Adicionar listener para garantir que fica sempre bloqueado
+                datesSection.addEventListener('click', function(e) {
+                    if (clientType === 'existant' && !isExistingClientData) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                }, true);
             } else {
                 searchBtn.style.display = 'none';
                 datesSection.classList.remove('locked');
@@ -885,10 +893,13 @@
             const email = document.getElementById('email').value.trim();
             
             if (ref && email && email.includes('@')) {
-                // Só desbloqueia as datas se for novo cliente
                 if (clientType !== 'existant') {
                     unlockSection('datesSection');
                 }
+            }
+            // Garantir que datas ficam sempre bloqueadas para cliente existente
+            if (clientType === 'existant') {
+                document.getElementById('datesSection').classList.add('locked');
             }
         }
         
