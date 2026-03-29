@@ -833,14 +833,16 @@
         function handleClientTypeChange(type) {
             const refEmailSection = document.getElementById('refEmailSection');
             const searchBtn = document.getElementById('searchBtn');
+            const datesSection = document.getElementById('datesSection');
             
-            // Unlock reference/email section
             refEmailSection.classList.remove('locked');
             
             if (type === 'existant') {
                 searchBtn.style.display = 'block';
+                datesSection.classList.add('locked');
             } else {
                 searchBtn.style.display = 'none';
+                datesSection.classList.remove('locked');
             }
         }
         
@@ -939,7 +941,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    alert('✅ Email de confirmation envoyé à ' + email + '\n\nVeuillez vérifier votre boîte de réception et cliquer sur le lien pour continuer.');
+                    alert('✅ Email de confirmation envoyé à ' + email + '\n\nVeuillez vérifier votre boîte de réception et cliquer sur le lien pour continuer.\n\nSi vous ne recevez pas l\'email, veuillez vérifier votre dossier SPAM.\nSi le problème persiste, contactez-nous à : officefnc@pto.travel');
                 } else {
                     alert('❌ Aucun client trouvé avec cette référence et cet email.');
                 }
