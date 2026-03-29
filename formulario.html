@@ -531,18 +531,22 @@
         @media print {
             @page {
                 size: A4;
-                margin: 12mm;
+                margin: 0;
             }
 
             /* Hide everything by default */
             body > * { display: none !important; }
-
-            /* Show only the voucher */
             #print-voucher { display: block !important; }
 
             #print-voucher {
                 font-family: 'Inter', sans-serif;
                 color: #1a1a1a;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                padding: 12mm;
+                box-sizing: border-box;
             }
         }
     </style>
@@ -1789,9 +1793,8 @@
                         Ces informations ont été transmises au prestataire de location. En cas d'erreur, veuillez remplir à nouveau le formulaire en sélectionnant "Modifier le formulaire" afin de modifier les champs nécessaires :<br>
                         <a href="https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html" style="color:#856404;">https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html</a>
                     </div>
-                    <div style="margin-top:16px; padding-top:12px; border-top:1px solid #e0e0e0; display:flex; justify-content:space-between; font-size:10px; color:#aaa;">
+                   <div style="margin-top:16px; padding-top:12px; border-top:1px solid #e0e0e0; font-size:10px; color:#aaa;">
                         <span>Émis le ${today}</span>
-                        <span>Page 1/1</span>
                     </div>
                 </div>
             </div>`;
