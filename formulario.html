@@ -1697,20 +1697,14 @@
             <div style="font-family:'Inter',sans-serif; max-width:720px; margin:0; color:#1a1a1a; padding-top:0;">
 
                 <!-- Header -->
-                <div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:28px 32px; border-radius:12px 12px 0 0; display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div style="font-size:22px; font-weight:700; letter-spacing:-0.5px;">🚗 Formulaire du Conducteur</div>
-                        <div style="font-size:13px; opacity:0.85; margin-top:4px;">Location de Voiture — Récapitulatif</div>
-                    </div>
-                    <div style="text-align:right; font-size:12px; opacity:0.8;">
-                        <div>Réf. <strong style="font-size:16px;">${ref}</strong></div>
-                        <div style="margin-top:4px;">Émis le ${today}</div>
-                    </div>
+                <div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:24px 32px; border-radius:12px 12px 0 0; text-align:center;">
+                    <div style="font-size:20px; font-weight:700; letter-spacing:-0.5px;">🚗 Formulaire du Conducteur — Location de Voiture</div>
                 </div>
 
                 <!-- Client name banner -->
-                <div style="background:#e8f4fd; padding:14px 32px; border-left:4px solid #2C5F8D; font-size:16px; font-weight:600; color:#2C5F8D;">
-                    ${nom}
+                <div style="background:#e8f4fd; padding:14px 32px; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:16px; font-weight:700; color:#2C5F8D; border-left:4px solid #2C5F8D; padding-left:12px;">${nom}</span>
+                    <span style="font-size:13px; font-weight:700; color:#1a1a1a;">Réf. ${ref}</span>
                 </div>
 
                 <!-- Body -->
@@ -1794,6 +1788,10 @@
                     <div style="background:#fff3cd; border-left:4px solid #ffc107; padding:12px 16px; border-radius:4px; font-size:11px; color:#856404;">
                         Ces informations ont été transmises au prestataire de location. En cas d'erreur, veuillez remplir à nouveau le formulaire en sélectionnant "Modifier le formulaire" afin de modifier les champs nécessaires :<br>
                         <a href="https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html" style="color:#856404;">https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html</a>
+                    </div>
+                    <div style="margin-top:16px; padding-top:12px; border-top:1px solid #e0e0e0; display:flex; justify-content:space-between; font-size:10px; color:#aaa;">
+                        <span>Émis le ${today}</span>
+                        <span>Page 1/1</span>
                     </div>
                 </div>
             </div>`;
