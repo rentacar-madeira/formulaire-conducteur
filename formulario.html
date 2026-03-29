@@ -558,15 +558,19 @@
             <form id="driverForm">
                 <!-- Client Type Selection -->
                 <div class="client-type-section">
-                    <div class="section-title">Type de Client</div>
+                    <div class="section-title">Comment souhaitez-vous procéder ?</div>
+                    <p style="font-size:13px; color:#666; margin-bottom:16px; line-height:1.6;">
+                        Si c'est la première fois que vous remplissez ce formulaire, sélectionnez <strong>«&nbsp;Remplir le formulaire&nbsp;»</strong>. 
+                        Si vous l'avez déjà rempli et souhaitez modifier vos informations, sélectionnez <strong>«&nbsp;Modifier le formulaire&nbsp;»</strong>.
+                    </p>
                     <div class="client-type-buttons">
                         <label class="client-type-btn" id="nouveauClientBtn">
                             <input type="radio" name="client_type" value="nouveau" required>
-                            <span>🆕 Nouveau Client</span>
+                            <span>🆕 Remplir le formulaire</span>
                         </label>
                         <label class="client-type-btn" id="existantClientBtn">
                             <input type="radio" name="client_type" value="existant" required>
-                            <span>👤 Client Existant</span>
+                            <span>✏️ Modifier le formulaire</span>
                         </label>
                     </div>
                 </div>
@@ -646,7 +650,7 @@
                     
                     <div class="form-group">
                         <label for="telephone">Téléphone *</label>
-                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; align-items: start;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start;">
                             <div style="position:relative;">
                                 <div id="indicatif_box" onclick="toggleIndicatifDropdown()"
                                      style="width:100%; padding:12px 36px 12px 16px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; background:#fafafa; cursor:pointer; min-height:46px; display:flex; align-items:center; color:#999; user-select:none;">
@@ -797,9 +801,14 @@
                             Disponible après l'envoi du formulaire
                         </span>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="submitToSheets()" id="submitBtn">
-                        ✅ Envoyer
-                    </button>
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                        <button type="button" class="btn btn-primary" onclick="submitToSheets()" id="submitBtn">
+                            ✅ Envoyer
+                        </button>
+                        <span id="submit_hint" style="display:none; font-size:11px; color:#2e7d32; text-align:center; line-height:1.4;">
+                            Si vous souhaitez modifier vos informations, sélectionnez<br>«&nbsp;Modifier le formulaire&nbsp;» avec votre référence et email.
+                        </span>
+                    </div>
                 </div>
             </form>
         </div>
@@ -925,6 +934,20 @@
             numeroDocInput.addEventListener('input', checkIdDocSection);
             dateEmissionIdInput.addEventListener('change', checkIdDocSection);
             dateExpirationIdInput.addEventListener('change', checkIdDocSection);
+
+            // Auto-clear red border when field is filled
+            document.querySelectorAll('input, textarea').forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.value && this.value.trim() !== '' && this.value !== '+') {
+                        this.classList.remove('error');
+                    }
+                });
+                input.addEventListener('change', function() {
+                    if (this.value && this.value.trim() !== '') {
+                        this.classList.remove('error');
+                    }
+                });
+            });
         }
         
         function checkRefEmailSection() {
@@ -1671,7 +1694,7 @@
             const today= new Date().toLocaleDateString('fr-FR');
 
             return `
-            <div style="font-family:'Inter',sans-serif; max-width:720px; margin:0 auto; color:#1a1a1a;">
+            <div style="font-family:'Inter',sans-serif; max-width:720px; margin:0; color:#1a1a1a; padding-top:0;">
 
                 <!-- Header -->
                 <div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:28px 32px; border-radius:12px 12px 0 0; display:flex; justify-content:space-between; align-items:center;">
@@ -1769,7 +1792,8 @@
 
                     <!-- Footer note -->
                     <div style="background:#fff3cd; border-left:4px solid #ffc107; padding:12px 16px; border-radius:4px; font-size:11px; color:#856404;">
-                        Ces informations ont été transmises au prestataire de location. En cas d'erreur, veuillez contacter : officefnc@pto.travel
+                        Ces informations ont été transmises au prestataire de location. En cas d'erreur, veuillez remplir à nouveau le formulaire en sélectionnant "Modifier le formulaire" afin de modifier les champs nécessaires :<br>
+                        <a href="https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html" style="color:#856404;">https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html</a>
                     </div>
                 </div>
             </div>`;
@@ -1801,6 +1825,28 @@
             if (hasEmpty) {
                 alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).');
                 return;
+            }
+
+            // Check for duplicate if nouveau client
+            if (clientType === 'nouveau') {
+                const ref   = document.getElementById('reference_agence').value.trim();
+                const email = document.getElementById('email').value.trim();
+                try {
+                    const checkResp = await fetch(GOOGLE_SHEETS_URL + '?action=search&ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email));
+                    const checkData = await checkResp.json();
+                    if (checkData.success) {
+                        alert('⚠️ Vos informations ont déjà été envoyées précédemment pour cette référence.\n\nSi vous souhaitez modifier vos données, veuillez sélectionner «\u00a0Modifier le formulaire\u00a0» et utiliser votre référence et adresse email.');
+                        // Auto-switch to existant
+                        document.querySelector('input[value="existant"]').checked = true;
+                        document.querySelectorAll('.client-type-btn').forEach(b => b.classList.remove('active'));
+                        document.getElementById('existantClientBtn').classList.add('active');
+                        clientType = 'existant';
+                        handleClientTypeChange('existant');
+                        return;
+                    }
+                } catch(e) {
+                    // If check fails, continue with submission
+                }
             }
 
             const validId = validateExpirationDate('date_expiration_id', 'error_expiration_id');
@@ -1854,6 +1900,14 @@
                 });
 
                 formSubmitted = true;
+
+                // Bloquer le bouton Envoyer définitivement
+                const submitBtn2 = document.getElementById('submitBtn');
+                submitBtn2.disabled = true;
+                submitBtn2.style.opacity = '0.5';
+                submitBtn2.style.cursor = 'not-allowed';
+                submitBtn2.innerHTML = '✅ Formulaire envoyé';
+                document.getElementById('submit_hint').style.display = 'block';
 
                 // Activer bouton PDF
                 const pdfBtn = document.getElementById('pdfBtn');
