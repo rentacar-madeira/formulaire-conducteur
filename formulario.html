@@ -2021,11 +2021,8 @@
         
         // Submit to Google Sheets
         async function submitToSheets() {
-            // Bloquear imediatamente o botão
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = '0.5';
-            submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
+            submitBtn.innerHTML = '<span class="spinner"></span> Vérification...';
 
             // Highlight empty fields in red
             const hasEmpty = highlightEmptyFields();
