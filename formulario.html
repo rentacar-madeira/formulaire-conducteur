@@ -925,6 +925,10 @@
                 searchBtn.style.opacity = '0.4';
                 searchBtn.style.cursor = 'not-allowed';
                 searchBtn.innerHTML = '⏳ Chargement...';
+                // Reativar email agence quando entra pelo link
+                    document.getElementById('email_agence').disabled = false;
+                    document.getElementById('email_agence').style.opacity = '1';
+                    document.getElementById('email_agence_send').disabled = false;
                 fetchExistingClientData(ref, token);
             }
         }
