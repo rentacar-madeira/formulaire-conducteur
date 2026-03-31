@@ -1318,9 +1318,13 @@
             }
             
             calculateDays();
-            unlockSection('personalInfoSection');
-            unlockSection('idDocSection');
-            unlockSection('licenseSection');
+            const dp = document.getElementById('date_prise').value;
+            const dr = document.getElementById('date_restitution').value;
+            if (dp && dr && dp.length === 10 && dr.length === 10) {
+                unlockSection('personalInfoSection');
+                unlockSection('idDocSection');
+                unlockSection('licenseSection');
+            }
         }
         
         function addEditIcon(fieldId) {
