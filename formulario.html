@@ -970,11 +970,20 @@
                 document.getElementById('submitBtn').style.opacity = '0.5';
                 document.getElementById('pdfBtn').disabled = true;
                 document.getElementById('pdfBtn').style.opacity = '0.5';
+
+                // Desativar email agence no modo modifier
+                document.getElementById('email_agence').disabled = true;
+                document.getElementById('email_agence').style.opacity = '0.5';
+                document.getElementById('email_agence_send').disabled = true;
             } else {
                 searchBtn.style.display = 'none';
                 // For nouveau: only unlock dates after ref+email filled (handled by checkRefEmailSection)
                 document.getElementById('submitBtn').disabled = false;
                 document.getElementById('submitBtn').style.opacity = '1';
+                // Reativar email agence no modo remplir
+                document.getElementById('email_agence').disabled = false;
+                document.getElementById('email_agence').style.opacity = '1';
+                document.getElementById('email_agence_send').disabled = false;
             }
         }
 
