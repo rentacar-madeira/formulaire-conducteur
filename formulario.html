@@ -1149,6 +1149,10 @@
             if (nom && adresse && tel.length > 4 && selectedIndicatif) {
                 unlockSection('idDocSection');
             }
+            // Desbloquear também se os dados foram carregados automaticamente
+            if (nom && adresse && document.getElementById('telephone').value.trim().length > 4) {
+                unlockSection('idDocSection');
+            }
         }
         
         function checkIdDocSection() {
