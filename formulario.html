@@ -593,8 +593,8 @@
                             <label for="email">📧 Email personnel *</label>
                             <div style="position:relative;">
                                 <input type="text" id="email" name="email" required autocomplete="off"
-                                       oninput="handleEmailInput(this.value)"
-                                       onblur="setTimeout(()=>closeEmailDropdown(),200)">
+                                       oninput="handleEmailInput(this.value, 'email_dropdown')"
+                                       onblur="setTimeout(()=>closeEmailDropdown('email_dropdown'),200)">
                                 <div id="email_dropdown" style="display:none; position:absolute; z-index:999; background:white; border:2px solid #2C5F8D; border-radius:8px; max-height:200px; overflow-y:auto; width:100%; box-shadow:0 8px 20px rgba(0,0,0,0.15); top:100%; margin-top:4px;"></div>
                             </div>
                             <div id="email_incompatible" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">
@@ -604,14 +604,20 @@
                                 ✅ Référence et email reconnus. Un lien de modification a été envoyé à votre adresse email.
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="grid-column: 1 / -1;">
                             <label for="email_agence">📧 Email agence <span style="font-weight:400; color:#888;">(optionnel)</span></label>
                             <div style="display:flex; align-items:center; gap:12px;">
-                                <input type="email" id="email_agence" name="email_agence" style="flex:1;">
+                                <div style="position:relative; flex:1;">
+                                    <input type="text" id="email_agence" name="email_agence" autocomplete="off"
+                                           style="width:100%;"
+                                           oninput="handleEmailInput(this.value, 'email_agence_dropdown')"
+                                           onblur="setTimeout(()=>closeEmailDropdown('email_agence_dropdown'),200)">
+                                    <div id="email_agence_dropdown" style="display:none; position:absolute; z-index:999; background:white; border:2px solid #2C5F8D; border-radius:8px; max-height:200px; overflow-y:auto; width:100%; box-shadow:0 8px 20px rgba(0,0,0,0.15); top:100%; margin-top:4px;"></div>
+                                </div>
                                 <label style="display:flex; align-items:center; gap:6px; font-weight:normal; font-size:12px; color:#444; white-space:nowrap; cursor:pointer;">
                                     <input type="checkbox" id="email_agence_send" name="email_agence_send"
                                            style="width:16px; height:16px; cursor:pointer; accent-color:#2C5F8D;">
-                                    Recevoir la confirmation
+                                    Cocher cette case, si vous souhaitez que cet email reçoive aussi une confirmation de vos données.
                                 </label>
                             </div>
                         </div>
@@ -1052,8 +1058,8 @@
             '@pto.travel', '@sapo.pt', '@mail.pt'
         ];
 
-        function handleEmailInput(value) {
-            const dropdown = document.getElementById('email_dropdown');
+        function handleEmailInput(value, dropdownId) {
+            const dropdown = document.getElementById(dropdownId || 'email_dropdown');
             if (!value || !value.includes('@')) {
                 dropdown.style.display = 'none';
                 return;
@@ -1076,7 +1082,8 @@
                 item.onmouseover = function() { this.style.background = '#e3f2fd'; };
                 item.onmouseout  = function() { this.style.background = 'white'; };
                 item.onclick = function() {
-                    document.getElementById('email').value = beforeAt + domain;
+                    const targetId = dropdownId === 'email_agence_dropdown' ? 'email_agence' : 'email';
+                    document.getElementById(targetId).value = beforeAt + domain;
                     dropdown.style.display = 'none';
                 };
                 dropdown.appendChild(item);
@@ -1084,8 +1091,8 @@
             dropdown.style.display = 'block';
         }
 
-        function closeEmailDropdown() {
-            document.getElementById('email_dropdown').style.display = 'none';
+        function closeEmailDropdown(dropdownId) {
+            document.getElementById(dropdownId || 'email_dropdown').style.display = 'none';
         }
 
         // Form Validation and Progressive Unlocking
