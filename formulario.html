@@ -1522,12 +1522,29 @@
                     dayDiv.classList.add('today');
                 }
 
-                // Check selected
+                // Check selected and range
+                const dp  = document.getElementById('date_prise').value;
+                const dr  = document.getElementById('date_restitution').value;
                 const input = document.getElementById(currentInputId);
                 if (input && input.value && input.value.length === 10) {
                     const parts = input.value.split('/');
                     const sel = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
                     if (date.toDateString() === sel.toDateString()) {
+                        dayDiv.classList.add('selected');
+                    }
+                }
+                // Highlight range between prise and restitution
+                if (dp && dp.length === 10 && dr && dr.length === 10) {
+                    const d1 = parseDateString(dp);
+                    const d2 = parseDateString(dr);
+                    if (d1 && d2 && date > d1 && date < d2) {
+                        dayDiv.style.background = '#e3f2fd';
+                        dayDiv.style.borderRadius = '0';
+                    }
+                    if (d1 && date.toDateString() === d1.toDateString()) {
+                        dayDiv.classList.add('selected');
+                    }
+                    if (d2 && date.toDateString() === d2.toDateString()) {
                         dayDiv.classList.add('selected');
                     }
                 }
@@ -1643,7 +1660,7 @@
             input.dispatchEvent(new Event('change'));
 
             // Check if there's a next calendar to open automatically
-            const nextId = NEXT_CALENDAR[currentInputId];
+           const nextId = NEXT_CALENDAR[currentInputId];
             closeCalendar();
 
             if (nextId) {
@@ -1651,6 +1668,8 @@
                 if (nextInput && !nextInput.disabled) {
                     setTimeout(() => {
                         currentInputId = nextId;
+                        // Abrir no mesmo mês/ano da data selecionada
+                        currentCalendarDate = new Date(date.getFullYear(), date.getMonth(), 1);
                         openCalendar();
                     }, 200);
                 }
