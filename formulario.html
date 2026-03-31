@@ -1846,7 +1846,11 @@
         }
 
         function updateTelephoneHidden() {
-            const num = document.getElementById('telephone_numero').value;
+            let num = document.getElementById('telephone_numero').value;
+            // Remover 0 inicial quando existe indicativo
+            if (selectedIndicatif && num.startsWith('0')) {
+                num = num.substring(1);
+            }
             document.getElementById('telephone').value = selectedIndicatif + num;
         }
         
