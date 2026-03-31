@@ -827,7 +827,7 @@
                     <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
                         <button type="button" class="btn btn-secondary" onclick="exportToPDF()" id="pdfBtn"
                                 style="width:100%; opacity:0.5; cursor:not-allowed;" disabled>
-                            📄 Sauvegarder une copie PDF
+                            🖨️ Imprimer / Sauvegarder une copie PDF
                         </button>
                         <span id="pdf_hint" style="font-size:11px; color:#999; text-align:center;">
                             Disponible après l'envoi du formulaire
@@ -2222,7 +2222,7 @@
                 document.getElementById('pdf_hint').textContent = '✅ Formulaire envoyé — vous pouvez maintenant sauvegarder';
                 document.getElementById('pdf_hint').style.color = '#2e7d32';
 
-                const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre dossier SPAM.\n\nVoulez-vous sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Sauvegarder plus tard via le bouton PDF');
+                const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre dossier SPAM.\n\nVoulez-vous imprimer / sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Imprimer / sauvegarder plus tard via le bouton PDF');
                 if (savePDF) {
                     document.getElementById('print-voucher').innerHTML = generateVoucher();
                     document.title = getPdfTitle();
