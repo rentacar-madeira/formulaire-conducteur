@@ -1380,8 +1380,6 @@
             if (input.value && input.value.length === 10) {
                 const parts = input.value.split('/');
                 currentCalendarDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-            } else {
-                currentCalendarDate = new Date();
             }
 
             populateSelects();
@@ -1666,10 +1664,11 @@
             if (nextId) {
                 const nextInput = document.getElementById(nextId);
                 if (nextInput && !nextInput.disabled) {
+                    const savedYear  = date.getFullYear();
+                    const savedMonth = date.getMonth();
                     setTimeout(() => {
                         currentInputId = nextId;
-                        // Abrir no mesmo mês/ano da data selecionada
-                        currentCalendarDate = new Date(date.getFullYear(), date.getMonth(), 1);
+                        currentCalendarDate = new Date(savedYear, savedMonth, 1);
                         openCalendar();
                     }, 200);
                 }
