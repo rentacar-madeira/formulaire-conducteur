@@ -964,24 +964,28 @@
         }
 
         // Helper: reset to modifier mode with only ref or email pre-filled
-        function switchToModifierMode(keepRef, keepEmail) {
-            // Switch radio
-            document.querySelector('input[value="existant"]').checked = true;
-            document.querySelectorAll('.client-type-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('existantClientBtn').classList.add('active');
-            clientType = 'existant';
-
+       function switchToModifierMode(keepRef, keepEmail) {
             const refVal   = document.getElementById('reference_agence').value;
             const emailVal = document.getElementById('email').value;
 
             // Clear entire form
             clearFormSilent();
 
+            // Restore modifier mode after clear
+            document.querySelector('input[value="existant"]').checked = true;
+            document.querySelector('input[value="nouveau"]').checked = false;
+            document.querySelectorAll('.client-type-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('existantClientBtn').classList.add('active');
+            clientType = 'existant';
+
             // Restore what we want to keep
             if (keepRef)   document.getElementById('reference_agence').value = refVal;
             if (keepEmail) document.getElementById('email').value = emailVal;
 
             handleClientTypeChange('existant');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Clear form without confirm dialog
