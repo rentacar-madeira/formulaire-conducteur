@@ -1535,26 +1535,27 @@
                 }
                // Mostrar range APENAS nos calendários de période de location
                 if (currentInputId === 'date_prise' || currentInputId === 'date_restitution') {
-                // Mostrar prise en charge mesmo quando restitution está vazia
-                if (dp && dp.length === 10) {
-                    const d1 = parseDateString(dp);
-                    if (d1 && date.toDateString() === d1.toDateString()) {
-                        dayDiv.classList.add('selected');
+                // Range APENAS para calendários de période de location
+                if (currentInputId === 'date_prise' || currentInputId === 'date_restitution') {
+                    if (dp && dp.length === 10) {
+                        const d1 = parseDateString(dp);
+                        if (d1 && date.toDateString() === d1.toDateString()) {
+                            dayDiv.classList.add('selected');
+                        }
                     }
-                }
-                // Highlight range between prise and restitution
-                if (dp && dp.length === 10 && dr && dr.length === 10) {
-                    const d1 = parseDateString(dp);
-                    const d2 = parseDateString(dr);
-                    if (d1 && d2 && date > d1 && date < d2) {
-                        dayDiv.style.background = '#e3f2fd';
-                        dayDiv.style.borderRadius = '0';
-                    }
-                    if (d1 && date.toDateString() === d1.toDateString()) {
-                        dayDiv.classList.add('selected');
-                    }
-                    if (d2 && date.toDateString() === d2.toDateString()) {
-                        dayDiv.classList.add('selected');
+                    if (dp && dp.length === 10 && dr && dr.length === 10) {
+                        const d1 = parseDateString(dp);
+                        const d2 = parseDateString(dr);
+                        if (d1 && d2 && date > d1 && date < d2) {
+                            dayDiv.style.background = '#e3f2fd';
+                            dayDiv.style.borderRadius = '0';
+                        }
+                        if (d1 && date.toDateString() === d1.toDateString()) {
+                            dayDiv.classList.add('selected');
+                        }
+                        if (d2 && date.toDateString() === d2.toDateString()) {
+                            dayDiv.classList.add('selected');
+                        }
                     }
                 }
 
