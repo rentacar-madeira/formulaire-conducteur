@@ -976,6 +976,7 @@
             document.querySelector('input[value="nouveau"]').checked = false;
             document.querySelectorAll('.client-type-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('existantClientBtn').classList.add('active');
+            document.getElementById('nouveauClientBtn').classList.remove('active');
             clientType = 'existant';
 
             // Restore what we want to keep
