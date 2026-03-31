@@ -590,7 +590,7 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="email">📧 Email *</label>
+                            <label for="email">📧 Email personnel *</label>
                             <div style="position:relative;">
                                 <input type="text" id="email" name="email" required autocomplete="off"
                                        oninput="handleEmailInput(this.value)"
@@ -603,6 +603,10 @@
                             <div id="both_found_msg" style="display:none; color:#2e7d32; font-size:12px; margin-top:4px; font-weight:500;">
                                 ✅ Référence et email reconnus. Un lien de modification a été envoyé à votre adresse email.
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email_agence">📧 Email agence <span style="font-weight:400; color:#888;">(optionnel)</span></label>
+                            <input type="email" id="email_agence" name="email_agence">
                         </div>
                     </div>
                     
@@ -2223,6 +2227,7 @@
                 is_modification: isExistingClientData,
                 reference_agence: document.getElementById('reference_agence').value,
                 email: document.getElementById('email').value,
+                email_agence: document.getElementById('email_agence').value,
                 date_prise: document.getElementById('date_prise').value,
                 date_restitution: document.getElementById('date_restitution').value,
                 jours: document.getElementById('daysCount').textContent,
