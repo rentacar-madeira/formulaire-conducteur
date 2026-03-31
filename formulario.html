@@ -1236,6 +1236,12 @@
                     isExistingClientData = true;
                     populateFormWithExistingData(data.clientData);
                     unlockAllSections();
+                    // Desativar botão Rechercher após carregar dados pelo link
+                    const searchBtn = document.getElementById('searchBtn');
+                    searchBtn.disabled = true;
+                    searchBtn.style.opacity = '0.4';
+                    searchBtn.style.cursor = 'not-allowed';
+                    searchBtn.innerHTML = '✅ Données chargées';
                 } else {
                     alert('❌ Impossible de récupérer les données du client.');
                 }
@@ -1312,6 +1318,7 @@
             }
             
             calculateDays();
+            unlockSection('personalInfoSection');
             unlockSection('idDocSection');
             unlockSection('licenseSection');
         }
