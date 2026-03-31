@@ -1533,7 +1533,9 @@
                         dayDiv.classList.add('selected');
                     }
                 }
-               // Mostrar prise en charge mesmo quando restitution está vazia
+               // Mostrar range APENAS nos calendários de période de location
+                if (currentInputId === 'date_prise' || currentInputId === 'date_restitution') {
+                // Mostrar prise en charge mesmo quando restitution está vazia
                 if (dp && dp.length === 10) {
                     const d1 = parseDateString(dp);
                     if (d1 && date.toDateString() === d1.toDateString()) {
