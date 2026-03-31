@@ -1380,6 +1380,8 @@
             if (input.value && input.value.length === 10) {
                 const parts = input.value.split('/');
                 currentCalendarDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+            } else if (currentInputId !== 'date_restitution') {
+                currentCalendarDate = new Date();
             }
 
             populateSelects();
