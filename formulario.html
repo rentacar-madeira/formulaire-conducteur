@@ -919,6 +919,10 @@
                 clientType = 'existant';
                 handleClientTypeChange('existant');
                 document.getElementById('reference_agence').value = ref;
+                // Bloquear email pessoal imediatamente enquanto carrega
+                document.getElementById('email').disabled = true;
+                document.getElementById('email').style.opacity = '0.5';
+                
                 // Desativar Rechercher imediatamente
                 const searchBtn = document.getElementById('searchBtn');
                 searchBtn.disabled = true;
