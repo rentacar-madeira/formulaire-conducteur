@@ -1531,6 +1531,13 @@
                         dayDiv.classList.add('selected');
                     }
                 }
+               // Mostrar prise en charge mesmo quando restitution está vazia
+                if (dp && dp.length === 10) {
+                    const d1 = parseDateString(dp);
+                    if (d1 && date.toDateString() === d1.toDateString()) {
+                        dayDiv.classList.add('selected');
+                    }
+                }
                 // Highlight range between prise and restitution
                 if (dp && dp.length === 10 && dr && dr.length === 10) {
                     const d1 = parseDateString(dp);
@@ -1566,8 +1573,10 @@
                 if (restitution && restitution.length === 10) {
                     const dr = parseDateString(restitution);
                     if (dr && date > dr) {
-                        alert('⚠️ La date de prise en charge ne peut pas être postérieure à la date de restitution.');
-                        return;
+                        // Limpar restitution e permitir continuar
+                        document.getElementById('date_restitution').value = '';
+                        document.getElementById('daysDisplay').classList.remove('show');
+                        document.getElementById('same_date_warning').style.display = 'none';
                     }
                 }
             }
