@@ -781,14 +781,19 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="date_expiration_permis">Date d'Expiration *</label>
-                            <span class="hint">Doit être postérieure à la date de restitution</span>
+                            <label for="date_expiration_permis">Date d'Expiration <span style="font-weight:400; color:#888;">(optionnel)</span></label>
+                            <span class="hint">Si elle existe, doit être postérieure à la date de restitution</span>
                             <div class="date-input">
                                 <input type="text" id="date_expiration_permis" name="date_expiration_permis" 
                                        placeholder="01/01/2024" 
                                        pattern="\d{2}/\d{2}/\d{4}" 
-                                       required
                                        readonly>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                                <button type="button" onclick="clearDateExpPermis()" 
+                                        style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">
+                                    ✕ Effacer la date
+                                </button>
                             </div>
                             <div class="error-message" id="error_expiration_permis">
                                 ⚠️ La date d'expiration doit être après la date de restitution
@@ -1108,6 +1113,11 @@
 
         function closeEmailDropdown(dropdownId) {
             document.getElementById(dropdownId || 'email_dropdown').style.display = 'none';
+        }
+
+        function clearDateExpPermis() {
+            document.getElementById('date_expiration_permis').value = '';
+            document.getElementById('error_expiration_permis').classList.remove('show');
         }
 
         // Form Validation and Progressive Unlocking
@@ -1686,10 +1696,18 @@
             }
             if (currentInputId === 'date_emission_permis') {
                 const prise = document.getElementById('date_prise').value;
+                const restitution = document.getElementById('date_restitution').value;
                 if (prise && prise.length === 10) {
                     const dp = parseDateString(prise);
                     if (dp && date >= dp) {
                         alert('⚠️ La date d\'émission du permis de conduire doit être antérieure à la date de prise en charge.');
+                        return;
+                    }
+                }
+                if (restitution && restitution.length === 10) {
+                    const dr = parseDateString(restitution);
+                    if (dr && date >= dr) {
+                        alert('⚠️ La date d\'émission du permis de conduire doit être antérieure à la date de restitution.');
                         return;
                     }
                 }
