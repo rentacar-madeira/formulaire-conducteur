@@ -6,544 +6,84 @@
     <title>Formulaire de Conducteur - Location de Voiture</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .container {
-            max-width: 900px;
-            width: 100%;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #2C5F8D 0%, #1a3a5c 100%);
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-        }
-        
-        .header p {
-            font-size: 16px;
-            opacity: 0.9;
-        }
-        
-        .form-content {
-            padding: 40px;
-        }
-        
-        /* Client Type Selection */
-        .client-type-section {
-            margin-bottom: 32px;
-        }
-        
-        .client-type-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .client-type-btn {
-            padding: 20px;
-            border: 3px solid #e0e0e0;
-            border-radius: 12px;
-            background: #fafafa;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-        }
-        
-        .client-type-btn:hover {
-            border-color: #2C5F8D;
-            background: #f0f4f8;
-        }
-        
-        .client-type-btn.active {
-            border-color: #2C5F8D;
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            color: #2C5F8D;
-        }
-        
-        .client-type-btn input[type="radio"] {
-            width: 20px;
-            height: 20px;
-            margin: 0;
-        }
-        
-        /* Section Blocking */
-        .form-section {
-            margin-bottom: 32px;
-            padding: 24px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            background: white;
-            transition: all 0.3s;
-        }
-        
-        .form-section.locked {
-            opacity: 0.5;
-            pointer-events: none;
-            background: #f5f5f5;
-        }
-        
-        .form-section.locked::before {
-            content: '🔒';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-        }
-        
-        .form-section {
-            position: relative;
-        }
-        
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2C5F8D;
-            margin-bottom: 20px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            font-size: 14px;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-        }
-        
-        .form-group .hint {
-            display: block;
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-        
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 15px;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
-            background: #fafafa;
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #2C5F8D;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(44, 95, 141, 0.1);
-        }
-        
-        .form-group input:disabled,
-        .form-group textarea:disabled {
-            background: #f0f0f0;
-            cursor: not-allowed;
-        }
-        
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-        
-        /* Reference and Email Row */
-        .ref-email-row {
-            display: grid;
-            grid-template-columns: 40% 1fr;
-            gap: 16px;
-            align-items: end;
-        }
-        
-        .search-btn {
-            padding: 12px 24px;
-            background: #2C5F8D;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 24px;
-        }
-        
-        .search-btn:hover {
-            background: #1a3a5c;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(44, 95, 141, 0.3);
-        }
-        
-        .search-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        /* Edit Icons for Prefilled Fields */
-        .editable-field {
-            position: relative;
-        }
-        
-        .edit-icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            font-size: 18px;
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-        
-        .edit-icon:hover {
-            opacity: 1;
-        }
-        
-        /* Calendar Styles */
-        .calendar-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; display: flex; justify-content: center; align-items: center; }
+        .container { max-width: 900px; width: 100%; background: white; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #2C5F8D 0%, #1a3a5c 100%); color: white; padding: 40px; text-align: center; }
+        .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .header p { font-size: 16px; opacity: 0.9; }
+        .form-content { padding: 40px; }
+        .client-type-section { margin-bottom: 32px; }
+        .client-type-buttons { display: flex; flex-direction: column; gap: 12px; }
+        .client-type-btn { padding: 20px; border: 3px solid #e0e0e0; border-radius: 12px; background: #fafafa; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 600; color: #333; }
+        .client-type-btn:hover { border-color: #2C5F8D; background: #f0f4f8; }
+        .client-type-btn.active { border-color: #2C5F8D; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #2C5F8D; }
+        .client-type-btn input[type="radio"] { width: 20px; height: 20px; margin: 0; }
+        .form-section { margin-bottom: 32px; padding: 24px; border: 2px solid #e0e0e0; border-radius: 12px; background: white; transition: all 0.3s; position: relative; }
+        .form-section.locked { opacity: 0.5; pointer-events: none; background: #f5f5f5; }
+        .form-section.locked::before { content: '🔒'; position: absolute; top: 10px; right: 10px; font-size: 24px; }
+        .section-title { font-size: 18px; font-weight: 700; color: #2C5F8D; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; font-size: 14px; color: #1a1a1a; margin-bottom: 4px; }
+        .form-group .hint { display: block; font-size: 12px; color: #666; margin-bottom: 8px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; font-family: 'Inter', sans-serif; transition: all 0.2s; background: #fafafa; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #2C5F8D; background: white; box-shadow: 0 0 0 4px rgba(44,95,141,0.1); }
+        .form-group input:disabled, .form-group textarea:disabled { background: #f0f0f0; cursor: not-allowed; }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+        .ref-email-row { display: grid; grid-template-columns: 40% 1fr; gap: 16px; align-items: end; }
+        .search-btn { padding: 12px 24px; background: #2C5F8D; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 24px; }
+        .search-btn:hover { background: #1a3a5c; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(44,95,141,0.3); }
+        .search-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .edit-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; opacity: 0.6; transition: opacity 0.2s; }
+        .edit-icon:hover { opacity: 1; }
+        .calendar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .calendar-overlay.active { display: flex; }
-
-        .calendar-container {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 340px;
-            width: 90%;
-            position: relative;
-        }
-
-        .calendar-field-title {
-            font-size: 10px;
-            font-weight: 700;
-            color: #2C5F8D;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 10px;
-        }
-
-        .calendar-close {
-            position: absolute;
-            top: 14px;
-            right: 14px;
-            background: #f0f0f0;
-            border: none;
-            font-size: 14px;
-            cursor: pointer;
-            color: #666;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
+        .calendar-container { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 340px; width: 90%; position: relative; }
+        .calendar-field-title { font-size: 10px; font-weight: 700; color: #2C5F8D; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+        .calendar-close { position: absolute; top: 14px; right: 14px; background: #f0f0f0; border: none; font-size: 14px; cursor: pointer; color: #666; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
         .calendar-close:hover { background: #e0e0e0; color: #333; }
-
-        .calendar-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            margin-bottom: 16px;
-        }
-
-        .calendar-nav {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
-            transition: background 0.2s;
-            color: #2C5F8D;
-            line-height: 1;
-        }
+        .calendar-header { display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 16px; }
+        .calendar-nav { background: none; border: none; font-size: 20px; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.2s; color: #2C5F8D; line-height: 1; }
         .calendar-nav:hover { background: #e3f2fd; }
-
-        .calendar-month-year {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .cal-select {
-            font-size: 15px;
-            font-weight: 700;
-            color: #2C5F8D;
-            background: #f0f4f8;
-            border: none;
-            border-radius: 6px;
-            padding: 4px 8px;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            text-align: center;
-        }
+        .calendar-month-year { display: flex; align-items: center; gap: 6px; }
+        .cal-select { font-size: 15px; font-weight: 700; color: #2C5F8D; background: #f0f4f8; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; appearance: none; -webkit-appearance: none; text-align: center; }
         .cal-select:hover { background: #e3f2fd; }
         .cal-select:focus { outline: 2px solid #2C5F8D; }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-        }
-
-        .calendar-day-header {
-            text-align: center;
-            font-weight: 700;
-            font-size: 11px;
-            color: #888;
-            padding: 6px 0;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-        }
-        .calendar-day:hover:not(.disabled):not(.other-month) {
-            background: #e3f2fd;
-            border-color: #2C5F8D;
-        }
-        .calendar-day.selected {
-            background: #2C5F8D;
-            color: white;
-            font-weight: 700;
-        }
-        .calendar-day.disabled {
-            color: #d0d0d0;
-            cursor: not-allowed;
-            background: none;
-        }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .calendar-day-header { text-align: center; font-weight: 700; font-size: 11px; color: #888; padding: 6px 0; }
+        .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s; border: 1px solid transparent; }
+        .calendar-day:hover:not(.disabled):not(.other-month) { background: #e3f2fd; border-color: #2C5F8D; }
+        .calendar-day.selected { background: #2C5F8D; color: white; font-weight: 700; }
+        .calendar-day.disabled { color: #d0d0d0; cursor: not-allowed; background: none; }
         .calendar-day.other-month { color: #d0d0d0; cursor: default; }
-        .calendar-day.today {
-            border: 2px solid #2C5F8D;
-            font-weight: 700;
-        }
-        
-        /* Date inputs with calendar icon */
-        .date-input {
-            position: relative;
-        }
-        
-        .date-input input {
-            padding-right: 40px;
-            cursor: pointer;
-        }
-        
-        .date-input::after {
-            content: '📅';
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            font-size: 18px;
-        }
-        
-        /* Days calculation display */
-        .days-display {
-            margin-top: 16px;
-            padding: 16px;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            border-radius: 8px;
-            border-left: 4px solid #4caf50;
-            font-size: 16px;
-            font-weight: 600;
-            color: #2e7d32;
-            display: none;
-        }
-        
-        .days-display.show {
-            display: block;
-        }
-        
-        /* Error states */
-        .form-group input.error,
-        .form-group textarea.error {
-            border-color: #dc3545;
-            background: #fff5f5;
-        }
-        
-        .error-message {
-            display: none;
-            color: #dc3545;
-            font-size: 12px;
-            margin-top: 4px;
-            font-weight: 500;
-        }
-        
-        .error-message.show {
-            display: block;
-        }
-        
-        /* Info Box */
-        .info-box {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-            border-left: 4px solid #ffc107;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 32px;
-        }
-        
-        .info-box h3 {
-            font-size: 14px;
-            font-weight: 700;
-            color: #856404;
-            margin-bottom: 12px;
-        }
-        
-        .info-box ul {
-            list-style: none;
-            font-size: 13px;
-            color: #856404;
-        }
-        
-        .info-box li {
-            padding-left: 20px;
-            margin-bottom: 8px;
-            position: relative;
-        }
-        
-        .info-box li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-        
-        /* Button Group */
-        .button-group {
-            display: grid;
-            gap: 12px;
-            margin-top: 32px;
-        }
-        
-        .btn {
-            padding: 16px 32px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
-            height: 100%;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #2C5F8D 0%, #1a3a5c 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(44, 95, 141, 0.3);
-        }
-        
-        .btn-primary:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: #2C5F8D;
-            border: 2px solid #2C5F8D;
-        }
-        
-        .btn-secondary:hover {
-            background: #f0f4f8;
-        }
-        
-        /* Loading Spinner */
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Print styles — Voucher layout */
+        .calendar-day.today { border: 2px solid #2C5F8D; font-weight: 700; }
+        .date-input { position: relative; }
+        .date-input input { padding-right: 40px; cursor: pointer; }
+        .date-input::after { content: '📅'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 18px; }
+        .days-display { margin-top: 16px; padding: 16px; background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border-radius: 8px; border-left: 4px solid #4caf50; font-size: 16px; font-weight: 600; color: #2e7d32; display: none; }
+        .days-display.show { display: block; }
+        .form-group input.error, .form-group textarea.error { border-color: #dc3545; background: #fff5f5; }
+        .error-message { display: none; color: #dc3545; font-size: 12px; margin-top: 4px; font-weight: 500; }
+        .error-message.show { display: block; }
+        .info-box { background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-left: 4px solid #ffc107; padding: 20px; border-radius: 8px; margin-top: 32px; }
+        .info-box h3 { font-size: 14px; font-weight: 700; color: #856404; margin-bottom: 12px; }
+        .info-box ul { list-style: none; font-size: 13px; color: #856404; }
+        .info-box li { padding-left: 20px; margin-bottom: 8px; position: relative; }
+        .info-box li::before { content: '•'; position: absolute; left: 0; font-weight: bold; }
+        .button-group { display: grid; gap: 12px; margin-top: 32px; }
+        .btn { padding: 16px 32px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+        .btn-primary { background: linear-gradient(135deg, #2C5F8D 0%, #1a3a5c 100%); color: white; }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(44,95,141,0.3); }
+        .btn-primary:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        .btn-secondary { background: white; color: #2C5F8D; border: 2px solid #2C5F8D; }
+        .btn-secondary:hover { background: #f0f4f8; }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: white; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         @media print {
-            @page {
-                size: A4;
-                margin: 0;
-            }
+            @page { size: A4; margin: 0; }
             body > * { display: none !important; }
             #print-voucher { display: block !important; }
-            #print-voucher {
-                font-family: 'Inter', sans-serif;
-                color: #1a1a1a;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                padding: 12mm;
-                box-sizing: border-box;
-            }
+            #print-voucher { font-family: 'Inter', sans-serif; color: #1a1a1a; position: absolute; top: 0; left: 0; width: 100%; padding: 12mm; box-sizing: border-box; }
         }
     </style>
 </head>
@@ -553,10 +93,8 @@
             <h1>🚗 Formulaire de Conducteur</h1>
             <p>Location de Voiture - Informations du Conducteur</p>
         </div>
-        
         <div class="form-content">
             <form id="driverForm">
-                <!-- Client Type Selection -->
                 <div class="client-type-section">
                     <div class="section-title">Comment souhaitez-vous procéder ?</div>
                     <p id="texte_instructions" style="font-size:13px; color:#666; margin-bottom:16px; line-height:1.6;">
@@ -574,266 +112,161 @@
                         </label>
                     </div>
                 </div>
-                
-                <!-- Reference and Email Section -->
                 <div class="form-section locked" id="refEmailSection">
                     <div class="section-title">Référence & Contact</div>
-                    
                     <div class="ref-email-row">
                         <div class="form-group">
                             <label for="reference_agence">Référence / Dossier *</label>
                             <input type="text" id="reference_agence" name="reference_agence" required>
-                            <div id="ref_incompatible" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">
-                                ⚠️ Cette référence n'est pas associée à cet email. Veuillez corriger la référence et cliquer sur "Rechercher".
-                            </div>
+                            <div id="ref_incompatible" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">⚠️ Cette référence n'est pas associée à cet email. Veuillez corriger la référence et cliquer sur "Rechercher".</div>
                         </div>
-                        
                         <div class="form-group">
                             <label for="email">📧 Email personnel *</label>
                             <div style="position:relative;">
-                                <input type="text" id="email" name="email" required autocomplete="off"
-                                       oninput="handleEmailInput(this.value, 'email_dropdown')"
-                                       onblur="setTimeout(()=>closeEmailDropdown('email_dropdown'),200)">
+                                <input type="text" id="email" name="email" required autocomplete="off" oninput="handleEmailInput(this.value, 'email_dropdown')" onblur="setTimeout(()=>closeEmailDropdown('email_dropdown'),200)">
                                 <div id="email_dropdown" style="display:none; position:absolute; z-index:999; background:white; border:2px solid #2C5F8D; border-radius:8px; max-height:200px; overflow-y:auto; width:100%; box-shadow:0 8px 20px rgba(0,0,0,0.15); top:100%; margin-top:4px;"></div>
                             </div>
-                            <div id="email_incompatible" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">
-                                ⚠️ Cet email n'est pas associé à cette référence. Veuillez corriger l'email et cliquer sur "Rechercher".
-                            </div>
-                            <div id="both_found_msg" style="display:none; color:#2e7d32; font-size:12px; margin-top:4px; font-weight:500;">
-                                ✅ Référence et email reconnus. Un lien de modification a été envoyé à votre adresse email.
-                            </div>
+                            <div id="email_incompatible" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">⚠️ Cet email n'est pas associé à cette référence. Veuillez corriger l'email et cliquer sur "Rechercher".</div>
+                            <div id="both_found_msg" style="display:none; color:#2e7d32; font-size:12px; margin-top:4px; font-weight:500;">✅ Référence et email reconnus. Un lien de modification a été envoyé à votre adresse email.</div>
                         </div>
                         <div class="form-group" style="grid-column: 1 / -1;">
                             <label for="email_agence">📧 Email agence <span style="font-weight:400; color:#888;">(optionnel)</span></label>
                             <div style="position:relative;">
-                                <input type="text" id="email_agence" name="email_agence" autocomplete="off"
-                                       style="width:100%;"
-                                       oninput="handleEmailInput(this.value, 'email_agence_dropdown')"
-                                       onblur="setTimeout(()=>closeEmailDropdown('email_agence_dropdown'),200)">
+                                <input type="text" id="email_agence" name="email_agence" autocomplete="off" style="width:100%;" oninput="handleEmailInput(this.value, 'email_agence_dropdown')" onblur="setTimeout(()=>closeEmailDropdown('email_agence_dropdown'),200)">
                                 <div id="email_agence_dropdown" style="display:none; position:absolute; z-index:999; background:white; border:2px solid #2C5F8D; border-radius:8px; max-height:200px; overflow-y:auto; width:100%; box-shadow:0 8px 20px rgba(0,0,0,0.15); top:100%; margin-top:4px;"></div>
                             </div>
                             <label style="display:flex; align-items:center; gap:6px; font-weight:normal; font-size:12px; color:#444; cursor:pointer; margin-top:8px;">
-                                <input type="checkbox" id="email_agence_send" name="email_agence_send"
-                                       style="width:16px; height:16px; cursor:pointer; accent-color:#2C5F8D;">
-                                 Cocher cette case si vous souhaitez que cet email reçoive également une confirmation de l'ensemble des informations renseignées dans ce formulaire.
+                                <input type="checkbox" id="email_agence_send" name="email_agence_send" style="width:16px; height:16px; cursor:pointer; accent-color:#2C5F8D;">
+                                Cocher cette case si vous souhaitez que cet email reçoive également une confirmation de l'ensemble des informations renseignées dans ce formulaire.
                             </label>
                         </div>
                     </div>
-                    
-                    <button type="button" class="search-btn" id="searchBtn" style="display: none;">
-                        🔍 RECHERCHER
-                    </button>
+                    <button type="button" class="search-btn" id="searchBtn" style="display: none;">🔍 RECHERCHER</button>
                 </div>
-                
-                <!-- Dates Section -->
                 <div class="form-section locked" id="datesSection">
                     <div class="section-title">📅 Période de Location</div>
-                    
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="form-group">
                             <label for="date_prise">Date de Prise en Charge *</label>
                             <span class="hint">Format: JJ/MM/AAAA</span>
                             <div class="date-input">
-                                <input type="text" id="date_prise" name="date_prise" 
-                                       placeholder="01/01/2024" 
-                                       pattern="\d{2}/\d{2}/\d{4}" 
-                                       required
-                                       readonly>
+                                <input type="text" id="date_prise" name="date_prise" placeholder="01/01/2024" pattern="\d{2}/\d{2}/\d{4}" required readonly>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-                                <button type="button" onclick="document.getElementById('date_prise').value=''; document.getElementById('daysDisplay').classList.remove('show'); document.getElementById('same_date_warning').style.display='none';" 
-                                        style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">
-                                    ✕ Effacer la date
-                                </button>
+                                <button type="button" onclick="document.getElementById('date_prise').value=''; document.getElementById('daysDisplay').classList.remove('show'); document.getElementById('same_date_warning').style.display='none';" style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">✕ Effacer la date</button>
                             </div>
                         </div>
-                        
                         <div class="form-group">
                             <label for="date_restitution">Date de Restitution *</label>
                             <span class="hint">Format: JJ/MM/AAAA</span>
                             <div class="date-input">
-                                <input type="text" id="date_restitution" name="date_restitution" 
-                                       placeholder="01/01/2024" 
-                                       pattern="\d{2}/\d{2}/\d{4}" 
-                                       required
-                                       readonly>
+                                <input type="text" id="date_restitution" name="date_restitution" placeholder="01/01/2024" pattern="\d{2}/\d{2}/\d{4}" required readonly>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-                                <button type="button" onclick="document.getElementById('date_restitution').value=''; document.getElementById('daysDisplay').classList.remove('show'); document.getElementById('same_date_warning').style.display='none';" 
-                                        style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">
-                                    ✕ Effacer la date
-                                </button>
+                                <button type="button" onclick="document.getElementById('date_restitution').value=''; document.getElementById('daysDisplay').classList.remove('show'); document.getElementById('same_date_warning').style.display='none';" style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">✕ Effacer la date</button>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="days-display" id="daysDisplay">
-                        📊 Durée de location: <span id="daysCount">0</span> jour(s)
-                    </div>
-                    <div id="same_date_warning" style="display:none; margin-top:8px; padding:10px 14px; background:#fff8e1; border-left:4px solid #ffc107; border-radius:4px; font-size:13px; color:#856404;">
-                        ℹ️ Les dates de prise en charge et de restitution sont identiques. Si c'est correct, la durée est comptabilisée comme 1 jour. Sinon, veuillez corriger.
-                    </div>
+                    <div class="days-display" id="daysDisplay">📊 Durée de location: <span id="daysCount">0</span> jour(s)</div>
+                    <div id="same_date_warning" style="display:none; margin-top:8px; padding:10px 14px; background:#fff8e1; border-left:4px solid #ffc107; border-radius:4px; font-size:13px; color:#856404;">ℹ️ Les dates de prise en charge et de restitution sont identiques. Si c'est correct, la durée est comptabilisée comme 1 jour. Sinon, veuillez corriger.</div>
                 </div>
-
-                <!-- Personal Info Section -->
                 <div class="form-section locked" id="personalInfoSection">
                     <div class="section-title">👤 Informations Personnelles</div>
-                    
                     <div class="form-group">
                         <label for="nom_complet">Nom Complet *</label>
                         <span class="hint">Nom et prénom comme sur la pièce d'identité</span>
                         <input type="text" id="nom_complet" name="nom_complet" required>
                     </div>
-                    
                     <div class="form-group">
                         <label for="adresse_complete">Adresse Complète *</label>
                         <span class="hint">Maximum 3 lignes - Rue, Code postal, Ville</span>
-                        <textarea id="adresse_complete" name="adresse_complete" required 
-                                  placeholder="Rue et numéro&#10;Code postal et ville&#10;Pays"></textarea>
+                        <textarea id="adresse_complete" name="adresse_complete" required placeholder="Rue et numéro&#10;Code postal et ville&#10;Pays"></textarea>
                     </div>
-                    
                     <div class="form-group">
                         <label for="telephone">Téléphone *</label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start;">
                             <div style="position:relative;">
-                                <div id="indicatif_box" onclick="toggleIndicatifDropdown()"
-                                     style="width:100%; padding:12px 36px 12px 16px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; background:#fafafa; cursor:pointer; min-height:46px; display:flex; align-items:center; color:#999; user-select:none;">
+                                <div id="indicatif_box" onclick="toggleIndicatifDropdown()" style="width:100%; padding:12px 36px 12px 16px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; background:#fafafa; cursor:pointer; min-height:46px; display:flex; align-items:center; color:#999; user-select:none;">
                                     <span id="indicatif_label">Sélectionner l'indicatif du pays</span>
                                 </div>
-                                <span id="indicatif_clear" onclick="clearIndicatif(event)" 
-                                      style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:16px; color:#999; font-weight:bold; z-index:2;">✕</span>
+                                <span id="indicatif_clear" onclick="clearIndicatif(event)" style="display:none; position:absolute; right:10px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:16px; color:#999; font-weight:bold; z-index:2;">✕</span>
                                 <div id="indicatif_dropdown" style="display:none; position:absolute; z-index:999; background:white; border:2px solid #2C5F8D; border-radius:8px; max-height:220px; overflow-y:auto; width:100%; box-shadow:0 8px 20px rgba(0,0,0,0.15); top:100%; margin-top:4px;">
                                     <div style="padding:8px; border-bottom:1px solid #e0e0e0; position:sticky; top:0; background:white;">
-                                        <input type="text" id="indicatif_search" placeholder="🔍 Rechercher un pays..."
-                                               autocomplete="off"
-                                               oninput="filterIndicatifs(this.value)"
-                                               onclick="event.stopPropagation()"
-                                               style="width:100%; padding:8px; border:1px solid #e0e0e0; border-radius:6px; font-size:13px;">
+                                        <input type="text" id="indicatif_search" placeholder="🔍 Rechercher un pays..." autocomplete="off" oninput="filterIndicatifs(this.value)" onclick="event.stopPropagation()" style="width:100%; padding:8px; border:1px solid #e0e0e0; border-radius:6px; font-size:13px;">
                                     </div>
                                     <div id="indicatif_list"></div>
                                 </div>
                             </div>
                             <div>
-                                <input type="tel" id="telephone_numero" name="telephone_numero"
-                                       placeholder="N° tél."
-                                       pattern="[0-9]{5,15}"
-                                       oninput="this.value=this.value.replace(/\D/g,'')"
-                                       onfocus="checkIndicatif()"
-                                       style="width:100%;">
+                                <input type="tel" id="telephone_numero" name="telephone_numero" placeholder="N° tél." pattern="[0-9]{5,15}" oninput="this.value=this.value.replace(/\D/g,'')" onfocus="checkIndicatif()" style="width:100%;">
                                 <input type="hidden" id="telephone" name="telephone">
-                                <div id="tel_error" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">
-                                    ⚠️ Veuillez d'abord sélectionner l'indicatif du pays.
-                                </div>
+                                <div id="tel_error" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">⚠️ Veuillez d'abord sélectionner l'indicatif du pays.</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- ID Document Section -->
                 <div class="form-section locked" id="idDocSection">
                     <div class="section-title">🪪 Pièce d'Identité</div>
-                    
                     <div class="form-group">
                         <label for="numero_document">Numéro du Document *</label>
                         <span class="hint">Carte d'identité ou passeport</span>
                         <input type="text" id="numero_document" name="numero_document" required>
                     </div>
-                    
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="form-group">
                             <label for="date_emission_id">Date d'Émission *</label>
                             <span class="hint">Format: JJ/MM/AAAA</span>
                             <div class="date-input">
-                                <input type="text" id="date_emission_id" name="date_emission_id" 
-                                       placeholder="01/01/2024" 
-                                       pattern="\d{2}/\d{2}/\d{4}" 
-                                       required
-                                       readonly>
+                                <input type="text" id="date_emission_id" name="date_emission_id" placeholder="01/01/2024" pattern="\d{2}/\d{2}/\d{4}" required readonly>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-                                <button type="button" onclick="document.getElementById('date_emission_id').value='';" 
-                                        style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">
-                                    ✕ Effacer la date
-                                </button>
+                                <button type="button" onclick="document.getElementById('date_emission_id').value='';" style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">✕ Effacer la date</button>
                             </div>
                         </div>
-                        
                         <div class="form-group">
                             <label for="date_expiration_id">Date d'Expiration *</label>
                             <span class="hint">Doit être postérieure à la date de restitution</span>
                             <div class="date-input">
-                                <input type="text" id="date_expiration_id" name="date_expiration_id" 
-                                       placeholder="01/01/2024" 
-                                       pattern="\d{2}/\d{2}/\d{4}" 
-                                       required
-                                       readonly>
+                                <input type="text" id="date_expiration_id" name="date_expiration_id" placeholder="01/01/2024" pattern="\d{2}/\d{2}/\d{4}" required readonly>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-                                <button type="button" onclick="document.getElementById('date_expiration_id').value=''; document.getElementById('error_expiration_id').classList.remove('show');" 
-                                        style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">
-                                    ✕ Effacer la date
-                                </button>
+                                <button type="button" onclick="document.getElementById('date_expiration_id').value=''; document.getElementById('error_expiration_id').classList.remove('show');" style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">✕ Effacer la date</button>
                             </div>
-                            
-                            <div class="error-message" id="error_expiration_id">
-                                ⚠️ La date d'expiration doit être après la date de restitution
-                            </div>
+                            <div class="error-message" id="error_expiration_id">⚠️ La date d'expiration doit être après la date de restitution</div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Driver License Section -->
                 <div class="form-section locked" id="licenseSection">
                     <div class="section-title">🚘 Permis de Conduire</div>
-                    
                     <div class="form-group">
                         <label for="numero_permis">Numéro du Permis *</label>
                         <input type="text" id="numero_permis" name="numero_permis" required>
                     </div>
-                    
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="form-group">
                             <label for="date_emission_permis">Date d'Émission *</label>
                             <span class="hint">Format: JJ/MM/AAAA</span>
                             <div class="date-input">
-                                <input type="text" id="date_emission_permis" name="date_emission_permis" 
-                                       placeholder="01/01/2024" 
-                                       pattern="\d{2}/\d{2}/\d{4}" 
-                                       required
-                                       readonly>
+                                <input type="text" id="date_emission_permis" name="date_emission_permis" placeholder="01/01/2024" pattern="\d{2}/\d{2}/\d{4}" required readonly>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-                                <button type="button" onclick="document.getElementById('date_emission_permis').value='';" 
-                                        style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">
-                                    ✕ Effacer la date
-                                </button>
+                                <button type="button" onclick="document.getElementById('date_emission_permis').value='';" style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">✕ Effacer la date</button>
                             </div>
                         </div>
-                        
                         <div class="form-group">
                             <label for="date_expiration_permis">Date d'Expiration <span style="font-weight:400; color:#888;">(optionnel)</span></label>
                             <span class="hint">Si elle existe, veuillez la renseigner ci-dessous.</span>
                             <div class="date-input">
-                                <input type="text" id="date_expiration_permis" name="date_expiration_permis" 
-                                       placeholder="01/01/2024" 
-                                       pattern="\d{2}/\d{2}/\d{4}" 
-                                       readonly>
+                                <input type="text" id="date_expiration_permis" name="date_expiration_permis" placeholder="01/01/2024" pattern="\d{2}/\d{2}/\d{4}" readonly>
                             </div>
                             <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-                                <button type="button" onclick="clearDateExpPermis()" 
-                                        style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">
-                                    ✕ Effacer la date
-                                </button>
+                                <button type="button" onclick="clearDateExpPermis()" style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">✕ Effacer la date</button>
                             </div>
-                            <div class="error-message" id="error_expiration_permis">
-                                ⚠️ La date d'expiration doit être après la date de restitution
-                            </div>
+                            <div class="error-message" id="error_expiration_permis">⚠️ La date d'expiration doit être après la date de restitution</div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Info Box -->
-               <div class="info-box">
+                <div class="info-box">
                     <h3>⚠️ Informations importantes</h3>
                     <ul>
                         <li>Tous les champs marqués d'un astérisque (*) sont obligatoires</li>
@@ -842,83 +275,44 @@
                         <li>Pour tout supplément (siège bébé, GPS, conducteur supplémentaire, ou autres), ces demandes devront être effectuées directement sur place lors de la prise en charge du véhicule</li>
                     </ul>
                 </div>
-
-               <!-- RGPD Consent -->
                 <div class="form-group" style="margin-top: 24px; padding: 20px; border: 2px solid #e0e0e0; border-radius: 12px; background: #fafafa;">
                     <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
-                        <input type="checkbox" id="rgpd_consent" name="rgpd_consent"
-                               style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
-                        <span style="font-size: 13px; color: #444; line-height: 1.6;">
-                            En cochant cette case, je confirme avoir lu et accepté que mes données personnelles (nom, adresse, contacts, pièce d'identité et permis de conduire) soient utilisées exclusivement dans le cadre de ma réservation de location de voiture — notamment par la société de location et le réceptif local — et ce, à des fins strictement opérationnelles. Ces données ne seront en aucun cas utilisées à des fins commerciales ou partagées avec des tiers extérieurs à la prestation.
-                        </span>
+                        <input type="checkbox" id="rgpd_consent" name="rgpd_consent" style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
+                        <span style="font-size: 13px; color: #444; line-height: 1.6;">En cochant cette case, je confirme avoir lu et accepté que mes données personnelles (nom, adresse, contacts, pièce d'identité et permis de conduire) soient utilisées exclusivement dans le cadre de ma réservation de location de voiture — notamment par la société de location et le réceptif local — et ce, à des fins strictement opérationnelles. Ces données ne seront en aucun cas utilisées à des fins commerciales ou partagées avec des tiers extérieurs à la prestation.</span>
                     </label>
-                    <div id="rgpd_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">
-                        ⚠️ Vous devez accepter les conditions pour continuer.
-                    </div>
+                    <div id="rgpd_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">⚠️ Vous devez accepter les conditions pour continuer.</div>
                 </div>
-
-                <!-- Checkbox agência — só aparece se email_agence_send estiver checked -->
                 <div id="rgpd_agence_section" style="display:none; margin-top: 16px; padding: 20px; border: 2px solid #e0e0e0; border-radius: 12px; background: #fafafa;">
                     <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
-                        <input type="checkbox" id="rgpd_agence" name="rgpd_agence"
-                               style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
-                        <span style="font-size: 13px; color: #444; line-height: 1.6;">
-                            En tant qu'agence, en cochant cette case, je certifie disposer de l'autorisation du/des client(s) pour recevoir une copie de ses/leurs données personnelles à l'adresse email indiquée dans le champ "Email agence".
-                        </span>
+                        <input type="checkbox" id="rgpd_agence" name="rgpd_agence" style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
+                        <span style="font-size: 13px; color: #444; line-height: 1.6;">En tant qu'agence, en cochant cette case, je certifie disposer de l'autorisation du/des client(s) pour recevoir une copie de ses/leurs données personnelles à l'adresse email indiquée dans le champ "Email agence".</span>
                     </label>
-                    <div id="rgpd_agence_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">
-                        ⚠️ Vous devez certifier disposer de l'autorisation du client pour continuer.
-                    </div>
+                    <div id="rgpd_agence_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">⚠️ Vous devez certifier disposer de l'autorisation du client pour continuer.</div>
                 </div>
-
-                <!-- Accuracy Confirmation -->
                 <div class="form-group" style="margin-top: 16px; padding: 20px; border: 2px solid #e0e0e0; border-radius: 12px; background: #fafafa;">
                     <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
-                        <input type="checkbox" id="accuracy_consent" name="accuracy_consent"
-                               style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
-                        <span style="font-size: 13px; color: #444; line-height: 1.6;">
-                            En cochant cette case, je certifie sur l'honneur que toutes les informations fournies dans ce formulaire sont exactes, complètes et conformes à mes documents officiels. Je comprends que toute information inexacte ou incomplète pourra entraîner le refus de la mise à disposition du véhicule lors de la remise des clés. Les informations transmises devront correspondre en tout point aux documents présentés au moment de la prise en charge du véhicule.
-                        </span>
+                        <input type="checkbox" id="accuracy_consent" name="accuracy_consent" style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
+                        <span style="font-size: 13px; color: #444; line-height: 1.6;">En cochant cette case, je certifie sur l'honneur que toutes les informations fournies dans ce formulaire sont exactes, complètes et conformes à mes documents officiels. Je comprends que toute information inexacte ou incomplète pourra entraîner le refus de la mise à disposition du véhicule lors de la remise des clés. Les informations transmises devront correspondre en tout point aux documents présentés au moment de la prise en charge du véhicule.</span>
                     </label>
-                    <div id="accuracy_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">
-                        ⚠️ Vous devez certifier l'exactitude des informations pour continuer.
-                    </div>
+                    <div id="accuracy_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">⚠️ Vous devez certifier l'exactitude des informations pour continuer.</div>
                 </div>
-                
-                <!-- Buttons -->
                 <div class="button-group" style="grid-template-columns: 0.9fr 1.2fr 0.9fr;">
                     <div style="display:flex; flex-direction:column;">
-                        <button type="button" id="effacerBtn" class="btn" onclick="clearForm()" 
-                            style="background:#fff5f5; color:#dc3545; border:2px solid #dc3545; height:80px; min-height:unset; padding:0;">
-                        🗑️ Effacer
-                    </button>
+                        <button type="button" id="effacerBtn" class="btn" onclick="clearForm()" style="background:#fff5f5; color:#dc3545; border:2px solid #dc3545; height:80px; min-height:unset; padding:0;">🗑️ Effacer</button>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:6px;">
-                        <button type="button" class="btn btn-secondary" onclick="exportToPDF()" id="pdfBtn"
-                                style="flex:1; opacity:0.5; cursor:not-allowed;" disabled>
-                            🖨️ Imprimer<br>💾 Sauvegarder en copie PDF
-                        </button>
-                        <span id="pdf_hint" style="font-size:11px; color:#999; text-align:center;">
-                            Disponible après l'envoi du formulaire
-                        </span>
+                        <button type="button" class="btn btn-secondary" onclick="exportToPDF()" id="pdfBtn" style="flex:1; opacity:0.5; cursor:not-allowed;" disabled>🖨️ Imprimer<br>💾 Sauvegarder en copie PDF</button>
+                        <span id="pdf_hint" style="font-size:11px; color:#999; text-align:center;">Disponible après l'envoi du formulaire</span>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:6px;">
-                        <button type="button" class="btn" onclick="submitToSheets()" id="submitBtn" style="height:80px; min-height:unset; padding:0; background:#f0fff4; color:#2e7d32; border:2px solid #2e7d32;">
-                            ✅ Soumettre
-                        </button>
-                        <span id="submit_hint" style="display:none; font-size:11px; color:#2e7d32; text-align:center; line-height:1.4;">
-                            Si vous souhaitez modifier vos informations, sélectionnez<br>«&nbsp;Modifier le formulaire&nbsp;» avec votre référence et email.
-                        </span>
+                        <button type="button" class="btn" onclick="submitToSheets()" id="submitBtn" style="height:80px; min-height:unset; padding:0; background:#f0fff4; color:#2e7d32; border:2px solid #2e7d32;">✅ Soumettre</button>
+                        <span id="submit_hint" style="display:none; font-size:11px; color:#2e7d32; text-align:center; line-height:1.4;">Si vous souhaitez modifier vos informations, sélectionnez<br>«&nbsp;Modifier le formulaire&nbsp;» avec votre référence et email.</span>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    
-    <!-- Print Voucher (hidden, only shown when printing) -->
     <div id="print-voucher" style="display:none;"></div>
-
-    <!-- Calendar Overlay -->
     <div class="calendar-overlay" id="calendarOverlay">
         <div class="calendar-container">
             <button class="calendar-close" onclick="closeCalendar()">✕</button>
@@ -934,18 +328,13 @@
             <div class="calendar-grid" id="calendarGrid"></div>
         </div>
     </div>
-
     <script>
-        // CONFIGURATION
         const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyzrJIhP3qZQfUarQmE6db4pQXCo7WZxZ9zagcOLk8YWo5HrHYJGsqTynPNyi9mqH5i/exec';
-        
-        // Global variables
         let currentCalendarDate = new Date();
         let currentInputId = null;
         let clientType = null;
         let isExistingClientData = false;
         
-        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             initializeClientTypeSelection();
             initializeFormValidation();
@@ -955,14 +344,11 @@
             checkURLParameters();
         });
         
-        // Check URL parameters for existing client
         function checkURLParameters() {
             const urlParams = new URLSearchParams(window.location.search);
             const ref = urlParams.get('ref');
             const token = urlParams.get('token');
-            
             if (ref && token) {
-                // Auto-select modifier and disable nouveau
                 document.querySelector('input[value="existant"]').checked = true;
                 document.querySelector('input[value="nouveau"]').disabled = true;
                 document.getElementById('nouveauClientBtn').style.opacity = '0.4';
@@ -971,28 +357,21 @@
                 clientType = 'existant';
                 handleClientTypeChange('existant');
                 document.getElementById('reference_agence').value = ref;
-                // Bloquear email pessoal imediatamente enquanto carrega
                 document.getElementById('email').disabled = true;
                 document.getElementById('email').style.opacity = '0.5';
-                
-                // Desativar Rechercher imediatamente
                 const searchBtn = document.getElementById('searchBtn');
                 searchBtn.disabled = true;
                 searchBtn.style.opacity = '0.4';
                 searchBtn.style.cursor = 'not-allowed';
                 searchBtn.innerHTML = '⏳ Chargement...';
-                // Reativar email agence quando entra pelo link
-                    document.getElementById('email_agence').disabled = false;
-                    document.getElementById('email_agence').style.opacity = '1';
-                    document.getElementById('email_agence_send').disabled = false;
-                // Desativar Effacer imediatamente
+                document.getElementById('email_agence').disabled = false;
+                document.getElementById('email_agence').style.opacity = '1';
+                document.getElementById('email_agence_send').disabled = false;
                 const effacerBtn = document.getElementById('effacerBtn');
                 effacerBtn.disabled = true;
                 effacerBtn.style.opacity = '0.4';
                 effacerBtn.style.cursor = 'not-allowed';
-                // Mudar texto explicativo
-                document.getElementById('texte_instructions').innerHTML = 
-                    '⚠️ Les champs modifiables sont indiqués en <strong style="color:#e65100;">orange</strong>. Si vous effectuez des modifications, vous devrez soumettre à nouveau le formulaire pour mettre à jour votre réservation. Si vous ne soumettez pas, aucune modification ne sera enregistrée.';
+                document.getElementById('texte_instructions').innerHTML = '⚠️ Les champs modifiables sont indiqués en <strong style="color:#e65100;">orange</strong>. Si vous effectuez des modifications, vous devrez soumettre à nouveau le formulaire pour mettre à jour votre réservation. Si vous ne soumettez pas, aucune modification ne sera enregistrée.';
                 document.getElementById('texte_instructions').style.color = '#e65100';
                 document.getElementById('texte_instructions').style.background = '#fff8f0';
                 document.getElementById('texte_instructions').style.padding = '12px 16px';
@@ -1002,91 +381,62 @@
             }
         }
         
-        // Client Type Selection
         function initializeClientTypeSelection() {
-            const radioButtons = document.querySelectorAll('input[name="client_type"]');
-            
-            radioButtons.forEach(radio => {
+            document.querySelectorAll('input[name="client_type"]').forEach(radio => {
                 radio.addEventListener('change', function() {
-                    const buttons = document.querySelectorAll('.client-type-btn');
-                    buttons.forEach(btn => btn.classList.remove('active'));
-                    
+                    document.querySelectorAll('.client-type-btn').forEach(btn => btn.classList.remove('active'));
                     this.closest('.client-type-btn').classList.add('active');
                     clientType = this.value;
-                    
                     handleClientTypeChange(this.value);
                 });
             });
         }
         
         function handleClientTypeChange(type) {
-            const refEmailSection = document.getElementById('refEmailSection');
-            const searchBtn = document.getElementById('searchBtn');
-            
-            refEmailSection.classList.remove('locked');
-
-            // Limpar todos os erros ao mudar de modo
+            document.getElementById('refEmailSection').classList.remove('locked');
             document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
             document.querySelectorAll('.error-message').forEach(el => el.classList.remove('show'));
             document.getElementById('indicatif_box').style.borderColor = '#e0e0e0';
             document.getElementById('rgpd_error').style.display = 'none';
             document.getElementById('accuracy_error').style.display = 'none';
-
             if (type === 'existant') {
-                searchBtn.style.display = 'block';
-                // Lock ALL other sections — only ref/email + rechercher active
+                document.getElementById('searchBtn').style.display = 'block';
                 ['datesSection','personalInfoSection','idDocSection','licenseSection'].forEach(id => {
                     document.getElementById(id).classList.add('locked');
                 });
-                // Disable submit and PDF buttons
                 document.getElementById('submitBtn').disabled = true;
                 document.getElementById('submitBtn').style.opacity = '0.5';
                 document.getElementById('pdfBtn').disabled = true;
                 document.getElementById('pdfBtn').style.opacity = '0.5';
-
-                // Desativar email agence no modo modifier
                 document.getElementById('email_agence').disabled = true;
                 document.getElementById('email_agence').style.opacity = '0.5';
                 document.getElementById('email_agence_send').disabled = true;
             } else {
-                searchBtn.style.display = 'none';
-                // For nouveau: only unlock dates after ref+email filled (handled by checkRefEmailSection)
+                document.getElementById('searchBtn').style.display = 'none';
                 document.getElementById('submitBtn').disabled = false;
                 document.getElementById('submitBtn').style.opacity = '1';
-                // Reativar email agence no modo remplir
                 document.getElementById('email_agence').disabled = false;
                 document.getElementById('email_agence').style.opacity = '1';
                 document.getElementById('email_agence_send').disabled = false;
             }
         }
 
-        // Helper: reset to modifier mode with only ref or email pre-filled
-       function switchToModifierMode(keepRef, keepEmail) {
-            const refVal   = document.getElementById('reference_agence').value;
+        function switchToModifierMode(keepRef, keepEmail) {
+            const refVal = document.getElementById('reference_agence').value;
             const emailVal = document.getElementById('email').value;
-
-            // Clear entire form
             clearFormSilent();
-
-            // Restore modifier mode after clear
             document.querySelector('input[value="existant"]').checked = true;
             document.querySelector('input[value="nouveau"]').checked = false;
             document.querySelectorAll('.client-type-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('existantClientBtn').classList.add('active');
             document.getElementById('nouveauClientBtn').classList.remove('active');
             clientType = 'existant';
-
-            // Restore what we want to keep
-            if (keepRef)   document.getElementById('reference_agence').value = refVal;
+            if (keepRef) document.getElementById('reference_agence').value = refVal;
             if (keepEmail) document.getElementById('email').value = emailVal;
-
             handleClientTypeChange('existant');
-
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Clear form without confirm dialog
         function clearFormSilent() {
             document.getElementById('driverForm').reset();
             selectedIndicatif = '';
@@ -1119,51 +469,32 @@
             document.getElementById('rgpd_agence_error').style.display = 'none';
             formSubmitted = false;
             const pdfBtn = document.getElementById('pdfBtn');
-            pdfBtn.disabled = true;
-            pdfBtn.style.opacity = '0.5';
-            pdfBtn.style.cursor = 'not-allowed';
+            pdfBtn.disabled = true; pdfBtn.style.opacity = '0.5'; pdfBtn.style.cursor = 'not-allowed';
             document.getElementById('pdf_hint').textContent = 'Disponible après l\'envoi du formulaire';
             document.getElementById('pdf_hint').style.color = '#999';
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = '1';
-            submitBtn.style.cursor = 'pointer';
+            submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
             submitBtn.innerHTML = '✅ Soumettre';
             document.getElementById('submit_hint').style.display = 'none';
         }
 
-        const EMAIL_DOMAINS = [
-            '@gmail.com', '@hotmail.com', '@hotmail.fr', '@outlook.com', '@outlook.fr',
-            '@yahoo.com', '@yahoo.fr', '@orange.fr', '@sfr.fr', '@free.fr',
-            '@laposte.net', '@wanadoo.fr', '@bbox.fr', '@numericable.fr',
-            '@live.com', '@live.fr', '@msn.com', '@icloud.com', '@me.com',
-            '@protonmail.com', '@proton.me', '@gmx.com', '@gmx.fr',
-            '@pto.travel', '@sapo.pt', '@mail.pt'
-        ];
+        const EMAIL_DOMAINS = ['@gmail.com','@hotmail.com','@hotmail.fr','@outlook.com','@outlook.fr','@yahoo.com','@yahoo.fr','@orange.fr','@sfr.fr','@free.fr','@laposte.net','@wanadoo.fr','@bbox.fr','@numericable.fr','@live.com','@live.fr','@msn.com','@icloud.com','@me.com','@protonmail.com','@proton.me','@gmx.com','@gmx.fr','@pto.travel','@sapo.pt','@mail.pt'];
 
         function handleEmailInput(value, dropdownId) {
             const dropdown = document.getElementById(dropdownId || 'email_dropdown');
-            if (!value || !value.includes('@')) {
-                dropdown.style.display = 'none';
-                return;
-            }
+            if (!value || !value.includes('@')) { dropdown.style.display = 'none'; return; }
             const atIndex = value.indexOf('@');
             const beforeAt = value.substring(0, atIndex);
-            const afterAt  = value.substring(atIndex + 1);
-            const filtered = EMAIL_DOMAINS.filter(d =>
-                d.toLowerCase().includes(afterAt.toLowerCase()) || afterAt === ''
-            );
-            if (filtered.length === 0) {
-                dropdown.style.display = 'none';
-                return;
-            }
+            const afterAt = value.substring(atIndex + 1);
+            const filtered = EMAIL_DOMAINS.filter(d => d.toLowerCase().includes(afterAt.toLowerCase()) || afterAt === '');
+            if (filtered.length === 0) { dropdown.style.display = 'none'; return; }
             dropdown.innerHTML = '';
             filtered.forEach(domain => {
                 const item = document.createElement('div');
                 item.style.cssText = 'padding:9px 12px; cursor:pointer; font-size:13px; border-bottom:1px solid #f5f5f5;';
                 item.textContent = beforeAt + domain;
                 item.onmouseover = function() { this.style.background = '#e3f2fd'; };
-                item.onmouseout  = function() { this.style.background = 'white'; };
+                item.onmouseout = function() { this.style.background = 'white'; };
                 item.onclick = function() {
                     const targetId = dropdownId === 'email_agence_dropdown' ? 'email_agence' : 'email';
                     document.getElementById(targetId).value = beforeAt + domain;
@@ -1183,87 +514,42 @@
             document.getElementById('error_expiration_permis').classList.remove('show');
         }
 
-        // Form Validation and Progressive Unlocking
         function initializeFormValidation() {
-            const refInput = document.getElementById('reference_agence');
-            const emailInput = document.getElementById('email');
-            
-            refInput.addEventListener('input', checkRefEmailSection);
-            emailInput.addEventListener('input', checkRefEmailSection);
-            
-            // Date inputs
-            const datePriseInput = document.getElementById('date_prise');
-            const dateRestitutionInput = document.getElementById('date_restitution');
-            
-            datePriseInput.addEventListener('change', checkDatesSection);
-            dateRestitutionInput.addEventListener('change', checkDatesSection);
-            
-            // Personal info
-            const nomInput = document.getElementById('nom_complet');
-            const adresseInput = document.getElementById('adresse_complete');
-            const telInput = document.getElementById('telephone_numero');
-            
-            nomInput.addEventListener('input', checkPersonalInfoSection);
-            adresseInput.addEventListener('input', checkPersonalInfoSection);
-            telInput.addEventListener('input', checkPersonalInfoSection);
-            
-            // ID Document
-            const numeroDocInput = document.getElementById('numero_document');
-            const dateEmissionIdInput = document.getElementById('date_emission_id');
-            const dateExpirationIdInput = document.getElementById('date_expiration_id');
-            
-            numeroDocInput.addEventListener('input', checkIdDocSection);
-            dateEmissionIdInput.addEventListener('change', checkIdDocSection);
-            dateExpirationIdInput.addEventListener('change', checkIdDocSection);
-
-            // Auto-clear red border when field is filled
+            document.getElementById('reference_agence').addEventListener('input', checkRefEmailSection);
+            document.getElementById('email').addEventListener('input', checkRefEmailSection);
+            document.getElementById('date_prise').addEventListener('change', checkDatesSection);
+            document.getElementById('date_restitution').addEventListener('change', checkDatesSection);
+            document.getElementById('nom_complet').addEventListener('input', checkPersonalInfoSection);
+            document.getElementById('adresse_complete').addEventListener('input', checkPersonalInfoSection);
+            document.getElementById('telephone_numero').addEventListener('input', checkPersonalInfoSection);
+            document.getElementById('numero_document').addEventListener('input', checkIdDocSection);
+            document.getElementById('date_emission_id').addEventListener('change', checkIdDocSection);
+            document.getElementById('date_expiration_id').addEventListener('change', checkIdDocSection);
             document.querySelectorAll('input, textarea').forEach(input => {
-                input.addEventListener('input', function() {
-                    if (this.value && this.value.trim() !== '' && this.value !== '+') {
-                        this.classList.remove('error');
-                    }
-                });
-                input.addEventListener('change', function() {
-                    if (this.value && this.value.trim() !== '') {
-                        this.classList.remove('error');
-                    }
-                });
+                input.addEventListener('input', function() { if (this.value && this.value.trim() !== '' && this.value !== '+') this.classList.remove('error'); });
+                input.addEventListener('change', function() { if (this.value && this.value.trim() !== '') this.classList.remove('error'); });
             });
-
-            // Mostrar/ocultar checkbox agência conforme email_agence_send
             document.getElementById('email_agence_send').addEventListener('change', function() {
                 const section = document.getElementById('rgpd_agence_section');
-                if (this.checked) {
-                    section.style.display = 'block';
-                } else {
-                    section.style.display = 'none';
-                    document.getElementById('rgpd_agence').checked = false;
-                    document.getElementById('rgpd_agence_error').style.display = 'none';
-                }
+                if (this.checked) { section.style.display = 'block'; }
+                else { section.style.display = 'none'; document.getElementById('rgpd_agence').checked = false; document.getElementById('rgpd_agence_error').style.display = 'none'; }
             });
         }
         
         function checkRefEmailSection() {
             const ref = document.getElementById('reference_agence').value.trim();
             const email = document.getElementById('email').value.trim();
-            
             if (ref && email && email.includes('@')) {
-                if (clientType !== 'existant') {
-                    unlockSection('datesSection');
-                }
+                if (clientType !== 'existant') unlockSection('datesSection');
             }
-            // Garantir que TUDO fica bloqueado no modo modifier
             if (clientType === 'existant') {
-                ['datesSection','personalInfoSection','idDocSection','licenseSection'].forEach(id => {
-                    document.getElementById(id).classList.add('locked');
-                });
+                ['datesSection','personalInfoSection','idDocSection','licenseSection'].forEach(id => document.getElementById(id).classList.add('locked'));
             }
         }
         
         function checkDatesSection() {
             const datePrise = document.getElementById('date_prise').value;
             const dateRestitution = document.getElementById('date_restitution').value;
-            
             if (datePrise && dateRestitution && datePrise.length === 10 && dateRestitution.length === 10) {
                 calculateDays();
                 unlockSection('personalInfoSection');
@@ -1276,150 +562,89 @@
             const nom = document.getElementById('nom_complet').value.trim();
             const adresse = document.getElementById('adresse_complete').value.trim();
             const tel = document.getElementById('telephone_numero').value.trim();
-            
-            if (nom && adresse && tel.length > 4 && selectedIndicatif) {
-                unlockSection('idDocSection');
-            }
-            // Desbloquear também se os dados foram carregados automaticamente
-            if (nom && adresse && document.getElementById('telephone').value.trim().length > 4) {
-                unlockSection('idDocSection');
-            }
+            if (nom && adresse && tel.length > 4 && selectedIndicatif) unlockSection('idDocSection');
+            if (nom && adresse && document.getElementById('telephone').value.trim().length > 4) unlockSection('idDocSection');
         }
         
         function checkIdDocSection() {
             const numero = document.getElementById('numero_document').value.trim();
             const emission = document.getElementById('date_emission_id').value;
             const expiration = document.getElementById('date_expiration_id').value;
-            
-            if (numero && emission && expiration && emission.length === 10 && expiration.length === 10) {
-                unlockSection('licenseSection');
-            }
+            if (numero && emission && expiration && emission.length === 10 && expiration.length === 10) unlockSection('licenseSection');
         }
         
-        function unlockSection(sectionId) {
-            document.getElementById(sectionId).classList.remove('locked');
-        }
+        function unlockSection(sectionId) { document.getElementById(sectionId).classList.remove('locked'); }
         
-        // Search Existing Client
         document.getElementById('searchBtn').addEventListener('click', async function() {
-            const ref   = document.getElementById('reference_agence').value.trim();
+            const ref = document.getElementById('reference_agence').value.trim();
             const email = document.getElementById('email').value.trim();
-            
-            if (!ref || !email) {
-                alert('⚠️ Veuillez remplir la référence agence et l\'adresse email.');
-                return;
-            }
-
-            // Hide previous messages
+            if (!ref || !email) { alert('⚠️ Veuillez remplir la référence agence et l\'adresse email.'); return; }
             document.getElementById('ref_incompatible').style.display = 'none';
             document.getElementById('email_incompatible').style.display = 'none';
             document.getElementById('both_found_msg').style.display = 'none';
-            
             this.innerHTML = '<span class="spinner"></span> Recherche...';
             this.disabled = true;
-            
             try {
                 const response = await fetch(GOOGLE_SHEETS_URL + '?action=search&ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email));
                 const data = await response.json();
-                
                 if (data.success) {
-                    // Both ref AND email found together
                     document.getElementById('both_found_msg').style.display = 'block';
                     alert('✅ Référence et email reconnus.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.');
                 } else {
-                    // Check ref and email separately
                     const [refResp, emailResp] = await Promise.all([
                         fetch(GOOGLE_SHEETS_URL + '?action=checkRef&ref=' + encodeURIComponent(ref)),
                         fetch(GOOGLE_SHEETS_URL + '?action=checkEmail&email=' + encodeURIComponent(email))
                     ]);
-                    const refData   = await refResp.json();
+                    const refData = await refResp.json();
                     const emailData = await emailResp.json();
-
-                    if (refData.exists && !emailData.exists) {
-                        // Ref found, email not matching
-                        document.getElementById('email').value = '';
-                        document.getElementById('email_incompatible').style.display = 'block';
-                    } else if (!refData.exists && emailData.exists) {
-                        // Email found, ref not matching
-                        document.getElementById('reference_agence').value = '';
-                        document.getElementById('ref_incompatible').style.display = 'block';
-                    } else {
-                        // Neither found
-                        alert('❌ Aucun dossier trouvé avec cette référence et cet email.\n\nSi vous remplissez ce formulaire pour la première fois, veuillez sélectionner "Remplir le formulaire".');
-                    }
+                    if (refData.exists && !emailData.exists) { document.getElementById('email').value = ''; document.getElementById('email_incompatible').style.display = 'block'; }
+                    else if (!refData.exists && emailData.exists) { document.getElementById('reference_agence').value = ''; document.getElementById('ref_incompatible').style.display = 'block'; }
+                    else { alert('❌ Aucun dossier trouvé avec cette référence et cet email.\n\nSi vous remplissez ce formulaire pour la première fois, veuillez sélectionner "Remplir le formulaire".'); }
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Erreur lors de la recherche. Veuillez réessayer.');
-            } finally {
-                this.innerHTML = '🔍 RECHERCHER';
-                this.disabled = false;
-            }
+            } catch (error) { alert('❌ Erreur lors de la recherche. Veuillez réessayer.'); }
+            finally { this.innerHTML = '🔍 RECHERCHER'; this.disabled = false; }
         });
         
-        // Fetch Existing Client Data
         async function fetchExistingClientData(ref, token) {
             try {
                 const response = await fetch(GOOGLE_SHEETS_URL + '?action=fetch&ref=' + encodeURIComponent(ref) + '&token=' + encodeURIComponent(token));
                 const data = await response.json();
-                
                 if (data.success && data.clientData) {
                     isExistingClientData = true;
                     populateFormWithExistingData(data.clientData);
                     unlockAllSections();
                     const submitBtn = document.getElementById('submitBtn');
-                    submitBtn.disabled = false;
-                    submitBtn.style.opacity = '1';
-                    submitBtn.style.cursor = 'pointer';
-                    // Desativar botão Rechercher após carregar dados pelo link
+                    submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
                     const searchBtn = document.getElementById('searchBtn');
-                    searchBtn.disabled = true;
-                    searchBtn.style.opacity = '0.4';
-                    searchBtn.style.cursor = 'not-allowed';
-                    searchBtn.innerHTML = '✅ Données chargées';
-                    // Desativar botão Effacer quando entra pelo link
+                    searchBtn.disabled = true; searchBtn.style.opacity = '0.4'; searchBtn.style.cursor = 'not-allowed'; searchBtn.innerHTML = '✅ Données chargées';
                     const effacerBtn = document.getElementById('effacerBtn');
-                    effacerBtn.disabled = true;
-                    effacerBtn.style.opacity = '0.4';
-                    effacerBtn.style.cursor = 'not-allowed';
-                } else {
-                    alert('❌ Impossible de récupérer les données du client.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Erreur lors de la récupération des données.');
-            }
+                    effacerBtn.disabled = true; effacerBtn.style.opacity = '0.4'; effacerBtn.style.cursor = 'not-allowed';
+                } else { alert('❌ Impossible de récupérer les données du client.'); }
+            } catch (error) { alert('❌ Erreur lors de la récupération des données.'); }
         }
         
         function populateFormWithExistingData(data) {
             const camposBloqueados = ['reference_agence', 'email'];
-
             const fields = {
-                'reference_agence': data.reference_agence,
-                'email': data.email,
-                'date_prise': data.date_prise,
-                'date_restitution': data.date_restitution,
-                'nom_complet': data.nom_complet,
-                'adresse_complete': data.adresse_complete,
-                'numero_document': data.numero_document,
-                'date_emission_id': data.date_emission_id,
-                'date_expiration_id': data.date_expiration_id,
-                'numero_permis': data.numero_permis,
-                'date_emission_permis': data.date_emission_permis,
-                'date_expiration_permis': data.date_expiration_permis
+                'reference_agence': data.reference_agence, 'email': data.email,
+                'date_prise': data.date_prise, 'date_restitution': data.date_restitution,
+                'nom_complet': data.nom_complet, 'adresse_complete': data.adresse_complete,
+                'numero_document': data.numero_document, 'date_emission_id': data.date_emission_id,
+                'date_expiration_id': data.date_expiration_id, 'numero_permis': data.numero_permis,
+                'date_emission_permis': data.date_emission_permis, 'date_expiration_permis': data.date_expiration_permis
             };
-            
             for (let [fieldId, value] of Object.entries(fields)) {
                 const input = document.getElementById(fieldId);
                 if (input && value) {
                     input.value = value;
-                    input.disabled = true;
-                    if (!camposBloqueados.includes(fieldId)) {
+                    if (camposBloqueados.includes(fieldId)) {
+                        input.disabled = true;
+                    } else {
+                        input.disabled = true;
                         addEditIcon(fieldId);
                     }
                 }
             }
-
             if (data.telephone) {
                 const tel = data.telephone.toString();
                 const match = COUNTRIES.find(c => tel.startsWith(c.code));
@@ -1431,28 +656,19 @@
                     document.getElementById('indicatif_clear').style.display = 'block';
                     document.getElementById('indicatif_box').style.borderColor = '#2C5F8D';
                     document.getElementById('telephone_numero').value = tel.substring(match.code.length);
-                } else {
-                    document.getElementById('telephone_numero').value = tel;
-                }
+                } else { document.getElementById('telephone_numero').value = tel; }
                 document.getElementById('telephone').value = tel;
                 document.getElementById('telephone_numero').disabled = true;
                 const numInput = document.getElementById('telephone_numero');
                 const wrapper = numInput.parentElement;
                 if (!wrapper.querySelector('.edit-icon')) {
                     const icon = document.createElement('span');
-                    icon.className = 'edit-icon';
-                    icon.innerHTML = '✏️';
+                    icon.className = 'edit-icon'; icon.innerHTML = '✏️';
                     icon.style.cssText = 'position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:18px; opacity:0.6;';
-                    icon.onclick = function() {
-                        numInput.disabled = false;
-                        numInput.focus();
-                        this.remove();
-                    };
-                    wrapper.style.position = 'relative';
-                    wrapper.appendChild(icon);
+                    icon.onclick = function() { numInput.disabled = false; numInput.focus(); this.remove(); };
+                    wrapper.style.position = 'relative'; wrapper.appendChild(icon);
                 }
             }
-            
             calculateDays();
             const dp = document.getElementById('date_prise').value;
             const dr = document.getElementById('date_restitution').value;
@@ -1461,8 +677,6 @@
                 unlockSection('idDocSection');
                 unlockSection('licenseSection');
             }
-        }
-
             // Colorir campos de datas em laranja
             const camposData = ['date_prise','date_restitution','date_emission_id','date_expiration_id','date_emission_permis','date_expiration_permis'];
             camposData.forEach(id => {
@@ -1472,9 +686,7 @@
                     el.style.background = 'white';
                     el.style.borderColor = '#ffb74d';
                     let userModified = false;
-                    el.addEventListener('change', function() {
-                        if (userModified) this.style.background = '#fff8f0';
-                    });
+                    el.addEventListener('change', function() { if (userModified) this.style.background = '#fff8f0'; });
                     setTimeout(() => { userModified = true; }, 500);
                 }
             });
@@ -1483,125 +695,62 @@
         function addEditIcon(fieldId) {
             const input = document.getElementById(fieldId);
             const wrapper = input.parentElement;
-            
             if (!wrapper.querySelector('.edit-icon')) {
                 const icon = document.createElement('span');
-                icon.className = 'edit-icon';
-                icon.innerHTML = '✏️';
-                icon.onclick = function() {
-                    input.disabled = false;
-                    input.focus();
-                    this.remove();
-                };
-                
-                wrapper.style.position = 'relative';
-                wrapper.appendChild(icon);
+                icon.className = 'edit-icon'; icon.innerHTML = '✏️';
+                icon.onclick = function() { input.disabled = false; input.focus(); this.remove(); };
+                wrapper.style.position = 'relative'; wrapper.appendChild(icon);
             }
         }
         
-        function unlockAllSections() {
-            document.querySelectorAll('.form-section').forEach(section => {
-                section.classList.remove('locked');
-            });
-        }
+        function unlockAllSections() { document.querySelectorAll('.form-section').forEach(s => s.classList.remove('locked')); }
         
-        // Calendar Functions
-        const FIELD_LABELS = {
-            'date_prise':             'Date de Prise en Charge',
-            'date_restitution':       'Date de Restitution',
-            'date_emission_id':       'Date d\'Émission — Pièce d\'Identité',
-            'date_expiration_id':     'Date d\'Expiration — Pièce d\'Identité',
-            'date_emission_permis':   'Date d\'Émission — Permis de Conduire',
-            'date_expiration_permis': 'Date d\'Expiration — Permis de Conduire'
-        };
-
-        // Fields where past dates are allowed
+        const FIELD_LABELS = { 'date_prise': 'Date de Prise en Charge', 'date_restitution': 'Date de Restitution', 'date_emission_id': "Date d'Émission — Pièce d'Identité", 'date_expiration_id': "Date d'Expiration — Pièce d'Identité", 'date_emission_permis': "Date d'Émission — Permis de Conduire", 'date_expiration_permis': "Date d'Expiration — Permis de Conduire" };
         const ALLOW_PAST = ['date_emission_id','date_expiration_id','date_emission_permis','date_expiration_permis'];
-
-        // Sequence: after selecting date_prise, auto-open date_restitution
-        const NEXT_CALENDAR = {
-            'date_prise': 'date_restitution'
-        };
-
-        const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin',
-                           'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+        const NEXT_CALENDAR = { 'date_prise': 'date_restitution' };
+        const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 
         function initializeDateInputs() {
-            const dateInputs = document.querySelectorAll('.date-input input');
-            dateInputs.forEach(input => {
+            document.querySelectorAll('.date-input input').forEach(input => {
                 input.addEventListener('click', function() {
                     if (!this.disabled) {
                         if (clientType === 'existant' && !isExistingClientData) return;
-                        currentInputId = this.id;
-                        openCalendar();
+                        currentInputId = this.id; openCalendar();
                     }
                 });
             });
         }
 
         function openCalendar() {
-            const overlay = document.getElementById('calendarOverlay');
-            overlay.classList.add('active');
-
-            // Set field title
-            const titleEl = document.getElementById('calendarFieldTitle');
-            titleEl.textContent = FIELD_LABELS[currentInputId] || currentInputId;
-
-            // Set calendar to current value or today
+            document.getElementById('calendarOverlay').classList.add('active');
+            document.getElementById('calendarFieldTitle').textContent = FIELD_LABELS[currentInputId] || currentInputId;
             const input = document.getElementById(currentInputId);
             if (input.value && input.value.length === 10) {
                 const parts = input.value.split('/');
                 currentCalendarDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-            } else if (currentInputId !== 'date_restitution') {
-                currentCalendarDate = new Date();
-            }
-
-            populateSelects();
-            renderCalendar();
+            } else if (currentInputId !== 'date_restitution') { currentCalendarDate = new Date(); }
+            populateSelects(); renderCalendar();
         }
 
-        function closeCalendar() {
-            document.getElementById('calendarOverlay').classList.remove('active');
-        }
+        function closeCalendar() { document.getElementById('calendarOverlay').classList.remove('active'); }
 
         function populateSelects() {
             const monthSel = document.getElementById('calMonthSelect');
-            const yearSel  = document.getElementById('calYearSelect');
-            const today    = new Date();
-            const curYear  = today.getFullYear();
-            const selYear  = currentCalendarDate.getFullYear();
-            const selMonth = currentCalendarDate.getMonth();
+            const yearSel = document.getElementById('calYearSelect');
+            const today = new Date(); const curYear = today.getFullYear();
+            const selYear = currentCalendarDate.getFullYear(); const selMonth = currentCalendarDate.getMonth();
             const allowPast = ALLOW_PAST.includes(currentInputId);
-
-            // Months
             monthSel.innerHTML = '';
-            MONTHS_FR.forEach((m, i) => {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.textContent = m;
-                if (i === selMonth) opt.selected = true;
-                monthSel.appendChild(opt);
-            });
-
-            // Years
+            MONTHS_FR.forEach((m, i) => { const opt = document.createElement('option'); opt.value = i; opt.textContent = m; if (i === selMonth) opt.selected = true; monthSel.appendChild(opt); });
             yearSel.innerHTML = '';
-            const startYear = allowPast ? curYear - 50 : curYear;
-            const endYear   = curYear + 30;
-            for (let y = startYear; y <= endYear; y++) {
-                const opt = document.createElement('option');
-                opt.value = y;
-                opt.textContent = y;
-                if (y === selYear) opt.selected = true;
-                yearSel.appendChild(opt);
-            }
+            const startYear = allowPast ? curYear - 50 : curYear; const endYear = curYear + 30;
+            for (let y = startYear; y <= endYear; y++) { const opt = document.createElement('option'); opt.value = y; opt.textContent = y; if (y === selYear) opt.selected = true; yearSel.appendChild(opt); }
         }
 
         function changeMonthSelect(val) {
             currentCalendarDate.setMonth(parseInt(val));
-            // If navigating back before today, snap to today
             const today = new Date();
-            if (currentCalendarDate.getFullYear() === today.getFullYear() &&
-                currentCalendarDate.getMonth() < today.getMonth()) {
+            if (currentCalendarDate.getFullYear() === today.getFullYear() && currentCalendarDate.getMonth() < today.getMonth()) {
                 currentCalendarDate = new Date(today.getFullYear(), today.getMonth(), 1);
                 document.getElementById('calMonthSelect').value = currentCalendarDate.getMonth();
             }
@@ -1611,8 +760,7 @@
         function changeYearSelect(val) {
             currentCalendarDate.setFullYear(parseInt(val));
             const today = new Date();
-            if (currentCalendarDate.getFullYear() === today.getFullYear() &&
-                currentCalendarDate.getMonth() < today.getMonth()) {
+            if (currentCalendarDate.getFullYear() === today.getFullYear() && currentCalendarDate.getMonth() < today.getMonth()) {
                 currentCalendarDate.setMonth(today.getMonth());
                 document.getElementById('calMonthSelect').value = today.getMonth();
             }
@@ -1620,648 +768,242 @@
         }
 
         function changeMonth(delta) {
-            const today = new Date();
-            const allowPast = ALLOW_PAST.includes(currentInputId);
-            const newDate = new Date(currentCalendarDate.getFullYear(),
-                                     currentCalendarDate.getMonth() + delta, 1);
-            // Don't go before current month unless field allows past dates
+            const today = new Date(); const allowPast = ALLOW_PAST.includes(currentInputId);
+            const newDate = new Date(currentCalendarDate.getFullYear(), currentCalendarDate.getMonth() + delta, 1);
             if (!allowPast && newDate < new Date(today.getFullYear(), today.getMonth(), 1)) return;
-            currentCalendarDate = newDate;
-            populateSelects();
-            renderCalendar();
+            currentCalendarDate = newDate; populateSelects(); renderCalendar();
         }
 
         function renderCalendar() {
-            const grid = document.getElementById('calendarGrid');
-            const today = new Date();
-            today.setHours(0,0,0,0);
-
+            const grid = document.getElementById('calendarGrid'); const today = new Date(); today.setHours(0,0,0,0);
             grid.innerHTML = '';
-
-            // Day headers — starting Monday
-            const dayHeaders = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-            dayHeaders.forEach(day => {
-                const header = document.createElement('div');
-                header.className = 'calendar-day-header';
-                header.textContent = day;
-                grid.appendChild(header);
-            });
-
-            const year  = currentCalendarDate.getFullYear();
-            const month = currentCalendarDate.getMonth();
-            const firstDay = new Date(year, month, 1);
-            const lastDay  = new Date(year, month + 1, 0);
-
-            // Monday-based: Sunday(0)→6, Monday(1)→0, ..., Saturday(6)→5
-            let startDow = firstDay.getDay(); // 0=Sun
-            startDow = (startDow === 0) ? 6 : startDow - 1;
-
-            // Previous month filler days
-            for (let i = startDow - 1; i >= 0; i--) {
-                const d = new Date(year, month, -i);
-                addCalendarDay(d, true, today);
-            }
-
-            // Current month days
-            for (let day = 1; day <= lastDay.getDate(); day++) {
-                const d = new Date(year, month, day);
-                addCalendarDay(d, false, today);
-            }
-
-            // Next month filler to complete grid (multiple of 7)
-            const totalCells = grid.children.length - 7; // minus headers
-            const remaining  = (7 - (totalCells % 7)) % 7;
-            for (let i = 1; i <= remaining; i++) {
-                const d = new Date(year, month + 1, i);
-                addCalendarDay(d, true, today);
-            }
+            ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(day => { const h = document.createElement('div'); h.className = 'calendar-day-header'; h.textContent = day; grid.appendChild(h); });
+            const year = currentCalendarDate.getFullYear(); const month = currentCalendarDate.getMonth();
+            const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0);
+            let startDow = firstDay.getDay(); startDow = (startDow === 0) ? 6 : startDow - 1;
+            for (let i = startDow - 1; i >= 0; i--) addCalendarDay(new Date(year, month, -i), true, today);
+            for (let day = 1; day <= lastDay.getDate(); day++) addCalendarDay(new Date(year, month, day), false, today);
+            const totalCells = grid.children.length - 7; const remaining = (7 - (totalCells % 7)) % 7;
+            for (let i = 1; i <= remaining; i++) addCalendarDay(new Date(year, month + 1, i), true, today);
         }
 
         function addCalendarDay(date, isOtherMonth, today) {
-            const grid   = document.getElementById('calendarGrid');
-            const dayDiv = document.createElement('div');
-            dayDiv.className = 'calendar-day';
-            dayDiv.textContent = date.getDate();
-
-            const allowPast = ALLOW_PAST.includes(currentInputId);
-            const isPast = !allowPast && date < today;
-
-            if (isOtherMonth || isPast) {
-                dayDiv.classList.add(isOtherMonth ? 'other-month' : 'disabled');
-            } else {
-                // Check today
-                if (date.toDateString() === today.toDateString()) {
-                    dayDiv.classList.add('today');
-                }
-
-                // Check selected and range
-                const dp  = document.getElementById('date_prise').value;
-                const dr  = document.getElementById('date_restitution').value;
+            const grid = document.getElementById('calendarGrid');
+            const dayDiv = document.createElement('div'); dayDiv.className = 'calendar-day'; dayDiv.textContent = date.getDate();
+            const allowPast = ALLOW_PAST.includes(currentInputId); const isPast = !allowPast && date < today;
+            if (isOtherMonth || isPast) { dayDiv.classList.add(isOtherMonth ? 'other-month' : 'disabled'); }
+            else {
+                if (date.toDateString() === today.toDateString()) dayDiv.classList.add('today');
+                const dp = document.getElementById('date_prise').value; const dr = document.getElementById('date_restitution').value;
                 const input = document.getElementById(currentInputId);
                 if (input && input.value && input.value.length === 10) {
                     const parts = input.value.split('/');
                     const sel = new Date(parseInt(parts[2]), parseInt(parts[1])-1, parseInt(parts[0]));
-                    if (date.toDateString() === sel.toDateString()) {
-                        dayDiv.classList.add('selected');
-                    }
+                    if (date.toDateString() === sel.toDateString()) dayDiv.classList.add('selected');
                 }
-                // Range APENAS para calendários de période de location
                 if (currentInputId === 'date_prise' || currentInputId === 'date_restitution') {
-                    if (dp && dp.length === 10) {
-                        const d1 = parseDateString(dp);
-                        if (d1 && date.toDateString() === d1.toDateString()) {
-                            dayDiv.classList.add('selected');
-                        }
-                    }
+                    if (dp && dp.length === 10) { const d1 = parseDateString(dp); if (d1 && date.toDateString() === d1.toDateString()) dayDiv.classList.add('selected'); }
                     if (dp && dp.length === 10 && dr && dr.length === 10) {
-                        const d1 = parseDateString(dp);
-                        const d2 = parseDateString(dr);
-                        if (d1 && d2 && date > d1 && date < d2) {
-                            dayDiv.style.background = '#e3f2fd';
-                            dayDiv.style.borderRadius = '0';
-                        }
-                        if (d1 && date.toDateString() === d1.toDateString()) {
-                            dayDiv.classList.add('selected');
-                        }
-                        if (d2 && date.toDateString() === d2.toDateString()) {
-                            dayDiv.classList.add('selected');
-                        }
+                        const d1 = parseDateString(dp); const d2 = parseDateString(dr);
+                        if (d1 && d2 && date > d1 && date < d2) { dayDiv.style.background = '#e3f2fd'; dayDiv.style.borderRadius = '0'; }
+                        if (d1 && date.toDateString() === d1.toDateString()) dayDiv.classList.add('selected');
+                        if (d2 && date.toDateString() === d2.toDateString()) dayDiv.classList.add('selected');
                     }
                 }
-
                 dayDiv.addEventListener('click', function() { selectDate(date); });
             }
-
             grid.appendChild(dayDiv);
         }
 
         function selectDate(date) {
             const input = document.getElementById(currentInputId);
-            const day   = String(date.getDate()).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year  = date.getFullYear();
+            const year = date.getFullYear();
             const dateStr = `${day}/${month}/${year}`;
-
-            // Validate date logic before accepting
             if (currentInputId === 'date_prise') {
                 const restitution = document.getElementById('date_restitution').value;
                 if (restitution && restitution.length === 10) {
                     const dr = parseDateString(restitution);
-                    if (dr && date > dr) {
-                        // Limpar restitution e permitir continuar
-                        document.getElementById('date_restitution').value = '';
-                        document.getElementById('daysDisplay').classList.remove('show');
-                        document.getElementById('same_date_warning').style.display = 'none';
-                    }
+                    if (dr && date > dr) { document.getElementById('date_restitution').value = ''; document.getElementById('daysDisplay').classList.remove('show'); document.getElementById('same_date_warning').style.display = 'none'; }
                 }
             }
             if (currentInputId === 'date_restitution') {
                 const prise = document.getElementById('date_prise').value;
                 if (prise && prise.length === 10) {
                     const dp = parseDateString(prise);
-                    if (dp && date < dp) {
-                        alert('⚠️ La date de restitution doit être égale ou postérieure à la date de prise en charge.');
-                        return;
-                    }
-                    if (dp && date.toDateString() === dp.toDateString()) {
-                        document.getElementById('same_date_warning').style.display = 'block';
-                    } else {
-                        document.getElementById('same_date_warning').style.display = 'none';
-                    }
+                    if (dp && date < dp) { alert('⚠️ La date de restitution doit être égale ou postérieure à la date de prise en charge.'); return; }
+                    if (dp && date.toDateString() === dp.toDateString()) document.getElementById('same_date_warning').style.display = 'block';
+                    else document.getElementById('same_date_warning').style.display = 'none';
                 }
             }
             if (currentInputId === 'date_prise') {
                 const restitution = document.getElementById('date_restitution').value;
                 if (restitution && restitution.length === 10) {
                     const dr = parseDateString(restitution);
-                    if (dr && date.toDateString() === dr.toDateString()) {
-                        document.getElementById('same_date_warning').style.display = 'block';
-                    } else {
-                        document.getElementById('same_date_warning').style.display = 'none';
-                    }
+                    if (dr && date.toDateString() === dr.toDateString()) document.getElementById('same_date_warning').style.display = 'block';
+                    else document.getElementById('same_date_warning').style.display = 'none';
                 }
             }
             if (currentInputId === 'date_emission_id') {
                 const prise = document.getElementById('date_prise').value;
-                if (prise && prise.length === 10) {
-                    const dp = parseDateString(prise);
-                    if (dp && date >= dp) {
-                        alert('⚠️ La date d\'émission de la pièce d\'identité doit être antérieure à la date de prise en charge.');
-                        return;
-                    }
-                }
+                if (prise && prise.length === 10) { const dp = parseDateString(prise); if (dp && date >= dp) { alert("⚠️ La date d'émission de la pièce d'identité doit être antérieure à la date de prise en charge."); return; } }
             }
             if (currentInputId === 'date_emission_permis') {
-                const prise = document.getElementById('date_prise').value;
-                const restitution = document.getElementById('date_restitution').value;
-                if (prise && prise.length === 10) {
-                    const dp = parseDateString(prise);
-                    if (dp && date >= dp) {
-                        alert('⚠️ La date d\'émission du permis de conduire doit être antérieure à la date de prise en charge.');
-                        return;
-                    }
-                }
-                if (restitution && restitution.length === 10) {
-                    const dr = parseDateString(restitution);
-                    if (dr && date >= dr) {
-                        alert('⚠️ La date d\'émission du permis de conduire doit être antérieure à la date de restitution.');
-                        return;
-                    }
-                }
+                const prise = document.getElementById('date_prise').value; const restitution = document.getElementById('date_restitution').value;
+                if (prise && prise.length === 10) { const dp = parseDateString(prise); if (dp && date >= dp) { alert("⚠️ La date d'émission du permis de conduire doit être antérieure à la date de prise en charge."); return; } }
+                if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date >= dr) { alert("⚠️ La date d'émission du permis de conduire doit être antérieure à la date de restitution."); return; } }
             }
             if (currentInputId === 'date_expiration_id') {
-                const emission = document.getElementById('date_emission_id').value;
-                const restitution = document.getElementById('date_restitution').value;
-                if (emission && emission.length === 10) {
-                    const de = parseDateString(emission);
-                    if (de && date <= de) {
-                        alert('⚠️ La date d\'expiration doit être postérieure à la date d\'émission.');
-                        return;
-                    }
-                }
-                if (restitution && restitution.length === 10) {
-                    const dr = parseDateString(restitution);
-                    if (dr && date <= dr) {
-                        alert('⚠️ La date d\'expiration du document doit être postérieure à la date de restitution.');
-                        return;
-                    }
-                }
+                const emission = document.getElementById('date_emission_id').value; const restitution = document.getElementById('date_restitution').value;
+                if (emission && emission.length === 10) { const de = parseDateString(emission); if (de && date <= de) { alert("⚠️ La date d'expiration doit être postérieure à la date d'émission."); return; } }
+                if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date <= dr) { alert("⚠️ La date d'expiration du document doit être postérieure à la date de restitution."); return; } }
             }
             if (currentInputId === 'date_expiration_permis') {
-                const emission = document.getElementById('date_emission_permis').value;
-                const restitution = document.getElementById('date_restitution').value;
-                if (emission && emission.length === 10) {
-                    const de = parseDateString(emission);
-                    if (de && date <= de) {
-                        alert('⚠️ La date d\'expiration doit être postérieure à la date d\'émission.');
-                        return;
-                    }
-                }
-                if (restitution && restitution.length === 10) {
-                    const dr = parseDateString(restitution);
-                    if (dr && date <= dr) {
-                        alert('⚠️ La date d\'expiration du permis doit être postérieure à la date de restitution.');
-                        return;
-                    }
-                }
+                const emission = document.getElementById('date_emission_permis').value; const restitution = document.getElementById('date_restitution').value;
+                if (emission && emission.length === 10) { const de = parseDateString(emission); if (de && date <= de) { alert("⚠️ La date d'expiration doit être postérieure à la date d'émission."); return; } }
+                if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date <= dr) { alert("⚠️ La date d'expiration du permis doit être postérieure à la date de restitution."); return; } }
             }
-
-            input.value = dateStr;
-            input.dispatchEvent(new Event('change'));
-
-            // Check if there's a next calendar to open automatically
-           const nextId = NEXT_CALENDAR[currentInputId];
-            closeCalendar();
-
+            input.value = dateStr; input.dispatchEvent(new Event('change'));
+            const nextId = NEXT_CALENDAR[currentInputId]; closeCalendar();
             if (nextId) {
                 const nextInput = document.getElementById(nextId);
                 if (nextInput && !nextInput.disabled) {
-                    const savedYear  = date.getFullYear();
-                    const savedMonth = date.getMonth();
-                    setTimeout(() => {
-                        currentInputId = nextId;
-                        currentCalendarDate = new Date(savedYear, savedMonth, 1);
-                        openCalendar();
-                    }, 200);
+                    const savedYear = date.getFullYear(); const savedMonth = date.getMonth();
+                    setTimeout(() => { currentInputId = nextId; currentCalendarDate = new Date(savedYear, savedMonth, 1); openCalendar(); }, 200);
                 }
             }
         }
         
-        // Calculate Days
         function calculateDays() {
             const datePrise = document.getElementById('date_prise').value;
             const dateRestitution = document.getElementById('date_restitution').value;
-            
             if (datePrise && dateRestitution && datePrise.length === 10 && dateRestitution.length === 10) {
-                const parts1 = datePrise.split('/');
-                const parts2 = dateRestitution.split('/');
-                
+                const parts1 = datePrise.split('/'); const parts2 = dateRestitution.split('/');
                 const date1 = new Date(parts1[2], parseInt(parts1[1]) - 1, parts1[0]);
                 const date2 = new Date(parts2[2], parseInt(parts2[1]) - 1, parts2[0]);
-                
                 const diffTime = date2 - date1;
                 const diffDays = diffTime === 0 ? 1 : Math.ceil(Math.abs(diffTime) / (1000 * 60 * 60 * 24));
-                
                 document.getElementById('daysCount').textContent = diffDays;
                 document.getElementById('daysDisplay').classList.add('show');
             }
         }
         
-        // Phone / Country Code
-        const COUNTRIES = [
-            {name:'Afghanistan',code:'+93'},{name:'Afrique du Sud',code:'+27'},{name:'Albanie',code:'+355'},
-            {name:'Algérie',code:'+213'},{name:'Allemagne',code:'+49'},{name:'Andorre',code:'+376'},
-            {name:'Angola',code:'+244'},{name:'Arabie Saoudite',code:'+966'},{name:'Argentine',code:'+54'},
-            {name:'Arménie',code:'+374'},{name:'Australie',code:'+61'},{name:'Autriche',code:'+43'},
-            {name:'Azerbaïdjan',code:'+994'},{name:'Bahreïn',code:'+973'},{name:'Bangladesh',code:'+880'},
-            {name:'Belgique',code:'+32'},{name:'Bénin',code:'+229'},{name:'Biélorussie',code:'+375'},
-            {name:'Bolivie',code:'+591'},{name:'Bosnie-Herzégovine',code:'+387'},{name:'Brésil',code:'+55'},
-            {name:'Bulgarie',code:'+359'},{name:'Burkina Faso',code:'+226'},{name:'Cameroun',code:'+237'},
-            {name:'Canada',code:'+1'},{name:'Cap-Vert',code:'+238'},{name:'Chili',code:'+56'},
-            {name:'Chine',code:'+86'},{name:'Chypre',code:'+357'},{name:'Colombie',code:'+57'},
-            {name:'Congo',code:'+242'},{name:'Corée du Sud',code:'+82'},{name:'Costa Rica',code:'+506'},
-            {name:'Côte d\'Ivoire',code:'+225'},{name:'Croatie',code:'+385'},{name:'Cuba',code:'+53'},
-            {name:'Danemark',code:'+45'},{name:'Égypte',code:'+20'},{name:'Émirats arabes unis',code:'+971'},
-            {name:'Équateur',code:'+593'},{name:'Espagne',code:'+34'},{name:'Estonie',code:'+372'},
-            {name:'États-Unis',code:'+1'},{name:'Éthiopie',code:'+251'},{name:'Finlande',code:'+358'},
-            {name:'France',code:'+33'},{name:'Gabon',code:'+241'},{name:'Géorgie',code:'+995'},
-            {name:'Ghana',code:'+233'},{name:'Grèce',code:'+30'},{name:'Guatemala',code:'+502'},
-            {name:'Guinée',code:'+224'},{name:'Haïti',code:'+509'},{name:'Honduras',code:'+504'},
-            {name:'Hong Kong',code:'+852'},{name:'Hongrie',code:'+36'},{name:'Inde',code:'+91'},
-            {name:'Indonésie',code:'+62'},{name:'Irak',code:'+964'},{name:'Iran',code:'+98'},
-            {name:'Irlande',code:'+353'},{name:'Islande',code:'+354'},{name:'Israël',code:'+972'},
-            {name:'Italie',code:'+39'},{name:'Jamaïque',code:'+1876'},{name:'Japon',code:'+81'},
-            {name:'Jordanie',code:'+962'},{name:'Kazakhstan',code:'+7'},{name:'Kenya',code:'+254'},
-            {name:'Kosovo',code:'+383'},{name:'Koweït',code:'+965'},{name:'Lettonie',code:'+371'},
-            {name:'Liban',code:'+961'},{name:'Libye',code:'+218'},{name:'Liechtenstein',code:'+423'},
-            {name:'Lituanie',code:'+370'},{name:'Luxembourg',code:'+352'},{name:'Macédoine du Nord',code:'+389'},
-            {name:'Madagascar',code:'+261'},{name:'Malaisie',code:'+60'},{name:'Mali',code:'+223'},
-            {name:'Malte',code:'+356'},{name:'Maroc',code:'+212'},{name:'Maurice',code:'+230'},
-            {name:'Mauritanie',code:'+222'},{name:'Mexique',code:'+52'},{name:'Moldavie',code:'+373'},
-            {name:'Monaco',code:'+377'},{name:'Mongolie',code:'+976'},{name:'Monténégro',code:'+382'},
-            {name:'Mozambique',code:'+258'},{name:'Myanmar',code:'+95'},{name:'Namibie',code:'+264'},
-            {name:'Népal',code:'+977'},{name:'Nicaragua',code:'+505'},{name:'Niger',code:'+227'},
-            {name:'Nigéria',code:'+234'},{name:'Norvège',code:'+47'},{name:'Nouvelle-Zélande',code:'+64'},
-            {name:'Oman',code:'+968'},{name:'Ouganda',code:'+256'},{name:'Pakistan',code:'+92'},
-            {name:'Palestine',code:'+970'},{name:'Panama',code:'+507'},{name:'Paraguay',code:'+595'},
-            {name:'Pays-Bas',code:'+31'},{name:'Pérou',code:'+51'},{name:'Philippines',code:'+63'},
-            {name:'Pologne',code:'+48'},{name:'Portugal',code:'+351'},{name:'Qatar',code:'+974'},
-            {name:'République dominicaine',code:'+1809'},{name:'République tchèque',code:'+420'},
-            {name:'Roumanie',code:'+40'},{name:'Royaume-Uni',code:'+44'},{name:'Russie',code:'+7'},
-            {name:'Rwanda',code:'+250'},{name:'Saint-Marin',code:'+378'},{name:'Sénégal',code:'+221'},
-            {name:'Serbie',code:'+381'},{name:'Singapour',code:'+65'},{name:'Slovaquie',code:'+421'},
-            {name:'Slovénie',code:'+386'},{name:'Somalie',code:'+252'},{name:'Soudan',code:'+249'},
-            {name:'Sri Lanka',code:'+94'},{name:'Suède',code:'+46'},{name:'Suisse',code:'+41'},
-            {name:'Syrie',code:'+963'},{name:'Taïwan',code:'+886'},{name:'Tanzanie',code:'+255'},
-            {name:'Thaïlande',code:'+66'},{name:'Togo',code:'+228'},{name:'Tunisie',code:'+216'},
-            {name:'Turquie',code:'+90'},{name:'Ukraine',code:'+380'},{name:'Uruguay',code:'+598'},
-            {name:'Venezuela',code:'+58'},{name:'Vietnam',code:'+84'},{name:'Yémen',code:'+967'},
-            {name:'Zambie',code:'+260'},{name:'Zimbabwe',code:'+263'}
-        ];
+        const COUNTRIES = [{name:'Afghanistan',code:'+93'},{name:'Afrique du Sud',code:'+27'},{name:'Albanie',code:'+355'},{name:'Algérie',code:'+213'},{name:'Allemagne',code:'+49'},{name:'Andorre',code:'+376'},{name:'Angola',code:'+244'},{name:'Arabie Saoudite',code:'+966'},{name:'Argentine',code:'+54'},{name:'Arménie',code:'+374'},{name:'Australie',code:'+61'},{name:'Autriche',code:'+43'},{name:'Azerbaïdjan',code:'+994'},{name:'Bahreïn',code:'+973'},{name:'Bangladesh',code:'+880'},{name:'Belgique',code:'+32'},{name:'Bénin',code:'+229'},{name:'Biélorussie',code:'+375'},{name:'Bolivie',code:'+591'},{name:'Bosnie-Herzégovine',code:'+387'},{name:'Brésil',code:'+55'},{name:'Bulgarie',code:'+359'},{name:'Burkina Faso',code:'+226'},{name:'Cameroun',code:'+237'},{name:'Canada',code:'+1'},{name:'Cap-Vert',code:'+238'},{name:'Chili',code:'+56'},{name:'Chine',code:'+86'},{name:'Chypre',code:'+357'},{name:'Colombie',code:'+57'},{name:'Congo',code:'+242'},{name:'Corée du Sud',code:'+82'},{name:'Costa Rica',code:'+506'},{name:"Côte d'Ivoire",code:'+225'},{name:'Croatie',code:'+385'},{name:'Cuba',code:'+53'},{name:'Danemark',code:'+45'},{name:'Égypte',code:'+20'},{name:'Émirats arabes unis',code:'+971'},{name:'Équateur',code:'+593'},{name:'Espagne',code:'+34'},{name:'Estonie',code:'+372'},{name:'États-Unis',code:'+1'},{name:'Éthiopie',code:'+251'},{name:'Finlande',code:'+358'},{name:'France',code:'+33'},{name:'Gabon',code:'+241'},{name:'Géorgie',code:'+995'},{name:'Ghana',code:'+233'},{name:'Grèce',code:'+30'},{name:'Guatemala',code:'+502'},{name:'Guinée',code:'+224'},{name:'Haïti',code:'+509'},{name:'Honduras',code:'+504'},{name:'Hong Kong',code:'+852'},{name:'Hongrie',code:'+36'},{name:'Inde',code:'+91'},{name:'Indonésie',code:'+62'},{name:'Irak',code:'+964'},{name:'Iran',code:'+98'},{name:'Irlande',code:'+353'},{name:'Islande',code:'+354'},{name:'Israël',code:'+972'},{name:'Italie',code:'+39'},{name:'Jamaïque',code:'+1876'},{name:'Japon',code:'+81'},{name:'Jordanie',code:'+962'},{name:'Kazakhstan',code:'+7'},{name:'Kenya',code:'+254'},{name:'Kosovo',code:'+383'},{name:'Koweït',code:'+965'},{name:'Lettonie',code:'+371'},{name:'Liban',code:'+961'},{name:'Libye',code:'+218'},{name:'Liechtenstein',code:'+423'},{name:'Lituanie',code:'+370'},{name:'Luxembourg',code:'+352'},{name:'Macédoine du Nord',code:'+389'},{name:'Madagascar',code:'+261'},{name:'Malaisie',code:'+60'},{name:'Mali',code:'+223'},{name:'Malte',code:'+356'},{name:'Maroc',code:'+212'},{name:'Maurice',code:'+230'},{name:'Mauritanie',code:'+222'},{name:'Mexique',code:'+52'},{name:'Moldavie',code:'+373'},{name:'Monaco',code:'+377'},{name:'Mongolie',code:'+976'},{name:'Monténégro',code:'+382'},{name:'Mozambique',code:'+258'},{name:'Myanmar',code:'+95'},{name:'Namibie',code:'+264'},{name:'Népal',code:'+977'},{name:'Nicaragua',code:'+505'},{name:'Niger',code:'+227'},{name:'Nigéria',code:'+234'},{name:'Norvège',code:'+47'},{name:'Nouvelle-Zélande',code:'+64'},{name:'Oman',code:'+968'},{name:'Ouganda',code:'+256'},{name:'Pakistan',code:'+92'},{name:'Palestine',code:'+970'},{name:'Panama',code:'+507'},{name:'Paraguay',code:'+595'},{name:'Pays-Bas',code:'+31'},{name:'Pérou',code:'+51'},{name:'Philippines',code:'+63'},{name:'Pologne',code:'+48'},{name:'Portugal',code:'+351'},{name:'Qatar',code:'+974'},{name:'République dominicaine',code:'+1809'},{name:'République tchèque',code:'+420'},{name:'Roumanie',code:'+40'},{name:'Royaume-Uni',code:'+44'},{name:'Russie',code:'+7'},{name:'Rwanda',code:'+250'},{name:'Saint-Marin',code:'+378'},{name:'Sénégal',code:'+221'},{name:'Serbie',code:'+381'},{name:'Singapour',code:'+65'},{name:'Slovaquie',code:'+421'},{name:'Slovénie',code:'+386'},{name:'Somalie',code:'+252'},{name:'Soudan',code:'+249'},{name:'Sri Lanka',code:'+94'},{name:'Suède',code:'+46'},{name:'Suisse',code:'+41'},{name:'Syrie',code:'+963'},{name:'Taïwan',code:'+886'},{name:'Tanzanie',code:'+255'},{name:'Thaïlande',code:'+66'},{name:'Togo',code:'+228'},{name:'Tunisie',code:'+216'},{name:'Turquie',code:'+90'},{name:'Ukraine',code:'+380'},{name:'Uruguay',code:'+598'},{name:'Venezuela',code:'+58'},{name:'Vietnam',code:'+84'},{name:'Yémen',code:'+967'},{name:'Zambie',code:'+260'},{name:'Zimbabwe',code:'+263'}];
 
         let selectedIndicatif = '';
 
         function initializePhoneValidation() {
             renderIndicatifList(COUNTRIES);
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('#indicatif_box') && !e.target.closest('#indicatif_dropdown')) {
-                    document.getElementById('indicatif_dropdown').style.display = 'none';
-                }
-            });
-
-            // Update hidden telephone field when number changes
-            document.getElementById('telephone_numero').addEventListener('input', function() {
-                updateTelephoneHidden();
-            });
+            document.addEventListener('click', function(e) { if (!e.target.closest('#indicatif_box') && !e.target.closest('#indicatif_dropdown')) document.getElementById('indicatif_dropdown').style.display = 'none'; });
+            document.getElementById('telephone_numero').addEventListener('input', function() { updateTelephoneHidden(); checkPersonalInfoSection(); });
         }
 
         function toggleIndicatifDropdown() {
             const dd = document.getElementById('indicatif_dropdown');
-            const isOpen = dd.style.display === 'block';
-            if (isOpen) {
-                dd.style.display = 'none';
-            } else {
-                // Reset search and show all countries
-                document.getElementById('indicatif_search').value = '';
-                renderIndicatifList(COUNTRIES);
-                dd.style.display = 'block';
-                setTimeout(() => document.getElementById('indicatif_search').focus(), 50);
-            }
+            if (dd.style.display === 'block') { dd.style.display = 'none'; }
+            else { document.getElementById('indicatif_search').value = ''; renderIndicatifList(COUNTRIES); dd.style.display = 'block'; setTimeout(() => document.getElementById('indicatif_search').focus(), 50); }
         }
 
         function renderIndicatifList(list) {
-            const container = document.getElementById('indicatif_list');
-            container.innerHTML = '';
+            const container = document.getElementById('indicatif_list'); container.innerHTML = '';
             list.forEach(c => {
                 const item = document.createElement('div');
                 item.style.cssText = 'padding:9px 12px; cursor:pointer; font-size:13px; border-bottom:1px solid #f5f5f5; display:flex; justify-content:space-between; align-items:center;';
                 item.innerHTML = '<span>' + c.name + '</span><span style="color:#2C5F8D; font-weight:600;">' + c.code + '</span>';
-                item.onmouseover = function() { this.style.background='#e3f2fd'; };
-                item.onmouseout  = function() { this.style.background='white'; };
+                item.onmouseover = function() { this.style.background='#e3f2fd'; }; item.onmouseout = function() { this.style.background='white'; };
                 item.onclick = function(e) {
-                    e.stopPropagation();
-                    selectedIndicatif = c.code;
+                    e.stopPropagation(); selectedIndicatif = c.code;
                     document.getElementById('indicatif_label').textContent = c.code + ' — ' + c.name;
-                    document.getElementById('indicatif_label').style.color = '#2C5F8D';
-                    document.getElementById('indicatif_label').style.fontWeight = '600';
-                    document.getElementById('indicatif_clear').style.display = 'block';
-                    document.getElementById('indicatif_box').style.borderColor = '#2C5F8D';
-                    document.getElementById('indicatif_dropdown').style.display = 'none';
-                    document.getElementById('tel_error').style.display = 'none';
-                    updateTelephoneHidden();
-                    document.getElementById('telephone_numero').focus();
+                    document.getElementById('indicatif_label').style.color = '#2C5F8D'; document.getElementById('indicatif_label').style.fontWeight = '600';
+                    document.getElementById('indicatif_clear').style.display = 'block'; document.getElementById('indicatif_box').style.borderColor = '#2C5F8D';
+                    document.getElementById('indicatif_dropdown').style.display = 'none'; document.getElementById('tel_error').style.display = 'none';
+                    updateTelephoneHidden(); document.getElementById('telephone_numero').focus();
                 };
                 container.appendChild(item);
             });
         }
 
-        function filterIndicatifs(query) {
-            const filtered = query
-                ? COUNTRIES.filter(c =>
-                    c.name.toLowerCase().includes(query.toLowerCase()) ||
-                    c.code.includes(query))
-                : COUNTRIES;
-            renderIndicatifList(filtered);
-        }
+        function filterIndicatifs(query) { renderIndicatifList(query ? COUNTRIES.filter(c => c.name.toLowerCase().includes(query.toLowerCase()) || c.code.includes(query)) : COUNTRIES); }
 
         function clearIndicatif(e) {
-            e.stopPropagation();
-            selectedIndicatif = '';
-            document.getElementById('indicatif_label').textContent = 'Sélectionner l\'indicatif du pays';
-            document.getElementById('indicatif_label').style.color = '#999';
-            document.getElementById('indicatif_label').style.fontWeight = 'normal';
-            document.getElementById('indicatif_clear').style.display = 'none';
-            document.getElementById('indicatif_box').style.borderColor = '#e0e0e0';
-            document.getElementById('telephone').value = '';
-            updateTelephoneHidden();
+            e.stopPropagation(); selectedIndicatif = '';
+            document.getElementById('indicatif_label').textContent = "Sélectionner l'indicatif du pays"; document.getElementById('indicatif_label').style.color = '#999'; document.getElementById('indicatif_label').style.fontWeight = 'normal';
+            document.getElementById('indicatif_clear').style.display = 'none'; document.getElementById('indicatif_box').style.borderColor = '#e0e0e0'; document.getElementById('telephone').value = ''; updateTelephoneHidden();
         }
 
-        function checkIndicatif() {
-            if (!selectedIndicatif) {
-                document.getElementById('tel_error').style.display = 'block';
-                document.getElementById('telephone_numero').blur();
-            }
-        }
+        function checkIndicatif() { if (!selectedIndicatif) { document.getElementById('tel_error').style.display = 'block'; document.getElementById('telephone_numero').blur(); } }
 
         function updateTelephoneHidden() {
             let num = document.getElementById('telephone_numero').value;
-            // Remover 0 inicial quando existe indicativo
-            if (selectedIndicatif && num.startsWith('0')) {
-                num = num.substring(1);
-            }
+            if (selectedIndicatif && num.startsWith('0')) num = num.substring(1);
             document.getElementById('telephone').value = selectedIndicatif + num;
         }
         
-        // Address Validation
         function initializeAddressValidation() {
             const addressTextarea = document.getElementById('adresse_complete');
-            
-            addressTextarea.addEventListener('input', function() {
-                const lines = this.value.split('\n');
-                if (lines.length > 3) {
-                    this.value = lines.slice(0, 3).join('\n');
-                }
-            });
-            
-            addressTextarea.addEventListener('keydown', function(e) {
-                const lines = this.value.split('\n');
-                if (e.key === 'Enter' && lines.length >= 3) {
-                    e.preventDefault();
-                }
-            });
+            addressTextarea.addEventListener('input', function() { const lines = this.value.split('\n'); if (lines.length > 3) this.value = lines.slice(0, 3).join('\n'); });
+            addressTextarea.addEventListener('keydown', function(e) { if (e.key === 'Enter' && this.value.split('\n').length >= 3) e.preventDefault(); });
         }
         
-        // Date Validation
         function validateExpirationDate(expirationInputId, errorMessageId) {
             const restitutionInput = document.getElementById('date_restitution');
             const expirationInput = document.getElementById(expirationInputId);
             const errorMessage = document.getElementById(errorMessageId);
-            
             if (restitutionInput.value.length === 10 && expirationInput.value.length === 10) {
                 const restitutionDate = parseDateString(restitutionInput.value);
                 const expirationDate = parseDateString(expirationInput.value);
-                
                 if (restitutionDate && expirationDate) {
-                    if (expirationDate <= restitutionDate) {
-                        expirationInput.classList.add('error');
-                        errorMessage.classList.add('show');
-                        return false;
-                    } else {
-                        expirationInput.classList.remove('error');
-                        errorMessage.classList.remove('show');
-                        return true;
-                    }
+                    if (expirationDate <= restitutionDate) { expirationInput.classList.add('error'); errorMessage.classList.add('show'); return false; }
+                    else { expirationInput.classList.remove('error'); errorMessage.classList.remove('show'); return true; }
                 }
-            } else {
-                expirationInput.classList.remove('error');
-                errorMessage.classList.remove('show');
-            }
+            } else { expirationInput.classList.remove('error'); errorMessage.classList.remove('show'); }
             return true;
         }
         
         function parseDateString(dateStr) {
             if (dateStr.length !== 10) return null;
-            const parts = dateStr.split('/');
-            if (parts.length !== 3) return null;
-            
-            const day = parseInt(parts[0], 10);
-            const month = parseInt(parts[1], 10) - 1;
-            const year = parseInt(parts[2], 10);
-            
+            const parts = dateStr.split('/'); if (parts.length !== 3) return null;
+            const day = parseInt(parts[0], 10); const month = parseInt(parts[1], 10) - 1; const year = parseInt(parts[2], 10);
             if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
-            
             return new Date(year, month, day);
         }
         
-        // Clear Form
-        function clearForm() {
-            if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) {
-                clearFormSilent();
-            }
-        }
+        function clearForm() { if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) clearFormSilent(); }
         
-        // Highlight empty required fields in red
         function highlightEmptyFields() {
             let hasEmpty = false;
-            const required = document.querySelectorAll('input[required], textarea[required]');
-            required.forEach(input => {
-                // Skip hidden fields and checkboxes
+            document.querySelectorAll('input[required], textarea[required]').forEach(input => {
                 if (input.type === 'hidden' || input.type === 'checkbox' || input.type === 'radio') return;
-                if (!input.value || input.value.trim() === '' || input.value === '+') {
-                    input.classList.add('error');
-                    hasEmpty = true;
-                } else {
-                    input.classList.remove('error');
-                }
+                if (!input.value || input.value.trim() === '' || input.value === '+') { input.classList.add('error'); hasEmpty = true; }
+                else input.classList.remove('error');
             });
-            // Check indicatif
-            if (!selectedIndicatif) {
-                document.getElementById('indicatif_box').style.borderColor = '#dc3545';
-                hasEmpty = true;
-            } else {
-                document.getElementById('indicatif_box').style.borderColor = '#2C5F8D';
-            }
-            // Check RGPD
+            if (!selectedIndicatif) { document.getElementById('indicatif_box').style.borderColor = '#dc3545'; hasEmpty = true; }
+            else document.getElementById('indicatif_box').style.borderColor = '#2C5F8D';
             const rgpd = document.getElementById('rgpd_consent');
-            if (rgpd && !rgpd.checked) {
-                document.getElementById('rgpd_error').style.display = 'block';
-                hasEmpty = true;
-            }
-            // Check accuracy
+            if (rgpd && !rgpd.checked) { document.getElementById('rgpd_error').style.display = 'block'; hasEmpty = true; }
             const accuracy = document.getElementById('accuracy_consent');
-            if (accuracy && !accuracy.checked) {
-                document.getElementById('accuracy_error').style.display = 'block';
-                hasEmpty = true;
-            }
+            if (accuracy && !accuracy.checked) { document.getElementById('accuracy_error').style.display = 'block'; hasEmpty = true; }
             return hasEmpty;
         }
 
-        // Generate voucher HTML for printing
         function generateVoucher() {
-            const ref  = document.getElementById('reference_agence').value;
-            const nom  = document.getElementById('nom_complet').value;
-            const tel  = document.getElementById('telephone').value;
+            const ref = document.getElementById('reference_agence').value;
+            const nom = document.getElementById('nom_complet').value;
+            const tel = document.getElementById('telephone').value;
             const email = document.getElementById('email').value;
-            const adr  = document.getElementById('adresse_complete').value.replace(/\n/g, '<br>');
-            const dp   = document.getElementById('date_prise').value;
-            const dr   = document.getElementById('date_restitution').value;
-            const jours= document.getElementById('daysCount').textContent;
+            const adr = document.getElementById('adresse_complete').value.replace(/\n/g, '<br>');
+            const dp = document.getElementById('date_prise').value;
+            const dr = document.getElementById('date_restitution').value;
+            const jours = document.getElementById('daysCount').textContent;
             const ndoc = document.getElementById('numero_document').value;
-            const eid  = document.getElementById('date_emission_id').value;
-            const expid= document.getElementById('date_expiration_id').value;
-            const nperm= document.getElementById('numero_permis').value;
-            const epm  = document.getElementById('date_emission_permis').value;
-            const exppm= document.getElementById('date_expiration_permis').value || 'SANS INFO';
-            const today= new Date().toLocaleDateString('fr-FR');
-
-            return `
-            <div style="font-family:'Inter',sans-serif; max-width:100%; margin:0; color:#1a1a1a;">
-
-                <!-- Header -->
-                <div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:24px 32px; border-radius:12px 12px 0 0; text-align:center;">
-                    <div style="font-size:22px; font-weight:700; letter-spacing:-0.5px;">🚗 Formulaire du Conducteur — Location de Voiture</div>
-                </div>
-
-                <!-- Client name banner -->
-                <div style="background:#e8f4fd; padding:14px 32px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:16px; font-weight:700; color:#2C5F8D; border-left:4px solid #2C5F8D; padding-left:12px;">${nom}</span>
-                    <span style="font-size:20px; color:#000000 !important;">Réf. <strong style="color:#000000;">${ref}</strong></span>
-                </div>
-
-                <!-- Body -->
-                <div style="border:1px solid #e0e0e0; border-top:none; border-radius:0 0 12px 12px; padding:24px 32px;">
-
-                    <!-- Période de location -->
-                    <div style="margin-bottom:20px;">
-                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px; padding-bottom:4px; border-bottom:2px solid #e8f4fd;">
-                            📅 Période de Location
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
-                            <div style="background:#f8f9fa; padding:10px 14px; border-radius:8px;">
-                                <div style="font-size:10px; color:#888; margin-bottom:2px;">Prise en charge</div>
-                                <div style="font-weight:600; font-size:14px;">${dp}</div>
-                            </div>
-                            <div style="background:#f8f9fa; padding:10px 14px; border-radius:8px;">
-                                <div style="font-size:10px; color:#888; margin-bottom:2px;">Restitution</div>
-                                <div style="font-weight:600; font-size:14px;">${dr}</div>
-                            </div>
-                            <div style="background:#e8f4fd; padding:10px 14px; border-radius:8px;">
-                                <div style="font-size:10px; color:#2C5F8D; margin-bottom:2px;">Durée</div>
-                                <div style="font-weight:700; font-size:14px; color:#2C5F8D;">${jours} jour(s)</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Informations personnelles -->
-                    <div style="margin-bottom:20px;">
-                        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px; padding-bottom:4px; border-bottom:2px solid #e8f4fd;">
-                            👤 Informations Personnelles
-                        </div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                            <div>
-                                <div style="font-size:10px; color:#888; margin-bottom:2px;">Adresse</div>
-                                <div style="font-size:13px;">${adr}</div>
-                            </div>
-                            <div>
-                                <div style="font-size:10px; color:#888; margin-bottom:2px;">Téléphone</div>
-                                <div style="font-size:13px; font-weight:600;">${tel}</div>
-                                <div style="font-size:10px; color:#888; margin-top:8px; margin-bottom:2px;">E-mail</div>
-                                <div style="font-size:13px;">${email}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Documents -->
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
-                        <div style="background:#f8f9fa; padding:14px; border-radius:8px;">
-                            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px;">🪪 Pièce d'Identité</div>
-                            <div style="font-size:10px; color:#888; margin-bottom:2px;">Numéro</div>
-                            <div style="font-weight:600; margin-bottom:8px;">${ndoc}</div>
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                                <div>
-                                    <div style="font-size:10px; color:#888; margin-bottom:2px;">Émission</div>
-                                    <div style="font-size:13px;">${eid}</div>
-                                </div>
-                                <div>
-                                    <div style="font-size:10px; color:#888; margin-bottom:2px;">Expiration</div>
-                                    <div style="font-size:13px; font-weight:600;">${expid}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="background:#f8f9fa; padding:14px; border-radius:8px;">
-                            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px;">🚘 Permis de Conduire</div>
-                            <div style="font-size:10px; color:#888; margin-bottom:2px;">Numéro</div>
-                            <div style="font-weight:600; margin-bottom:8px;">${nperm}</div>
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                                <div>
-                                    <div style="font-size:10px; color:#888; margin-bottom:2px;">Émission</div>
-                                    <div style="font-size:13px;">${epm}</div>
-                                </div>
-                                <div>
-                                    <div style="font-size:10px; color:#888; margin-bottom:2px;">Expiration</div>
-                                    <div style="font-size:13px; font-weight:600;">${exppm}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Footer note -->
-                    <div style="background:#fff3cd; border-left:4px solid #ffc107; padding:12px 16px; border-radius:4px; font-size:11px; color:#856404; margin-bottom:12px;">
-                        Ces informations ont été transmises au prestataire de location. En cas d'erreur, veuillez remplir à nouveau le formulaire en sélectionnant "Modifier le formulaire" afin de modifier les champs nécessaires :<br>
-                        <a href="https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html" style="color:#856404;">https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html</a>
-                    </div>
-                    <div style="border:1px solid #e0e0e0; border-radius:6px; padding:12px 16px; font-size:10px; color:#555; line-height:1.6;">
-                        <div style="font-weight:700; margin-bottom:6px; font-size:11px;">✅ Déclarations du conducteur</div>
-                        <div style="margin-bottom:6px;">☑ Je confirme avoir lu et accepté que mes données personnelles (nom, adresse, contacts, pièce d'identité et permis de conduire) soient utilisées exclusivement dans le cadre de ma réservation de location de voiture — notamment par la société de location et le réceptif local — et ce, à des fins strictement opérationnelles. Ces données ne seront en aucun cas utilisées à des fins commerciales ou partagées avec des tiers extérieurs à la prestation.</div>
-                        <div>☑ Je certifie sur l'honneur que toutes les informations fournies dans ce formulaire sont exactes, complètes et conformes à mes documents officiels. Je comprends que toute information inexacte ou incomplète pourra entraîner le refus de la mise à disposition du véhicule lors de la remise des clés. Les informations transmises devront correspondre en tout point aux documents présentés au moment de la prise en charge du véhicule.</div>
-                    </div>
-                    <div style="margin-top:16px; padding-top:12px; border-top:1px solid #e0e0e0; font-size:10px; color:#aaa;">
-                        Émis le ${today}
-                    </div>
-                </div>
-            </div>`;
+            const eid = document.getElementById('date_emission_id').value;
+            const expid = document.getElementById('date_expiration_id').value;
+            const nperm = document.getElementById('numero_permis').value;
+            const epm = document.getElementById('date_emission_permis').value;
+            const exppm = document.getElementById('date_expiration_permis').value || 'SANS INFO';
+            const today = new Date().toLocaleDateString('fr-FR');
+            return `<div style="font-family:'Inter',sans-serif; max-width:100%; margin:0; color:#1a1a1a;"><div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:24px 32px; border-radius:12px 12px 0 0; text-align:center;"><div style="font-size:22px; font-weight:700; letter-spacing:-0.5px;">🚗 Formulaire du Conducteur — Location de Voiture</div></div><div style="background:#e8f4fd; padding:14px 32px; display:flex; justify-content:space-between; align-items:center;"><span style="font-size:16px; font-weight:700; color:#2C5F8D; border-left:4px solid #2C5F8D; padding-left:12px;">${nom}</span><span style="font-size:20px; color:#000000 !important;">Réf. <strong style="color:#000000;">${ref}</strong></span></div><div style="border:1px solid #e0e0e0; border-top:none; border-radius:0 0 12px 12px; padding:24px 32px;"><div style="margin-bottom:20px;"><div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px; padding-bottom:4px; border-bottom:2px solid #e8f4fd;">📅 Période de Location</div><div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;"><div style="background:#f8f9fa; padding:10px 14px; border-radius:8px;"><div style="font-size:10px; color:#888; margin-bottom:2px;">Prise en charge</div><div style="font-weight:600; font-size:14px;">${dp}</div></div><div style="background:#f8f9fa; padding:10px 14px; border-radius:8px;"><div style="font-size:10px; color:#888; margin-bottom:2px;">Restitution</div><div style="font-weight:600; font-size:14px;">${dr}</div></div><div style="background:#e8f4fd; padding:10px 14px; border-radius:8px;"><div style="font-size:10px; color:#2C5F8D; margin-bottom:2px;">Durée</div><div style="font-weight:700; font-size:14px; color:#2C5F8D;">${jours} jour(s)</div></div></div></div><div style="margin-bottom:20px;"><div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px; padding-bottom:4px; border-bottom:2px solid #e8f4fd;">👤 Informations Personnelles</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"><div><div style="font-size:10px; color:#888; margin-bottom:2px;">Adresse</div><div style="font-size:13px;">${adr}</div></div><div><div style="font-size:10px; color:#888; margin-bottom:2px;">Téléphone</div><div style="font-size:13px; font-weight:600;">${tel}</div><div style="font-size:10px; color:#888; margin-top:8px; margin-bottom:2px;">E-mail</div><div style="font-size:13px;">${email}</div></div></div></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;"><div style="background:#f8f9fa; padding:14px; border-radius:8px;"><div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px;">🪪 Pièce d'Identité</div><div style="font-size:10px; color:#888; margin-bottom:2px;">Numéro</div><div style="font-weight:600; margin-bottom:8px;">${ndoc}</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"><div><div style="font-size:10px; color:#888; margin-bottom:2px;">Émission</div><div style="font-size:13px;">${eid}</div></div><div><div style="font-size:10px; color:#888; margin-bottom:2px;">Expiration</div><div style="font-size:13px; font-weight:600;">${expid}</div></div></div></div><div style="background:#f8f9fa; padding:14px; border-radius:8px;"><div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px;">🚘 Permis de Conduire</div><div style="font-size:10px; color:#888; margin-bottom:2px;">Numéro</div><div style="font-weight:600; margin-bottom:8px;">${nperm}</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"><div><div style="font-size:10px; color:#888; margin-bottom:2px;">Émission</div><div style="font-size:13px;">${epm}</div></div><div><div style="font-size:10px; color:#888; margin-bottom:2px;">Expiration</div><div style="font-size:13px; font-weight:600;">${exppm}</div></div></div></div></div><div style="background:#fff3cd; border-left:4px solid #ffc107; padding:12px 16px; border-radius:4px; font-size:11px; color:#856404; margin-bottom:12px;">Ces informations ont été transmises au prestataire de location. En cas d'erreur, veuillez remplir à nouveau le formulaire en sélectionnant "Modifier le formulaire" afin de modifier les champs nécessaires :<br><a href="https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html" style="color:#856404;">https://ptotravelfnc.github.io/formulario-rent-a-car/formulario.html</a></div><div style="border:1px solid #e0e0e0; border-radius:6px; padding:12px 16px; font-size:10px; color:#555; line-height:1.6;"><div style="font-weight:700; margin-bottom:6px; font-size:11px;">✅ Déclarations du conducteur</div><div style="margin-bottom:6px;">☑ Je confirme avoir lu et accepté que mes données personnelles (nom, adresse, contacts, pièce d'identité et permis de conduire) soient utilisées exclusivement dans le cadre de ma réservation de location de voiture — notamment par la société de location et le réceptif local — et ce, à des fins strictement opérationnelles. Ces données ne seront en aucun cas utilisées à des fins commerciales ou partagées avec des tiers extérieurs à la prestation.</div><div>☑ Je certifie sur l'honneur que toutes les informations fournies dans ce formulaire sont exactes, complètes et conformes à mes documents officiels. Je comprends que toute information inexacte ou incomplète pourra entraîner le refus de la mise à disposition du véhicule lors de la remise des clés. Les informations transmises devront correspondre en tout point aux documents présentés au moment de la prise en charge du véhicule.</div></div><div style="margin-top:16px; padding-top:12px; border-top:1px solid #e0e0e0; font-size:10px; color:#aaa;">Émis le ${today}</div></div></div>`;
         }
 
         function getPdfTitle() {
@@ -2272,180 +1014,72 @@
 
         let formSubmitted = false;
 
-        // Export to PDF
         function exportToPDF() {
-            if (!formSubmitted) {
-                alert('⚠️ Veuillez d\'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF.');
-                return;
-            }
+            if (!formSubmitted) { alert("⚠️ Veuillez d'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF."); return; }
             document.getElementById('print-voucher').innerHTML = generateVoucher();
-            document.title = getPdfTitle();
-            window.print();
+            document.title = getPdfTitle(); window.print();
         }
         
-        // Submit to Google Sheets
         async function submitToSheets() {
             const submitBtn = document.getElementById('submitBtn');
-
-            // Highlight empty fields in red
             const hasEmpty = highlightEmptyFields();
-            if (hasEmpty) {
-                alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).');
-                return;
-            }
-
-            // Bloquear imediatamente após validação passar
-            submitBtn.disabled = true;
-            submitBtn.style.opacity = '0.7';
-            submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
-
-            // Check for duplicate if nouveau client
+            if (hasEmpty) { alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).'); return; }
+            submitBtn.disabled = true; submitBtn.style.opacity = '0.7'; submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
             if (clientType === 'nouveau') {
-                const ref   = document.getElementById('reference_agence').value.trim();
+                const ref = document.getElementById('reference_agence').value.trim();
                 const email = document.getElementById('email').value.trim();
                 try {
-                    const [refResp, emailResp] = await Promise.all([
-                        fetch(GOOGLE_SHEETS_URL + '?action=checkRef&ref=' + encodeURIComponent(ref)),
-                        fetch(GOOGLE_SHEETS_URL + '?action=checkEmail&email=' + encodeURIComponent(email))
-                    ]);
-                    const refData   = await refResp.json();
-                    const emailData = await emailResp.json();
-
+                    const [refResp, emailResp] = await Promise.all([fetch(GOOGLE_SHEETS_URL + '?action=checkRef&ref=' + encodeURIComponent(ref)), fetch(GOOGLE_SHEETS_URL + '?action=checkEmail&email=' + encodeURIComponent(email))]);
+                    const refData = await refResp.json(); const emailData = await emailResp.json();
                     if (refData.exists && emailData.exists) {
-                        const searchResp = await fetch(GOOGLE_SHEETS_URL + '?action=search&ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email));
-                        await searchResp.json();
-                        switchToModifierMode(true, true);
-                        document.getElementById('both_found_msg').style.display = 'block';
-                        alert('⚠️ Vos informations existent déjà dans notre système.\n\nUn lien de modification a été envoyé à votre adresse email.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.');
-                        return;
+                        const searchResp = await fetch(GOOGLE_SHEETS_URL + '?action=search&ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email)); await searchResp.json();
+                        switchToModifierMode(true, true); document.getElementById('both_found_msg').style.display = 'block';
+                        alert('⚠️ Vos informations existent déjà dans notre système.\n\nUn lien de modification a été envoyé à votre adresse email.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.'); return;
                     } else if (refData.exists && !emailData.exists) {
-                        switchToModifierMode(true, false);
-                        document.getElementById('email_incompatible').style.display = 'block';
-                        alert('⚠️ Cette référence existe déjà dans notre système mais l\'email ne correspond pas.\n\nVeuillez corriger votre email et cliquer sur "Rechercher".');
-                        return;
+                        switchToModifierMode(true, false); document.getElementById('email_incompatible').style.display = 'block';
+                        alert("⚠️ Cette référence existe déjà dans notre système mais l'email ne correspond pas.\n\nVeuillez corriger votre email et cliquer sur \"Rechercher\"."); return;
                     } else if (!refData.exists && emailData.exists) {
-                        switchToModifierMode(false, true);
-                        document.getElementById('ref_incompatible').style.display = 'block';
-                        alert('⚠️ Cet email existe déjà dans notre système mais la référence ne correspond pas.\n\nVeuillez corriger votre référence et cliquer sur "Rechercher".');
-                        return;
+                        switchToModifierMode(false, true); document.getElementById('ref_incompatible').style.display = 'block';
+                        alert("⚠️ Cet email existe déjà dans notre système mais la référence ne correspond pas.\n\nVeuillez corriger votre référence et cliquer sur \"Rechercher\"."); return;
                     }
-                } catch(e) {
-                    // If check fails, continue with submission
-                }
+                } catch(e) {}
             }
-
             const validId = validateExpirationDate('date_expiration_id', 'error_expiration_id');
             const validPermis = validateExpirationDate('date_expiration_permis', 'error_expiration_permis');
-            
-            if (!validId || !validPermis) {
-                alert('⚠️ Attention: Les dates d\'expiration des documents doivent être postérieures à la date de restitution du véhicule.');
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Soumettre';
-                return;
-            }
-
-            if (!document.getElementById('rgpd_consent').checked) {
-                document.getElementById('rgpd_error').style.display = 'block';
-                document.getElementById('rgpd_consent').scrollIntoView({ behavior: 'smooth' });
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Soumettre';
-                return;
-            }
+            if (!validId || !validPermis) { alert("⚠️ Attention: Les dates d'expiration des documents doivent être postérieures à la date de restitution du véhicule."); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
+            if (!document.getElementById('rgpd_consent').checked) { document.getElementById('rgpd_error').style.display = 'block'; document.getElementById('rgpd_consent').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             document.getElementById('rgpd_error').style.display = 'none';
-
-            if (!document.getElementById('accuracy_consent').checked) {
-                document.getElementById('accuracy_error').style.display = 'block';
-                document.getElementById('accuracy_consent').scrollIntoView({ behavior: 'smooth' });
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Soumettre';
-                return;
-            }
+            if (!document.getElementById('accuracy_consent').checked) { document.getElementById('accuracy_error').style.display = 'block'; document.getElementById('accuracy_consent').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             document.getElementById('accuracy_error').style.display = 'none';
-
-            // Verificar checkbox agência se email_agence_send estiver checked
             if (document.getElementById('email_agence_send').checked) {
-                if (!document.getElementById('rgpd_agence').checked) {
-                    document.getElementById('rgpd_agence_error').style.display = 'block';
-                    document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' });
-                    submitBtn.disabled = false;
-                    submitBtn.style.opacity = '1';
-                    submitBtn.innerHTML = '✅ Soumettre';
-                    return;
-                }
+                if (!document.getElementById('rgpd_agence').checked) { document.getElementById('rgpd_agence_error').style.display = 'block'; document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             }
-           
-            // Collect form data
             const formData = {
-                client_type: clientType,
-                is_modification: isExistingClientData,
-                reference_agence: document.getElementById('reference_agence').value,
-                email: document.getElementById('email').value,
-                email_agence: document.getElementById('email_agence').value,
-                email_agence_send: document.getElementById('email_agence_send').checked,
-                date_prise: document.getElementById('date_prise').value,
-                date_restitution: document.getElementById('date_restitution').value,
-                jours: document.getElementById('daysCount').textContent,
-                nom_complet: document.getElementById('nom_complet').value,
-                adresse_complete: document.getElementById('adresse_complete').value,
-                telephone: document.getElementById('telephone').value,
-                numero_document: document.getElementById('numero_document').value,
-                date_emission_id: document.getElementById('date_emission_id').value,
-                date_expiration_id: document.getElementById('date_expiration_id').value,
-                numero_permis: document.getElementById('numero_permis').value,
-                date_emission_permis: document.getElementById('date_emission_permis').value,
-                date_expiration_permis: document.getElementById('date_expiration_permis').value,
+                client_type: clientType, is_modification: isExistingClientData,
+                reference_agence: document.getElementById('reference_agence').value, email: document.getElementById('email').value,
+                email_agence: document.getElementById('email_agence').value, email_agence_send: document.getElementById('email_agence_send').checked,
+                date_prise: document.getElementById('date_prise').value, date_restitution: document.getElementById('date_restitution').value,
+                jours: document.getElementById('daysCount').textContent, nom_complet: document.getElementById('nom_complet').value,
+                adresse_complete: document.getElementById('adresse_complete').value, telephone: document.getElementById('telephone').value,
+                numero_document: document.getElementById('numero_document').value, date_emission_id: document.getElementById('date_emission_id').value,
+                date_expiration_id: document.getElementById('date_expiration_id').value, numero_permis: document.getElementById('numero_permis').value,
+                date_emission_permis: document.getElementById('date_emission_permis').value, date_expiration_permis: document.getElementById('date_expiration_permis').value,
                 timestamp: new Date().toLocaleString('fr-FR')
             };
-
             try {
-                await fetch(GOOGLE_SHEETS_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
-
+                await fetch(GOOGLE_SHEETS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(formData) });
                 formSubmitted = true;
-
-                submitBtn.disabled = true;
-                submitBtn.style.opacity = '0.5';
-                submitBtn.style.cursor = 'not-allowed';
-                submitBtn.innerHTML = '✅ Formulaire envoyé';
+                submitBtn.disabled = true; submitBtn.style.opacity = '0.5'; submitBtn.style.cursor = 'not-allowed'; submitBtn.innerHTML = '✅ Formulaire envoyé';
                 document.getElementById('submit_hint').style.display = 'block';
-
                 const pdfBtn = document.getElementById('pdfBtn');
-                pdfBtn.disabled = false;
-                pdfBtn.style.opacity = '1';
-                pdfBtn.style.cursor = 'pointer';
-                pdfBtn.style.background = '#e8f4fd';
-                pdfBtn.style.color = '#2C5F8D';
-                pdfBtn.style.border = '2px solid #2C5F8D';
+                pdfBtn.disabled = false; pdfBtn.style.opacity = '1'; pdfBtn.style.cursor = 'pointer';
+                pdfBtn.style.background = '#e8f4fd'; pdfBtn.style.color = '#2C5F8D'; pdfBtn.style.border = '2px solid #2C5F8D';
                 document.getElementById('pdf_hint').textContent = '✅ Formulaire envoyé — vous pouvez maintenant sauvegarder';
                 document.getElementById('pdf_hint').style.color = '#2e7d32';
-
                 const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre boîte mail SPAM.\n\nVoulez-vous imprimer / sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Imprimer / sauvegarder plus tard via le bouton PDF');
-                if (savePDF) {
-                    document.getElementById('print-voucher').innerHTML = generateVoucher();
-                    document.title = getPdfTitle();
-                    window.print();
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.');
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Soumettre';
-            } finally {
-                if (!formSubmitted) {
-                    submitBtn.disabled = false;
-                    submitBtn.style.opacity = '1';
-                    submitBtn.innerHTML = '✅ Soumettre';
-                }
-            }
+                if (savePDF) { document.getElementById('print-voucher').innerHTML = generateVoucher(); document.title = getPdfTitle(); window.print(); }
+            } catch (error) { alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.'); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; }
+            finally { if (!formSubmitted) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; } }
         }
     </script>
 </body>
