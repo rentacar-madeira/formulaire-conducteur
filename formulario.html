@@ -890,11 +890,9 @@
                 
                 <!-- Buttons -->
                 <div class="button-group">
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
-                        <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                    <button type="button" class="btn btn-secondary" onclick="clearForm()">
                         🗑️ Effacer
-                        </button>
-                    </div>
+                    </button>
                     <div style="display:flex; flex-direction:column; align-items:center; gap:6px; height:100%;">
                         <button type="button" class="btn btn-secondary" onclick="exportToPDF()" id="pdfBtn"
                                 style="width:100%; opacity:0.5; cursor:not-allowed; flex:1;" disabled>
@@ -904,7 +902,7 @@
                             Disponible après l'envoi du formulaire
                         </span>
                     </div>
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+                    <div style="display:flex; flex-direction:column; align-items:stretch; gap:6px;">
                         <button type="button" class="btn btn-primary" onclick="submitToSheets()" id="submitBtn">
                             ✅ Envoyer
                         </button>
