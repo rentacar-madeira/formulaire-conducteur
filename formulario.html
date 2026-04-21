@@ -611,6 +611,7 @@
                 const data = await response.json();
                 if (data.success && data.clientData) {
                     isExistingClientData = true;
+                    alert('isExistingClientData definido como TRUE');
                     populateFormWithExistingData(data.clientData);
                     unlockAllSections();
                     const submitBtn = document.getElementById('submitBtn');
