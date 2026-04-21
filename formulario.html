@@ -1430,8 +1430,9 @@
                         setTimeout(() => { userModified = true; }, 500);
                     }
                 }
+            }
 
-            // Handle telephone separately — split indicatif from number
+            // Handle telephone separately
             if (data.telephone) {
                 const tel = data.telephone.toString();
                 const match = COUNTRIES.find(c => tel.startsWith(c.code));
