@@ -2118,7 +2118,7 @@
             const expid= document.getElementById('date_expiration_id').value;
             const nperm= document.getElementById('numero_permis').value;
             const epm  = document.getElementById('date_emission_permis').value;
-            const exppm= document.getElementById('date_expiration_permis').value;
+            const exppm= document.getElementById('date_expiration_permis').value || 'SANS INFO';
             const today= new Date().toLocaleDateString('fr-FR');
 
             return `
