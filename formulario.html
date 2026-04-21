@@ -1360,6 +1360,11 @@
                     searchBtn.style.opacity = '0.4';
                     searchBtn.style.cursor = 'not-allowed';
                     searchBtn.innerHTML = '✅ Données chargées';
+                    // Desativar botão Effacer quando entra pelo link
+                    const effacerBtn = document.querySelector('button[onclick="clearForm()"]');
+                    effacerBtn.disabled = true;
+                    effacerBtn.style.opacity = '0.4';
+                    effacerBtn.style.cursor = 'not-allowed';
                 } else {
                     alert('❌ Impossible de récupérer les données du client.');
                 }
