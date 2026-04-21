@@ -1021,7 +1021,6 @@
         }
         
         async function submitToSheets() {
-            alert('submitToSheets — isExistingClientData: ' + isExistingClientData + ' | clientType: ' + clientType);
             const submitBtn = document.getElementById('submitBtn');
             const hasEmpty = highlightEmptyFields();
             if (hasEmpty) { alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).'); return; }
@@ -1055,8 +1054,6 @@
             if (document.getElementById('email_agence_send').checked) {
                 if (!document.getElementById('rgpd_agence').checked) { document.getElementById('rgpd_agence_error').style.display = 'block'; document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             }
-            console.log('isExistingClientData:', isExistingClientData);
-            console.log('clientType:', clientType);
             // Collect form data
             const formData = {
                 client_type: clientType, is_modification: isExistingClientData,
