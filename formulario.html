@@ -1420,11 +1420,16 @@
                         input.disabled = false;
                         input.style.background = 'white';
                         input.style.borderColor = '#ffb74d';
-                        input.addEventListener('input', function() { this.style.background = '#fff8f0'; });
-                        input.addEventListener('change', function() { this.style.background = '#fff8f0'; });
+                        let userModified = false;
+                        input.addEventListener('input', function() {
+                            if (userModified) this.style.background = '#fff8f0';
+                        });
+                        input.addEventListener('change', function() {
+                            if (userModified) this.style.background = '#fff8f0';
+                        });
+                        setTimeout(() => { userModified = true; }, 500);
                     }
                 }
-            }
 
             // Handle telephone separately — split indicatif from number
             if (data.telephone) {
@@ -1447,8 +1452,11 @@
                 document.getElementById('telephone_numero').style.borderColor = '#ffb74d';
                 document.getElementById('indicatif_box').style.background = 'white';
                 document.getElementById('indicatif_box').style.borderColor = '#ffb74d';
-                document.getElementById('telephone_numero').addEventListener('input', function() { this.style.background = '#fff8f0'; });
-            }
+                let telModified = false;
+                document.getElementById('telephone_numero').addEventListener('input', function() {
+                    if (telModified) this.style.background = '#fff8f0';
+                });
+                setTimeout(() => { telModified = true; }, 500);
 
             calculateDays();
             const dp = document.getElementById('date_prise').value;
@@ -1467,7 +1475,11 @@
                     el.disabled = false;
                     el.style.background = 'white';
                     el.style.borderColor = '#ffb74d';
-                    el.addEventListener('change', function() { this.style.background = '#fff8f0'; });
+                    let userModified = false;
+                    el.addEventListener('change', function() {
+                        if (userModified) this.style.background = '#fff8f0';
+                    });
+                    setTimeout(() => { userModified = true; }, 500);
                 }
             });
         }
