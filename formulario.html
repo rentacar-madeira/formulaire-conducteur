@@ -616,7 +616,7 @@
                             <label style="display:flex; align-items:center; gap:6px; font-weight:normal; font-size:12px; color:#444; cursor:pointer; margin-top:8px;">
                                 <input type="checkbox" id="email_agence_send" name="email_agence_send"
                                        style="width:16px; height:16px; cursor:pointer; accent-color:#2C5F8D;">
-                                Cocher cette case, si vous souhaitez que cet email reçoive aussi une confirmation de vos données.
+                                 Cocher cette case si vous souhaitez que cet email reçoive également une confirmation de l'ensemble des informations renseignées dans ce formulaire.
                             </label>
                         </div>
                     </div>
@@ -856,8 +856,8 @@
                     <div id="rgpd_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">
                         ⚠️ Vous devez accepter les conditions pour continuer.
                     </div>
-                    <!-- Checkbox agência -->
-                    <div style="margin-top:16px; padding-top:16px; border-top:1px solid #e0e0e0;">
+                   <!-- Checkbox agência — só aparece se email_agence_send estiver checked -->
+                    <div id="rgpd_agence_section" style="display:none; margin-top:16px; padding-top:16px; border-top:1px solid #e0e0e0;">
                         <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-weight: normal;">
                             <input type="checkbox" id="rgpd_agence" name="rgpd_agence"
                                    style="width: 20px; height: 20px; min-width: 20px; margin-top: 2px; cursor: pointer; accent-color: #2C5F8D;">
@@ -865,8 +865,10 @@
                                 En tant qu'agence, en cochant cette case, je certifie disposer de l'autorisation du/des client(s) pour recevoir une copie de ses/leurs données personnelles à l'adresse email indiquée dans le champ "Email agence".
                             </span>
                         </label>
+                        <div id="rgpd_agence_error" style="display:none; color:#dc3545; font-size:12px; margin-top:8px; font-weight:500;">
+                            ⚠️ Vous devez certifier disposer de l'autorisation du client pour continuer.
+                        </div>
                     </div>
-                </div>
 
                 <!-- Accuracy Confirmation -->
                 <div class="form-group" style="margin-top: 16px; padding: 20px; border: 2px solid #e0e0e0; border-radius: 12px; background: #fafafa;">
@@ -1095,6 +1097,9 @@
             document.getElementById('rgpd_error').style.display = 'none';
             document.getElementById('accuracy_consent').checked = false;
             document.getElementById('accuracy_error').style.display = 'none';
+            document.getElementById('rgpd_agence').checked = false;
+            document.getElementById('rgpd_agence_section').style.display = 'none';
+            document.getElementById('rgpd_agence_error').style.display = 'none';
             formSubmitted = false;
             const pdfBtn = document.getElementById('pdfBtn');
             pdfBtn.disabled = true;
@@ -1206,6 +1211,18 @@
                         this.classList.remove('error');
                     }
                 });
+            });
+
+            // Mostrar/ocultar checkbox agência conforme email_agence_send
+            document.getElementById('email_agence_send').addEventListener('change', function() {
+                const section = document.getElementById('rgpd_agence_section');
+                if (this.checked) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                    document.getElementById('rgpd_agence').checked = false;
+                    document.getElementById('rgpd_agence_error').style.display = 'none';
+                }
             });
         }
         
@@ -2309,6 +2326,18 @@
             }
             document.getElementById('accuracy_error').style.display = 'none';
 
+            // Verificar checkbox agência se email_agence_send estiver checked
+            if (document.getElementById('email_agence_send').checked) {
+                if (!document.getElementById('rgpd_agence').checked) {
+                    document.getElementById('rgpd_agence_error').style.display = 'block';
+                    document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' });
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.innerHTML = '✅ Envoyer';
+                    return;
+                }
+            }
+           
             // Collect form data
             const formData = {
                 client_type: clientType,
