@@ -1392,7 +1392,6 @@
         }
         
         function populateFormWithExistingData(data) {
-            // Campos que ficam SEMPRE bloqueados (não editáveis)
             const camposBloqueados = ['reference_agence', 'email'];
 
             const fields = {
@@ -1414,18 +1413,13 @@
                 const input = document.getElementById(fieldId);
                 if (input && value) {
                     input.value = value;
-                    if (camposBloqueados.includes(fieldId)) {
-                        input.disabled = true;
-                   } else {
-                        input.disabled = true;
+                    input.disabled = true;
+                    if (!camposBloqueados.includes(fieldId)) {
                         addEditIcon(fieldId);
                     }
                 }
             }
 
-            }
-
-            // Handle telephone separately — split indicatif from number
             if (data.telephone) {
                 const tel = data.telephone.toString();
                 const match = COUNTRIES.find(c => tel.startsWith(c.code));
@@ -1458,7 +1452,7 @@
                     wrapper.appendChild(icon);
                 }
             }
-
+            
             calculateDays();
             const dp = document.getElementById('date_prise').value;
             const dr = document.getElementById('date_restitution').value;
