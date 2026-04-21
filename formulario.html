@@ -611,9 +611,9 @@
                 const data = await response.json();
                 if (data.success && data.clientData) {
                     isExistingClientData = true;
-                    alert('isExistingClientData definido como TRUE');
                     populateFormWithExistingData(data.clientData);
                     unlockAllSections();
+                    alert('Após unlockAllSections: ' + isExistingClientData);
                     const submitBtn = document.getElementById('submitBtn');
                     submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
                     const searchBtn = document.getElementById('searchBtn');
