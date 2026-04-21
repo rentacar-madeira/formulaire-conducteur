@@ -904,7 +904,7 @@
                     </div>
                     <div style="display:flex; flex-direction:column; gap:6px;">
                         <button type="button" class="btn" onclick="submitToSheets()" id="submitBtn" style="height:80px; min-height:unset; padding:0; background:#f0fff4; color:#2e7d32; border:2px solid #2e7d32;">
-                            ✅ Envoyer
+                            ✅ Soumettre
                         </button>
                         <span id="submit_hint" style="display:none; font-size:11px; color:#2e7d32; text-align:center; line-height:1.4;">
                             Si vous souhaitez modifier vos informations, sélectionnez<br>«&nbsp;Modifier le formulaire&nbsp;» avec votre référence et email.
@@ -1115,7 +1115,7 @@
             submitBtn.disabled = false;
             submitBtn.style.opacity = '1';
             submitBtn.style.cursor = 'pointer';
-            submitBtn.innerHTML = '✅ Envoyer';
+            submitBtn.innerHTML = '✅ Soumettre';
             document.getElementById('submit_hint').style.display = 'none';
         }
 
@@ -2306,7 +2306,7 @@
                 alert('⚠️ Attention: Les dates d\'expiration des documents doivent être postérieures à la date de restitution du véhicule.');
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Envoyer';
+                submitBtn.innerHTML = '✅ Soumettre';
                 return;
             }
 
@@ -2315,7 +2315,7 @@
                 document.getElementById('rgpd_consent').scrollIntoView({ behavior: 'smooth' });
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Envoyer';
+                submitBtn.innerHTML = '✅ Soumettre';
                 return;
             }
             document.getElementById('rgpd_error').style.display = 'none';
@@ -2325,7 +2325,7 @@
                 document.getElementById('accuracy_consent').scrollIntoView({ behavior: 'smooth' });
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Envoyer';
+                submitBtn.innerHTML = '✅ Soumettre';
                 return;
             }
             document.getElementById('accuracy_error').style.display = 'none';
@@ -2337,7 +2337,7 @@
                     document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' });
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
-                    submitBtn.innerHTML = '✅ Envoyer';
+                    submitBtn.innerHTML = '✅ Soumettre';
                     return;
                 }
             }
@@ -2400,12 +2400,12 @@
                 alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.');
                 submitBtn.disabled = false;
                 submitBtn.style.opacity = '1';
-                submitBtn.innerHTML = '✅ Envoyer';
+                submitBtn.innerHTML = '✅ Soumettre';
             } finally {
                 if (!formSubmitted) {
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
-                    submitBtn.innerHTML = '✅ Envoyer';
+                    submitBtn.innerHTML = '✅ Soumettre';
                 }
             }
         }
