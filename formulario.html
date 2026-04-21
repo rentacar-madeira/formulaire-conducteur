@@ -559,7 +559,7 @@
                 <!-- Client Type Selection -->
                 <div class="client-type-section">
                     <div class="section-title">Comment souhaitez-vous procéder ?</div>
-                    <p style="font-size:13px; color:#666; margin-bottom:16px; line-height:1.6;">
+                    <p id="texte_instructions" style="font-size:13px; color:#666; margin-bottom:16px; line-height:1.6;">
                         Si c'est la première fois que vous remplissez ce formulaire, sélectionnez <strong>«&nbsp;Remplir le formulaire&nbsp;»</strong>. 
                         Si vous l'avez déjà rempli et souhaitez modifier vos informations, sélectionnez <strong>«&nbsp;Modifier le formulaire&nbsp;»</strong>.
                     </p>
@@ -990,6 +990,14 @@
                 effacerBtn.disabled = true;
                 effacerBtn.style.opacity = '0.4';
                 effacerBtn.style.cursor = 'not-allowed';
+                // Mudar texto explicativo
+                document.getElementById('texte_instructions').innerHTML = 
+                    '⚠️ Les champs modifiables sont indiqués en <strong style="color:#e65100;">orange</strong>. Si vous effectuez des modifications, vous devrez soumettre à nouveau le formulaire pour mettre à jour votre réservation. Si vous ne soumettez pas, aucune modification ne sera enregistrée.';
+                document.getElementById('texte_instructions').style.color = '#e65100';
+                document.getElementById('texte_instructions').style.background = '#fff8f0';
+                document.getElementById('texte_instructions').style.padding = '12px 16px';
+                document.getElementById('texte_instructions').style.borderLeft = '4px solid #e65100';
+                document.getElementById('texte_instructions').style.borderRadius = '4px';
                 fetchExistingClientData(ref, token);
             }
         }
@@ -1402,9 +1410,13 @@
                 const input = document.getElementById(fieldId);
                 if (input && value) {
                     input.value = value;
-                    input.disabled = true;
-                    if (!camposBloqueados.includes(fieldId)) {
-                        addEditIcon(fieldId);
+                    if (camposBloqueados.includes(fieldId)) {
+                        input.disabled = true;
+                    } else {
+                        // Campo modificável — laranja, sem lápis
+                        input.disabled = false;
+                        input.style.background = '#fff3e0';
+                        input.style.borderColor = '#e65100';
                     }
                 }
             }
@@ -1426,24 +1438,24 @@
                     document.getElementById('telephone_numero').value = tel;
                 }
                 document.getElementById('telephone').value = tel;
-                document.getElementById('telephone_numero').disabled = true;
-                // Add edit icon for phone
-                const numInput = document.getElementById('telephone_numero');
-                const wrapper = numInput.parentElement;
-                if (!wrapper.querySelector('.edit-icon')) {
-                    const icon = document.createElement('span');
-                    icon.className = 'edit-icon';
-                    icon.innerHTML = '✏️';
-                    icon.style.cssText = 'position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:18px; opacity:0.6;';
-                    icon.onclick = function() {
-                        numInput.disabled = false;
-                        numInput.focus();
-                        this.remove();
-                    };
-                    wrapper.style.position = 'relative';
-                    wrapper.appendChild(icon);
-                }
+                // Campo telefone modificável — laranja, sem lápis
+                document.getElementById('telephone_numero').disabled = false;
+                document.getElementById('telephone_numero').style.background = '#fff3e0';
+                document.getElementById('telephone_numero').style.borderColor = '#e65100';
+                document.getElementById('indicatif_box').style.background = '#fff3e0';
+                document.getElementById('indicatif_box').style.borderColor = '#e65100';
             }
+
+            // Colorir campos de datas em laranja
+            const camposData = ['date_prise','date_restitution','date_emission_id','date_expiration_id','date_emission_permis','date_expiration_permis'];
+            camposData.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = false;
+                    el.style.background = '#fff3e0';
+                    el.style.borderColor = '#e65100';
+                }
+            });
             
             calculateDays();
             const dp = document.getElementById('date_prise').value;
