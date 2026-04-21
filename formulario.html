@@ -472,16 +472,6 @@
             grid-template-columns: 1fr 1fr 1fr;
             gap: 12px;
             margin-top: 32px;
-            align-items: stretch;
-        }
-
-        .button-group .btn {
-            height: 100%;
-        }
-
-        .button-group > * {
-            display: flex;
-            flex-direction: column;
         }
         
         .btn {
@@ -899,20 +889,22 @@
                 
                 <!-- Buttons -->
                 <div class="button-group">
-                    <button type="button" class="btn btn-secondary" onclick="clearForm()">
-                        🗑️ Effacer
-                    </button>
-                    <div style="display:flex; flex-direction:column; align-items:center; gap:6px; height:100%;">
+                    <div style="display:flex; flex-direction:column;">
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()" style="flex:1;">
+                            🗑️ Effacer
+                        </button>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
                         <button type="button" class="btn btn-secondary" onclick="exportToPDF()" id="pdfBtn"
-                                style="width:100%; opacity:0.5; cursor:not-allowed; flex:1;" disabled>
+                                style="flex:1; opacity:0.5; cursor:not-allowed;" disabled>
                             🖨️ Imprimer / Sauvegarder une copie PDF
                         </button>
                         <span id="pdf_hint" style="font-size:11px; color:#999; text-align:center;">
                             Disponible après l'envoi du formulaire
                         </span>
                     </div>
-                    <div style="display:flex; flex-direction:column; align-items:stretch; gap:6px;">
-                        <button type="button" class="btn btn-primary" onclick="submitToSheets()" id="submitBtn">
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                        <button type="button" class="btn btn-primary" onclick="submitToSheets()" id="submitBtn" style="flex:1;">
                             ✅ Envoyer
                         </button>
                         <span id="submit_hint" style="display:none; font-size:11px; color:#2e7d32; text-align:center; line-height:1.4;">
