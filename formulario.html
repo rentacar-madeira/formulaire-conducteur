@@ -613,7 +613,6 @@
                     isExistingClientData = true;
                     populateFormWithExistingData(data.clientData);
                     unlockAllSections();
-                    alert('Após unlockAllSections: ' + isExistingClientData);
                     const submitBtn = document.getElementById('submitBtn');
                     submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
                     const searchBtn = document.getElementById('searchBtn');
@@ -1022,6 +1021,7 @@
         }
         
         async function submitToSheets() {
+            alert('submitToSheets — isExistingClientData: ' + isExistingClientData + ' | clientType: ' + clientType);
             const submitBtn = document.getElementById('submitBtn');
             const hasEmpty = highlightEmptyFields();
             if (hasEmpty) { alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).'); return; }
