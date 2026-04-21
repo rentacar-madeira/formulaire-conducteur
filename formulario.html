@@ -2387,6 +2387,7 @@
                 document.getElementById('pdf_hint').style.color = '#2e7d32';
 
                 const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre boîte mail SPAM.\n\nVoulez-vous imprimer / sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Imprimer / sauvegarder plus tard via le bouton PDF');
+                if (savePDF) {
                     document.getElementById('print-voucher').innerHTML = generateVoucher();
                     document.title = getPdfTitle();
                     window.print();
