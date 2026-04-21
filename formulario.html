@@ -890,14 +890,15 @@
                 <!-- Buttons -->
                 <div class="button-group">
                     <div style="display:flex; flex-direction:column;">
-                        <button type="button" class="btn btn-secondary" onclick="clearForm()" style="flex:1;">
+                        <button type="button" class="btn" onclick="clearForm()" 
+                                style="flex:1; background:#fff5f5; color:#dc3545; border:2px solid #dc3545;">
                             🗑️ Effacer
                         </button>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:6px;">
                         <button type="button" class="btn btn-secondary" onclick="exportToPDF()" id="pdfBtn"
                                 style="flex:1; opacity:0.5; cursor:not-allowed;" disabled>
-                            🖨️ Imprimer / Sauvegarder une copie PDF
+                            🖨️ Imprimer<br>💾 Sauvegarder en copie PDF
                         </button>
                         <span id="pdf_hint" style="font-size:11px; color:#999; text-align:center;">
                             Disponible après l'envoi du formulaire
