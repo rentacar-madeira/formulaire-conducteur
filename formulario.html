@@ -641,6 +641,12 @@
                                        required
                                        readonly>
                             </div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                                <button type="button" onclick="document.getElementById('date_prise').value=''; document.getElementById('daysDisplay').classList.remove('show'); document.getElementById('same_date_warning').style.display='none';" 
+                                        style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">
+                                    ✕ Effacer la date
+                                </button>
+                            </div>
                         </div>
                         
                         <div class="form-group">
@@ -652,6 +658,12 @@
                                        pattern="\d{2}/\d{2}/\d{4}" 
                                        required
                                        readonly>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                                <button type="button" onclick="document.getElementById('date_restitution').value=''; document.getElementById('daysDisplay').classList.remove('show'); document.getElementById('same_date_warning').style.display='none';" 
+                                        style="font-size:11px; color:#888; background:none; border:1px solid #ddd; border-radius:4px; padding:2px 8px; cursor:pointer;">
+                                    ✕ Effacer la date
+                                </button>
                             </div>
                         </div>
                     </div>
