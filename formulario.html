@@ -985,6 +985,11 @@
                     document.getElementById('email_agence').disabled = false;
                     document.getElementById('email_agence').style.opacity = '1';
                     document.getElementById('email_agence_send').disabled = false;
+                // Desativar Effacer imediatamente
+                const effacerBtn = document.getElementById('effacerBtn');
+                effacerBtn.disabled = true;
+                effacerBtn.style.opacity = '0.4';
+                effacerBtn.style.cursor = 'not-allowed';
                 fetchExistingClientData(ref, token);
             }
         }
