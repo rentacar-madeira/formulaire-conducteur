@@ -1367,6 +1367,10 @@
                     isExistingClientData = true;
                     populateFormWithExistingData(data.clientData);
                     unlockAllSections();
+                    const submitBtn = document.getElementById('submitBtn');
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
                     // Desativar botão Rechercher após carregar dados pelo link
                     const searchBtn = document.getElementById('searchBtn');
                     searchBtn.disabled = true;
@@ -1413,10 +1417,11 @@
                     if (camposBloqueados.includes(fieldId)) {
                         input.disabled = true;
                     } else {
-                        // Campo modificável — laranja, sem lápis
                         input.disabled = false;
-                        input.style.background = '#fff3e0';
-                        input.style.borderColor = '#e65100';
+                        input.style.background = 'white';
+                        input.style.borderColor = '#ffb74d';
+                        input.addEventListener('input', function() { this.style.background = '#fff8f0'; });
+                        input.addEventListener('change', function() { this.style.background = '#fff8f0'; });
                     }
                 }
             }
@@ -1424,7 +1429,6 @@
             // Handle telephone separately — split indicatif from number
             if (data.telephone) {
                 const tel = data.telephone.toString();
-                // Find matching country code
                 const match = COUNTRIES.find(c => tel.startsWith(c.code));
                 if (match) {
                     selectedIndicatif = match.code;
@@ -1432,31 +1436,20 @@
                     document.getElementById('indicatif_label').style.color = '#2C5F8D';
                     document.getElementById('indicatif_label').style.fontWeight = '600';
                     document.getElementById('indicatif_clear').style.display = 'block';
-                    document.getElementById('indicatif_box').style.borderColor = '#2C5F8D';
+                    document.getElementById('indicatif_box').style.borderColor = '#ffb74d';
                     document.getElementById('telephone_numero').value = tel.substring(match.code.length);
                 } else {
                     document.getElementById('telephone_numero').value = tel;
                 }
                 document.getElementById('telephone').value = tel;
-                // Campo telefone modificável — laranja, sem lápis
                 document.getElementById('telephone_numero').disabled = false;
-                document.getElementById('telephone_numero').style.background = '#fff3e0';
-                document.getElementById('telephone_numero').style.borderColor = '#e65100';
-                document.getElementById('indicatif_box').style.background = '#fff3e0';
-                document.getElementById('indicatif_box').style.borderColor = '#e65100';
+                document.getElementById('telephone_numero').style.background = 'white';
+                document.getElementById('telephone_numero').style.borderColor = '#ffb74d';
+                document.getElementById('indicatif_box').style.background = 'white';
+                document.getElementById('indicatif_box').style.borderColor = '#ffb74d';
+                document.getElementById('telephone_numero').addEventListener('input', function() { this.style.background = '#fff8f0'; });
             }
 
-            // Colorir campos de datas em laranja
-            const camposData = ['date_prise','date_restitution','date_emission_id','date_expiration_id','date_emission_permis','date_expiration_permis'];
-            camposData.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.disabled = false;
-                    el.style.background = '#fff3e0';
-                    el.style.borderColor = '#e65100';
-                }
-            });
-            
             calculateDays();
             const dp = document.getElementById('date_prise').value;
             const dr = document.getElementById('date_restitution').value;
@@ -1465,6 +1458,18 @@
                 unlockSection('idDocSection');
                 unlockSection('licenseSection');
             }
+
+            // Colorir campos de datas em laranja
+            const camposData = ['date_prise','date_restitution','date_emission_id','date_expiration_id','date_emission_permis','date_expiration_permis'];
+            camposData.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = false;
+                    el.style.background = 'white';
+                    el.style.borderColor = '#ffb74d';
+                    el.addEventListener('change', function() { this.style.background = '#fff8f0'; });
+                }
+            });
         }
         
         function addEditIcon(fieldId) {
