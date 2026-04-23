@@ -998,6 +998,7 @@
             let hasEmpty = false;
             document.querySelectorAll('input[required], textarea[required]').forEach(input => {
                 if (input.type === 'hidden' || input.type === 'checkbox' || input.type === 'radio') return;
+                if (input.disabled) { input.classList.remove('error'); return; }
                 if (!input.value || input.value.trim() === '' || input.value === '+') { input.classList.add('error'); hasEmpty = true; }
                 else input.classList.remove('error');
             });
