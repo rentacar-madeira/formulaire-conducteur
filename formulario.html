@@ -644,6 +644,12 @@
                     isExistingClientData = true;
                     populateFormWithExistingData(data.clientData);
                     unlockAllSections();
+                    // Re-bloquear imediatamente enquanto verifica pendente
+                    document.querySelectorAll('.form-section').forEach(s => s.classList.add('locked'));
+                    document.getElementById('submitBtn').disabled = true;
+                    document.getElementById('submitBtn').style.opacity = '0.4';
+                    document.getElementById('effacerBtn').disabled = true;
+                    document.getElementById('effacerBtn').style.opacity = '0.4';
 
                     // Verificar se tem alteração pendente
                     const pendResp = await fetch(GOOGLE_SHEETS_URL + '?action=checkPendente&ref=' + encodeURIComponent(ref));
