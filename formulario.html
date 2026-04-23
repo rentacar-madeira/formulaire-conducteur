@@ -398,6 +398,9 @@
                 document.getElementById('accuracy_consent').disabled = true;
                 document.getElementById('accuracy_consent').style.opacity = '0.5';
                 document.getElementById('rgpd_agence').disabled = true;
+                document.getElementById('effacerBtn').style.cursor = 'not-allowed';
+                document.getElementById('pdfBtn').disabled = true;
+                document.getElementById('pdfBtn').style.opacity = '0.4';
                 // Mensagem de carregamento
                 document.getElementById('texte_instructions').innerHTML = '⏳ Chargement de l\'état de votre réservation...';
                 document.getElementById('texte_instructions').style.color = '#2C5F8D';
@@ -405,7 +408,6 @@
                 document.getElementById('texte_instructions').style.padding = '12px 16px';
                 document.getElementById('texte_instructions').style.borderLeft = '4px solid #2C5F8D';
                 document.getElementById('texte_instructions').style.borderRadius = '4px';
-                fetchExistingClientData(ref, token);
             }
         }
         
