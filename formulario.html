@@ -625,6 +625,8 @@
         
         function populateFormWithExistingData(data) {
             const camposBloqueados = ['reference_agence', 'email'];
+            // Remover todos os lápis existentes
+            document.querySelectorAll('.edit-icon').forEach(icon => icon.remove());
             const fields = {
                 'reference_agence': data.reference_agence, 'email': data.email,
                 'date_prise': data.date_prise, 'date_restitution': data.date_restitution,
@@ -666,7 +668,7 @@
                 document.getElementById('telephone').value = tel;
                 document.getElementById('telephone_numero').disabled = false;
                 document.getElementById('telephone_numero').style.background = 'white';
-                document.getElementById('telephone_numero').style.borderColor = '#ffb74d';
+                document.getElementById('telephone_numero').style.border = '2px solid #ffb74d';
                 document.getElementById('indicatif_box').style.background = 'white';
                 document.getElementById('indicatif_box').style.borderColor = '#ffb74d';
                 let telModified = false;
