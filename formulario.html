@@ -685,20 +685,21 @@
 
                     } else {
                         // Concluído — pode modificar novamente
+                        unlockAllSections();
                         const texte = document.getElementById('texte_instructions');
-                        texte.innerHTML = '✅ <strong>État de la modification : CONFIRMÉ par le loueur.</strong><br>Vous pouvez effectuer de nouvelles modifications si nécessaire. Si vous modifiez des informations, vous devrez soumettre à nouveau le formulaire pour mettre à jour votre réservation. Si vous ne soumettez pas, aucune modification ne sera enregistrée.';
+                        texte.innerHTML = '✅ <strong>État de la modification : CONFIRMÉ par le loueur.</strong><br>Vous pouvez effectuer de nouvelles modifications si nécessaire. Cases modifiables ci-dessous en orange. Si vous modifiez des informations, vous devrez soumettre à nouveau le formulaire pour mettre à jour votre réservation. Si vous ne soumettez pas, aucune modification ne sera enregistrée.';
                         texte.style.color = '#2e7d32';
                         texte.style.background = '#f0fff4';
                         texte.style.padding = '12px 16px';
                         texte.style.borderLeft = '4px solid #4caf50';
                         texte.style.borderRadius = '4px';
-                        // Desbloquear tudo
                         document.getElementById('submitBtn').disabled = false;
                         document.getElementById('submitBtn').style.opacity = '1';
                         document.getElementById('submitBtn').style.cursor = 'pointer';
                         document.getElementById('email_agence').disabled = false;
                         document.getElementById('email_agence').style.opacity = '1';
                         document.getElementById('email_agence').style.background = 'white';
+                        document.getElementById('email_agence').style.borderColor = '#2C5F8D';
                         document.getElementById('email_agence_send').disabled = false;
                         document.getElementById('email_agence_send').style.opacity = '1';
                         document.getElementById('rgpd_consent').disabled = false;
@@ -706,6 +707,8 @@
                         document.getElementById('accuracy_consent').disabled = false;
                         document.getElementById('accuracy_consent').style.opacity = '1';
                         document.getElementById('rgpd_agence').disabled = false;
+                        // Aplicar contornos laranja nos campos modificáveis
+                        populateFormWithExistingData(data.clientData);
                     }
                     const searchBtn = document.getElementById('searchBtn');
                     searchBtn.disabled = true; searchBtn.style.opacity = '0.4'; searchBtn.style.cursor = 'not-allowed'; searchBtn.innerHTML = '✅ Données chargées';
