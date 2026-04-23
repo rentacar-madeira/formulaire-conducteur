@@ -646,7 +646,6 @@
                     // Verificar se tem alteração pendente
                     const pendResp = await fetch(GOOGLE_SHEETS_URL + '?action=checkPendente&ref=' + encodeURIComponent(ref));
                     const pendData = await pendResp.json();
-                    alert('pendente: ' + pendData.pendente + ' | ref: ' + ref);
 
                     if (pendData.pendente) {
                         // Bloquear tudo — modo consulta
@@ -687,6 +686,15 @@
                         texte.style.borderRadius = '4px';
                         const submitBtn = document.getElementById('submitBtn');
                         submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+                        document.getElementById('email_agence').disabled = false;
+                        document.getElementById('email_agence').style.opacity = '1';
+                        document.getElementById('email_agence').style.background = 'white';
+                        document.getElementById('email_agence_send').disabled = false;
+                        document.getElementById('email_agence_send').style.opacity = '1';
+                        document.getElementById('rgpd_consent').disabled = false;
+                        document.getElementById('rgpd_consent').style.opacity = '1';
+                        document.getElementById('accuracy_consent').disabled = false;
+                        document.getElementById('accuracy_consent').style.opacity = '1';
                     }
                     const searchBtn = document.getElementById('searchBtn');
                     searchBtn.disabled = true; searchBtn.style.opacity = '0.4'; searchBtn.style.cursor = 'not-allowed'; searchBtn.innerHTML = '✅ Données chargées';
