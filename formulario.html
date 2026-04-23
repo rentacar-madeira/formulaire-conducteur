@@ -379,6 +379,9 @@
                 document.getElementById('texte_instructions').style.padding = '12px 16px';
                 document.getElementById('texte_instructions').style.borderLeft = '4px solid #e65100';
                 document.getElementById('texte_instructions').style.borderRadius = '4px';
+                fetchExistingClientData(ref, token);
+            }
+        }
               // Bloquear IMEDIATAMENTE tudo enquanto carrega
                 document.querySelectorAll('.form-section').forEach(s => s.classList.add('locked'));
                 document.getElementById('submitBtn').disabled = true;
