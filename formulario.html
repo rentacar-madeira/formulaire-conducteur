@@ -615,8 +615,44 @@
                     isExistingClientData = true;
                     populateFormWithExistingData(data.clientData);
                     unlockAllSections();
-                    const submitBtn = document.getElementById('submitBtn');
-                    submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+
+                    // Verificar se tem alteração pendente
+                    const pendResp = await fetch(GOOGLE_SHEETS_URL + '?action=checkPendente&ref=' + encodeURIComponent(ref));
+                    const pendData = await pendResp.json();
+
+                    if (pendData.pendente) {
+                        // Bloquear tudo — modo consulta
+                        document.querySelectorAll('.form-section').forEach(s => s.classList.add('locked'));
+                        document.getElementById('refEmailSection').classList.remove('locked');
+
+                        // Mostrar mensagem de pendente
+                        const texte = document.getElementById('texte_instructions');
+                        texte.innerHTML = '⏳ <strong>État de la modification : EN ATTENTE de traitement par le loueur.</strong><br>Une fois votre demande traitée, vous pourrez à nouveau modifier votre réservation.';
+                        texte.style.color = '#e65100';
+                        texte.style.background = '#fff3e0';
+                        texte.style.padding = '12px 16px';
+                        texte.style.borderLeft = '4px solid #e65100';
+                        texte.style.borderRadius = '4px';
+
+                        // Só botão PDF ativo
+                        const submitBtn = document.getElementById('submitBtn');
+                        submitBtn.disabled = true; submitBtn.style.opacity = '0.4'; submitBtn.style.cursor = 'not-allowed';
+                        const effacerBtn = document.getElementById('effacerBtn');
+                        effacerBtn.disabled = true; effacerBtn.style.opacity = '0.4'; effacerBtn.style.cursor = 'not-allowed';
+
+                        // Ativar PDF para consulta
+                        formSubmitted = true;
+                        const pdfBtn = document.getElementById('pdfBtn');
+                        pdfBtn.disabled = false; pdfBtn.style.opacity = '1'; pdfBtn.style.cursor = 'pointer';
+                        pdfBtn.style.background = '#e8f4fd'; pdfBtn.style.color = '#2C5F8D'; pdfBtn.style.border = '2px solid #2C5F8D';
+                        document.getElementById('pdf_hint').textContent = '🖨️ Consulter et sauvegarder une copie';
+                        document.getElementById('pdf_hint').style.color = '#2C5F8D';
+
+                    } else {
+                        // Normal — pode modificar
+                        const submitBtn = document.getElementById('submitBtn');
+                        submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+                    }
                     const searchBtn = document.getElementById('searchBtn');
                     searchBtn.disabled = true; searchBtn.style.opacity = '0.4'; searchBtn.style.cursor = 'not-allowed'; searchBtn.innerHTML = '✅ Données chargées';
                     const effacerBtn = document.getElementById('effacerBtn');
