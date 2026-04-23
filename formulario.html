@@ -379,7 +379,7 @@
                 document.getElementById('texte_instructions').style.padding = '12px 16px';
                 document.getElementById('texte_instructions').style.borderLeft = '4px solid #e65100';
                 document.getElementById('texte_instructions').style.borderRadius = '4px';
-                // Bloquear IMEDIATAMENTE tudo enquanto carrega
+              // Bloquear IMEDIATAMENTE tudo enquanto carrega
                 document.querySelectorAll('.form-section').forEach(s => s.classList.add('locked'));
                 document.getElementById('submitBtn').disabled = true;
                 document.getElementById('submitBtn').style.opacity = '0.4';
@@ -389,6 +389,15 @@
                 document.getElementById('effacerBtn').style.cursor = 'not-allowed';
                 document.getElementById('pdfBtn').disabled = true;
                 document.getElementById('pdfBtn').style.opacity = '0.4';
+                document.getElementById('email_agence').disabled = true;
+                document.getElementById('email_agence').style.opacity = '0.5';
+                document.getElementById('email_agence_send').disabled = true;
+                document.getElementById('email_agence_send').style.opacity = '0.5';
+                document.getElementById('rgpd_consent').disabled = true;
+                document.getElementById('rgpd_consent').style.opacity = '0.5';
+                document.getElementById('accuracy_consent').disabled = true;
+                document.getElementById('accuracy_consent').style.opacity = '0.5';
+                document.getElementById('rgpd_agence').disabled = true;
                 // Mensagem de carregamento
                 document.getElementById('texte_instructions').innerHTML = '⏳ Chargement de l\'état de votre réservation...';
                 document.getElementById('texte_instructions').style.color = '#2C5F8D';
