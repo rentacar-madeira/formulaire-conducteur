@@ -640,9 +640,14 @@
                     if (camposBloqueados.includes(fieldId)) {
                         input.disabled = true;
                     } else {
-                        input.disabled = true;
+                        input.disabled = false;
+                        input.style.background = 'white';
                         input.style.borderColor = '#ffb74d';
-                        addEditIcon(fieldId);
+                        let userModified = false;
+                        input.addEventListener('input', function() {
+                            if (userModified) this.style.background = '#fff8f0';
+                        });
+                        setTimeout(() => { userModified = true; }, 500);
                     }
                 }
             }
@@ -659,16 +664,16 @@
                     document.getElementById('telephone_numero').value = tel.substring(match.code.length);
                 } else { document.getElementById('telephone_numero').value = tel; }
                 document.getElementById('telephone').value = tel;
-                document.getElementById('telephone_numero').disabled = true;
-                const numInput = document.getElementById('telephone_numero');
-                const wrapper = numInput.parentElement;
-                if (!wrapper.querySelector('.edit-icon')) {
-                    const icon = document.createElement('span');
-                    icon.className = 'edit-icon'; icon.innerHTML = '✏️';
-                    icon.style.cssText = 'position:absolute; right:12px; top:50%; transform:translateY(-50%); cursor:pointer; font-size:18px; opacity:0.6;';
-                    icon.onclick = function() { numInput.disabled = false; numInput.focus(); this.remove(); };
-                    wrapper.style.position = 'relative'; wrapper.appendChild(icon);
-                }
+                document.getElementById('telephone_numero').disabled = false;
+                document.getElementById('telephone_numero').style.background = 'white';
+                document.getElementById('telephone_numero').style.borderColor = '#ffb74d';
+                document.getElementById('indicatif_box').style.background = 'white';
+                document.getElementById('indicatif_box').style.borderColor = '#ffb74d';
+                let telModified = false;
+                document.getElementById('telephone_numero').addEventListener('input', function() {
+                    if (telModified) this.style.background = '#fff8f0';
+                });
+                setTimeout(() => { telModified = true; }, 500);
             }
             calculateDays();
             const dp = document.getElementById('date_prise').value;
