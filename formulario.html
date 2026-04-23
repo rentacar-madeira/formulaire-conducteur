@@ -619,6 +619,7 @@
                     // Verificar se tem alteração pendente
                     const pendResp = await fetch(GOOGLE_SHEETS_URL + '?action=checkPendente&ref=' + encodeURIComponent(ref));
                     const pendData = await pendResp.json();
+                    alert('pendente: ' + pendData.pendente + ' | ref: ' + ref);
 
                     if (pendData.pendente) {
                         // Bloquear tudo — modo consulta
