@@ -405,13 +405,14 @@
                 document.getElementById('effacerBtn').style.cursor = 'not-allowed';
                 document.getElementById('pdfBtn').disabled = true;
                 document.getElementById('pdfBtn').style.opacity = '0.4';
-                // Mensagem de carregamento
+                /// Mensagem de carregamento
                 document.getElementById('texte_instructions').innerHTML = '⏳ Chargement de l\'état de votre réservation...';
                 document.getElementById('texte_instructions').style.color = '#2C5F8D';
                 document.getElementById('texte_instructions').style.background = '#e3f2fd';
                 document.getElementById('texte_instructions').style.padding = '12px 16px';
                 document.getElementById('texte_instructions').style.borderLeft = '4px solid #2C5F8D';
                 document.getElementById('texte_instructions').style.borderRadius = '4px';
+                fetchExistingClientData(ref, token);
             }
         }
         
