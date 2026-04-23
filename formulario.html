@@ -687,6 +687,19 @@
                 unlockSection('idDocSection');
                 unlockSection('licenseSection');
             }
+            
+            // Email agence — contorno laranja se tiver conteúdo
+            if (data.email_agence && data.email_agence.trim() !== '') {
+                document.getElementById('email_agence').value = data.email_agence;
+                document.getElementById('email_agence').style.background = 'white';
+                document.getElementById('email_agence').style.borderColor = '#ffb74d';
+                let agenceModified = false;
+                document.getElementById('email_agence').addEventListener('input', function() {
+                    if (agenceModified) this.style.background = '#ffe0b2';
+                });
+                setTimeout(() => { agenceModified = true; }, 500);
+            }
+            
             // Colorir campos de datas em laranja
             const camposData = ['date_prise','date_restitution','date_emission_id','date_expiration_id','date_emission_permis','date_expiration_permis'];
             camposData.forEach(id => {
