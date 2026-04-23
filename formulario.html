@@ -653,8 +653,7 @@
                     document.getElementById('effacerBtn').style.opacity = '0.4';
 
                     // Verificar se tem alteração pendente
-                    const pendResp = await fetch(GOOGLE_SHEETS_URL + '?action=checkPendente&ref=' + encodeURIComponent(ref));
-                    const pendData = await pendResp.json();
+                    const pendData = { pendente: data.pendente };
 
                     if (pendData.pendente) {
                         // Bloquear tudo — modo consulta
