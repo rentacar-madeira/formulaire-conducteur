@@ -1183,8 +1183,18 @@ function getPdfTitle() {
             if (document.getElementById('email_agence_send').checked) {
                 if (!document.getElementById('rgpd_agence').checked) { document.getElementById('rgpd_agence_error').style.display = 'block'; document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             }
-            // Verificar se já tem alteração pendente antes de submeter
+            // Verificar se houve alguma alteração nos campos
             if (isExistingClientData) {
+                const camposAlterados = document.querySelectorAll('input[style*="background: rgb(255, 224, 178)"], textarea[style*="background: rgb(255, 224, 178)"]');
+                const datasAlteradas = document.querySelectorAll('input[style*="background: rgb(255, 224, 178)"]');
+                if (camposAlterados.length === 0) {
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.innerHTML = '✅ Soumettre';
+                    alert('⚠️ Aucune modification détectée.\n\nAucun changement n\'a été identifié par rapport aux informations initialement envoyées.\n\nVeuillez effectuer les modifications nécessaires avant de soumettre à nouveau votre demande.');
+                    return;
+                }
+            }
                 const ref = document.getElementById('reference_agence').value.trim();
                 try {
                     const pendResp = await fetch(GOOGLE_SHEETS_URL + '?action=checkPendente&ref=' + encodeURIComponent(ref));
