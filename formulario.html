@@ -662,7 +662,7 @@
 
                         // Mostrar mensagem de pendente
                         const texte = document.getElementById('texte_instructions');
-                        texte.innerHTML = '⏳ <strong>État de la modification : EN ATTENTE de traitement par le loueur.</strong><br>Une fois votre demande traitée, vous pourrez à nouveau modifier votre réservation.';
+                        texte.innerHTML = '⏳ <strong>Status de la modification : EN ATTENTE de traitement par le loueur.</strong><br>Une fois votre demande traitée, vous pourrez à nouveau modifier votre réservation.';
                         texte.style.color = '#e65100';
                         texte.style.background = '#fff3e0';
                         texte.style.padding = '12px 16px';
@@ -687,9 +687,7 @@
                         // Concluído — pode modificar novamente
                         unlockAllSections();
                         const texte = document.getElementById('texte_instructions');
-                        texte.innerHTML = '✅ <strong>État de la modification : CONFIRMÉ par le loueur.</strong><br>Vous pouvez effectuer de nouvelles modifications si nécessaire. Cases modifiables ci-dessous en orange. Si vous modifiez des informations, vous devrez soumettre à nouveau le formulaire pour mettre à jour votre réservation. Si vous ne soumettez pas, aucune modification ne sera enregistrée.';
-                        texte.style.color = '#2e7d32';
-                        texte.style.background = '#f0fff4';
+                        texte.innerHTML = '✅ <strong>Status de vos données : CONFIRMÉ par le loueur.</strong><br>Vous pouvez apporter des modifications si nécessaire. <span style="color:#e65100; font-weight:600;">Les champs modifiables sont indiqués ci-dessous en orange.</span> Si vous modifiez des informations, vous devez <strong>IMPÉRATIVEMENT</strong> soumettre à nouveau le formulaire afin de mettre à jour votre réservation. À défaut de soumission, aucune modification ne sera prise en compte.';                        texte.style.background = '#f0fff4';
                         texte.style.padding = '12px 16px';
                         texte.style.borderLeft = '4px solid #4caf50';
                         texte.style.borderRadius = '4px';
