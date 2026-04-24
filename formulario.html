@@ -1124,7 +1124,9 @@
         function getPdfTitle() {
             const ref = document.getElementById('reference_agence').value || 'Ref';
             const nom = document.getElementById('nom_complet').value || 'Client';
-            return 'Ref. ' + ref + ' - ' + nom + ' - Formulaire du Conducteur - Location de Voiture';
+            const today = new Date().toLocaleDateString('fr-FR').replace(/\//g, '.');
+            const suffix = isExistingClientData ? ' - Modification' : '';
+            return 'Ref. ' + ref + ' - ' + nom + ' - Formulaire du Conducteur - ' + today + suffix;
         }
 
         let formSubmitted = false;
