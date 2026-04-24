@@ -1206,7 +1206,9 @@ function getPdfTitle() {
                     if (!el) return false;
                     return el.value.trim() !== (valoresOriginais[id] || '').toString().trim();
                 });
-                if (!houveAlteracao) {
+                const emailAgencePreenchido = document.getElementById('email_agence').value.trim() !== '';
+                const emailAgenceSend = document.getElementById('email_agence_send').checked;
+                if (!houveAlteracao && !(emailAgencePreenchido && emailAgenceSend)) {
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
                     submitBtn.innerHTML = '✅ Soumettre';
