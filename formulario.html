@@ -1169,6 +1169,21 @@ function getPdfTitle() {
             if (document.getElementById('email_agence_send').checked) {
                 if (!document.getElementById('rgpd_agence').checked) { document.getElementById('rgpd_agence_error').style.display = 'block'; document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             }
+            // Verificar se já tem alteração pendente antes de submeter
+            if (isExistingClientData) {
+                const ref = document.getElementById('reference_agence').value.trim();
+                try {
+                    const pendResp = await fetch(GOOGLE_SHEETS_URL + '?action=checkPendente&ref=' + encodeURIComponent(ref));
+                    const pendData = await pendResp.json();
+                    if (pendData.pendente) {
+                        submitBtn.disabled = false;
+                        submitBtn.style.opacity = '1';
+                        submitBtn.innerHTML = '✅ Soumettre';
+                        alert('⚠️ Impossible de soumettre de nouvelles modifications.\n\nUne demande de modification est déjà en attente de confirmation par le loueur.\n\nVeuillez réessayer plus tard en rouvrant le lien reçu par email pour vérifier l\'état de votre réservation.');
+                        return;
+                    }
+                } catch(e) {}
+            }
             // Collect form data
             const formData = {
                 client_type: clientType, is_modification: isExistingClientData,
