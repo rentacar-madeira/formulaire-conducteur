@@ -1210,6 +1210,7 @@ function getPdfTitle() {
                 }
             }
                 // Verificar se já tem alteração pendente
+            if (isExistingClientData) {
                 const ref = document.getElementById('reference_agence').value.trim();
                 try {
                     const pendResp = await fetch(GOOGLE_SHEETS_URL + '?action=checkPendente&ref=' + encodeURIComponent(ref));
