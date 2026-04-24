@@ -809,9 +809,14 @@
                     el.style.background = 'white';
                     el.style.borderColor = '#ffb74d';
                     valoresOriginais[id] = el.value;
-                    let userModified = false;
-                    el.addEventListener('change', function() { if (userModified) this.style.background = '#ffe0b2'; });
-                    setTimeout(() => { userModified = true; }, 500);
+                    const valorOriginalData = el.value;
+                    el.addEventListener('change', function() {
+                        if (this.value.trim() !== valorOriginalData.toString().trim()) {
+                            this.style.background = '#ffe0b2';
+                        } else {
+                            this.style.background = 'white';
+                        }
+                    });
                 }
             });
         }
