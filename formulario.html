@@ -675,13 +675,11 @@
                         const effacerBtn = document.getElementById('effacerBtn');
                         effacerBtn.disabled = true; effacerBtn.style.opacity = '0.4'; effacerBtn.style.cursor = 'not-allowed';
 
-                        // Ativar PDF para consulta
-                        formSubmitted = true;
+                        // PDF inativo em modo pendente
                         const pdfBtn = document.getElementById('pdfBtn');
-                        pdfBtn.disabled = false; pdfBtn.style.opacity = '1'; pdfBtn.style.cursor = 'pointer';
-                        pdfBtn.style.background = '#e8f4fd'; pdfBtn.style.color = '#2C5F8D'; pdfBtn.style.border = '2px solid #2C5F8D';
-                        document.getElementById('pdf_hint').textContent = '🖨️ Consulter et sauvegarder une copie';
-                        document.getElementById('pdf_hint').style.color = '#2C5F8D';
+                        pdfBtn.disabled = true; pdfBtn.style.opacity = '0.4'; pdfBtn.style.cursor = 'not-allowed';
+                        document.getElementById('pdf_hint').textContent = 'Disponible une fois la modification traitée';
+                        document.getElementById('pdf_hint').style.color = '#999';
 
                     } else {
                         // Concluído — pode modificar novamente
