@@ -736,11 +736,14 @@
                         input.disabled = false;
                         input.style.background = 'white';
                         input.style.borderColor = '#ffb74d';
-                        let userModified = false;
+                        const valorOriginal = value;
                         input.addEventListener('input', function() {
-                            if (userModified) this.style.background = '#ffe0b2';
+                            if (this.value.trim() !== valorOriginal.toString().trim()) {
+                                this.style.background = '#ffe0b2';
+                            } else {
+                                this.style.background = 'white';
+                            }
                         });
-                        setTimeout(() => { userModified = true; }, 500);
                     }
                 }
             }
@@ -762,11 +765,14 @@
                 document.getElementById('telephone_numero').style.border = '2px solid #ffb74d';
                 document.getElementById('indicatif_box').style.background = 'white';
                 document.getElementById('indicatif_box').style.borderColor = '#ffb74d';
-                let telModified = false;
+                const telOriginal = document.getElementById('telephone_numero').value;
                 document.getElementById('telephone_numero').addEventListener('input', function() {
-                    if (telModified) this.style.background = '#ffe0b2';
+                    if (this.value.trim() !== telOriginal.toString().trim()) {
+                        this.style.background = '#ffe0b2';
+                    } else {
+                        this.style.background = 'white';
+                    }
                 });
-                setTimeout(() => { telModified = true; }, 500);
             }
             calculateDays();
             const dp = document.getElementById('date_prise').value;
