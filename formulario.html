@@ -1186,7 +1186,6 @@ function getPdfTitle() {
             // Verificar se houve alguma alteração nos campos
             if (isExistingClientData) {
                 const camposAlterados = document.querySelectorAll('input[style*="background: rgb(255, 224, 178)"], textarea[style*="background: rgb(255, 224, 178)"]');
-                const datasAlteradas = document.querySelectorAll('input[style*="background: rgb(255, 224, 178)"]');
                 if (camposAlterados.length === 0) {
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
@@ -1194,7 +1193,7 @@ function getPdfTitle() {
                     alert('⚠️ Aucune modification détectée.\n\nAucun changement n\'a été identifié par rapport aux informations initialement envoyées.\n\nVeuillez effectuer les modifications nécessaires avant de soumettre à nouveau votre demande.');
                     return;
                 }
-            }
+                // Verificar se já tem alteração pendente
                 const ref = document.getElementById('reference_agence').value.trim();
                 try {
                     const pendResp = await fetch(GOOGLE_SHEETS_URL + '?action=checkPendente&ref=' + encodeURIComponent(ref));
