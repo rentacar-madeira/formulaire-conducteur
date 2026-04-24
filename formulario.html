@@ -982,7 +982,11 @@
                 if (emission && emission.length === 10) { const de = parseDateString(emission); if (de && date <= de) { alert("⚠️ La date d'expiration doit être postérieure à la date d'émission."); return; } }
                 if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date <= dr) { alert("⚠️ La date d'expiration du permis doit être postérieure à la date de restitution."); return; } }
             }
-            input.value = dateStr; input.dispatchEvent(new Event('change'));
+            const valorAnterior = input.value;
+            input.value = dateStr;
+            if (dateStr !== valorAnterior) {
+                input.dispatchEvent(new Event('change'));
+            }
             const nextId = NEXT_CALENDAR[currentInputId]; closeCalendar();
             if (nextId) {
                 const nextInput = document.getElementById(nextId);
@@ -1185,8 +1189,9 @@ function getPdfTitle() {
             }
             // Verificar se houve alguma alteração nos campos
             if (isExistingClientData) {
-                const camposAlterados = document.querySelectorAll('input[style*="background: rgb(255, 224, 178)"], textarea[style*="background: rgb(255, 224, 178)"]');
-                if (camposAlterados.length === 0) {
+                const camposAlterados = document.querySelectorAll('input[style*="background: rgb(255, 224, 178)"], textarea[style*="background: rgb(255, 224, 178)"], input[style*="background:rgb(255, 224, 178)"]');
+                const datasAlteradas = Array.from(document.querySelectorAll('.date-input input')).filter(el => el.style.background === 'rgb(255, 224, 178)');
+                if (camposAlterados.length === 0 && datasAlteradas.length === 0) {
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
                     submitBtn.innerHTML = '✅ Soumettre';
