@@ -315,6 +315,33 @@
         </div>
     </div>
     <div id="print-voucher" style="display:none;"></div>
+
+    <!-- Modal de confirmação -->
+    <div id="confirmModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:2000; justify-content:center; align-items:center;">
+        <div style="background:white; border-radius:16px; padding:32px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <h2 style="color:#2C5F8D; font-size:18px; margin-bottom:16px;">📋 Confirmation avant envoi</h2>
+            <div id="modalResume" style="background:#f8f9fa; border-radius:8px; padding:16px; margin-bottom:20px; font-size:13px; line-height:1.8;"></div>
+            <div style="background:#fff3e0; border-left:4px solid #e65100; padding:12px 16px; border-radius:4px; margin-bottom:16px; font-size:12px; color:#e65100;">
+                ⚠️ Vérifiez attentivement votre adresse email. En cas d'erreur, contactez-nous au <strong>+351 291 147 790</strong>.
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Confirmez votre adresse email *</label>
+                <input type="email" id="confirmEmailInput" placeholder="Saisissez à nouveau votre email" style="width:100%; padding:10px 14px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; font-family:'Inter',sans-serif; box-sizing:border-box;">
+                <div id="confirmEmailError" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">⚠️ L'email ne correspond pas. Veuillez vérifier.</div>
+            </div>
+            <div style="margin-bottom:20px; padding:12px; border:2px solid #e0e0e0; border-radius:8px;">
+                <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-weight:normal;">
+                    <input type="checkbox" id="confirmEmailCheck" style="width:18px; height:18px; min-width:18px; margin-top:2px; cursor:pointer; accent-color:#2C5F8D;">
+                    <span style="font-size:12px; color:#444; line-height:1.6;">Je confirme que l'adresse email indiquée est correcte et que je pourrai y accéder pour modifier mes informations si nécessaire.</span>
+                </label>
+            </div>
+            <div style="display:flex; gap:12px;">
+                <button onclick="closeConfirmModal()" style="flex:1; padding:12px; background:#fff5f5; color:#dc3545; border:2px solid #dc3545; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">✕ Corriger</button>
+                <button onclick="confirmAndSubmit()" style="flex:1; padding:12px; background:#f0fff4; color:#2e7d32; border:2px solid #2e7d32; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">✅ Confirmer et envoyer</button>
+            </div>
+        </div>
+    </div>
+
     <div class="calendar-overlay" id="calendarOverlay">
         <div class="calendar-container">
             <button class="calendar-close" onclick="closeCalendar()">✕</button>
@@ -1103,6 +1130,43 @@
             if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
             return new Date(year, month, day);
         }
+
+        function openConfirmModal() {
+            const email = document.getElementById('email').value;
+            const nom = document.getElementById('nom_complet').value;
+            const ref = document.getElementById('reference_agence').value;
+            const dp = document.getElementById('date_prise').value;
+            const dr = document.getElementById('date_restitution').value;
+            const jours = document.getElementById('daysCount').textContent;
+            document.getElementById('modalResume').innerHTML = `
+                <div style="margin-bottom:6px;">📌 <strong>Référence :</strong> ${ref}</div>
+                <div style="margin-bottom:6px;">👤 <strong>Nom :</strong> ${nom}</div>
+                <div style="margin-bottom:6px; color:#e65100;">📧 <strong>Email :</strong> ${email}</div>
+                <div style="margin-bottom:6px;">📅 <strong>Période :</strong> ${dp} → ${dr} (${jours} jour(s))</div>
+            `;
+            document.getElementById('confirmEmailInput').value = '';
+            document.getElementById('confirmEmailError').style.display = 'none';
+            document.getElementById('confirmEmailCheck').checked = false;
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.innerHTML = '✅ Soumettre';
+        }
+
+        function confirmAndSubmit() {
+            const email = document.getElementById('email').value.trim();
+            const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
+            const checked = document.getElementById('confirmEmailCheck').checked;
+            if (email !== confirmEmail) { document.getElementById('confirmEmailError').style.display = 'block'; return; }
+            if (!checked) { alert('⚠️ Veuillez cocher la case de confirmation.'); return; }
+            document.getElementById('confirmModal').style.display = 'none';
+            proceedWithSubmit();
+        }
         
         function clearForm() { if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) clearFormSilent(); }
         
@@ -1170,6 +1234,17 @@ function getPdfTitle() {
             const submitBtn = document.getElementById('submitBtn');
             const hasEmpty = highlightEmptyFields();
             if (hasEmpty) { alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).'); return; }
+            submitBtn.disabled = true; submitBtn.style.opacity = '0.7'; submitBtn.innerHTML = '<span class="spinner"></span> Vérification...';
+            // Mostrar modal de confirmação apenas para novos clientes
+            if (clientType === 'nouveau') {
+                openConfirmModal();
+                return;
+            }
+            await proceedWithSubmit();
+        }
+
+        async function proceedWithSubmit() {
+            const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true; submitBtn.style.opacity = '0.7'; submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
             if (clientType === 'nouveau') {
                 const ref = document.getElementById('reference_agence').value.trim();
