@@ -1196,7 +1196,13 @@ function getPdfTitle() {
             if (!document.getElementById('accuracy_consent').checked) { document.getElementById('accuracy_error').style.display = 'block'; document.getElementById('accuracy_consent').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             document.getElementById('accuracy_error').style.display = 'none';
             if (document.getElementById('email_agence_send').checked) {
-                if (!document.getElementById('rgpd_agence').checked) { document.getElementById('rgpd_agence_error').style.display = 'block'; document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
+                if (!document.getElementById('rgpd_agence').checked) { 
+                    document.getElementById('rgpd_agence_error').style.display = 'block'; 
+                    document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' }); 
+                    submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; 
+                    alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).');
+                    return; 
+                }
             }
             // Verificar se houve alguma alteração nos campos
             if (isExistingClientData) {
