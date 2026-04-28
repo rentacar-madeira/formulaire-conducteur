@@ -353,7 +353,16 @@
             </div>
         </div>
     </div>
-
+    <div id="reservationModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:2000; justify-content:center; align-items:center;">
+    <div style="background:white; border-radius:16px; padding:32px; max-width:500px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <h2 style="color:#2C5F8D; font-size:18px; margin-bottom:16px;">📋 Ma réservation</h2>
+        <div id="reservationModalMsg" style="font-size:13px; color:#444; line-height:1.8; margin-bottom:24px;"></div>
+        <div style="display:flex; gap:12px;">
+            <button onclick="document.getElementById('reservationModal').style.display='none'" style="flex:1; padding:12px; background:#fff5f5; color:#dc3545; border:2px solid #dc3545; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">✕ Fermer</button>
+            <button onclick="confirmarImpressaoReservation()" style="flex:1; padding:12px; background:#e3f2fd; color:#1565c0; border:2px solid #1565c0; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">🖨️ Ouvrir l'aperçu</button>
+        </div>
+    </div>
+</div>
     <div class="calendar-overlay" id="calendarOverlay">
         <div class="calendar-container">
             <button class="calendar-close" onclick="closeCalendar()">✕</button>
@@ -1394,19 +1403,21 @@ function getPdfTitle() {
 }
 
 function showReservationInfo() {
-    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-    const msg = '📋 Ce document correspond à votre réservation confirmée par le loueur.\n\n' +
-        const msg = valoresOriginaisCompletos._pendente
-    ? '📋 Ce document correspond à votre réservation confirmée par le loueur.\n\nToutes modifications "en attente de confirmation du loueur" ne seront pas à jour sur ce document. Une fois traitée par le loueur, la réservation sera mise à jour lorsque vous ouvrez à nouveau le lien reçu par email.\n\nCliquez sur OK pour ouvrir l\'aperçu imprimable et/ou sauvegardable en PDF.'
-    : '📋 Ce document correspond à votre réservation confirmée par le loueur.\n\nCliquez sur OK pour ouvrir l\'aperçu imprimable et/ou sauvegardable en PDF.';
-    
-    if (isMobile || true) {
-        if (confirm(msg)) {
-            document.getElementById('print-voucher').innerHTML = generateVoucherOriginal();
-            document.title = getPdfTitle() + ' (confirmé)';
-            window.print();
-        }
+    const pendente = valoresOriginaisCompletos._pendente;
+    let html = '<p style="margin-bottom:12px;">Ce document correspond à votre réservation <strong>confirmée par le loueur</strong>.</p>';
+    if (pendente) {
+        html += '<div style="background:#fff3e0; border-left:4px solid #e65100; padding:10px 14px; border-radius:4px; margin-bottom:12px; font-size:12px; color:#e65100;">⚠️ Toutes modifications <strong>"en attente de confirmation du loueur"</strong> ne seront pas à jour sur ce document. Une fois traitée par le loueur, la réservation sera mise à jour lorsque vous ouvrez à nouveau le lien reçu par email.</div>';
     }
+    html += '<p style="color:#888; font-size:12px;">Cliquez sur <strong>Ouvrir l\'aperçu</strong> pour imprimer et/ou sauvegarder en PDF.</p>';
+    document.getElementById('reservationModalMsg').innerHTML = html;
+    document.getElementById('reservationModal').style.display = 'flex';
+}
+
+function confirmarImpressaoReservation() {
+    document.getElementById('reservationModal').style.display = 'none';
+    document.getElementById('print-voucher').innerHTML = generateVoucherOriginal();
+    document.title = getPdfTitle() + ' (confirmé)';
+    window.print();
 }
 
 function generateVoucherOriginal() {
