@@ -379,6 +379,7 @@
         let clientType = null;
         let isExistingClientData = false;
         let valoresOriginais = {};
+        let valoresOriginaisCompletos = {}; // ← adicionar aqui
         
         document.addEventListener('DOMContentLoaded', function() {
             initializeClientTypeSelection();
@@ -701,11 +702,8 @@
                     const pendData = { pendente: data.pendente };
 
                     if (pendData.pendente) {
-                        // Bloquear tudo — modo consulta
                         document.querySelectorAll('.form-section').forEach(s => s.classList.add('locked'));
-                        document.getElementById('refEmailSection').classList.remove('locked');
-
-                        // Mostrar mensagem de pendente
+                        document.getElementById('maReservationBtnWrapper').style.display = 'block'; // ← adicionar
                         const texte = document.getElementById('texte_instructions');
                         texte.innerHTML = '⏳ <strong>Status de la modification : EN ATTENTE de traitement par le loueur.</strong><br>Une fois votre demande traitée, vous pourrez à nouveau modifier votre réservation.';
                         texte.style.color = '#e65100';
@@ -729,6 +727,7 @@
                     } else {
                         // Concluído — pode modificar novamente
                         unlockAllSections();
+                        document.getElementById('maReservationBtnWrapper').style.display = 'block'; // ← adicionar
                         const texte = document.getElementById('texte_instructions');
                         texte.innerHTML = '✅ <strong>Status de vos données : CONFIRMÉ par le loueur.</strong><br>Vous pouvez apporter des modifications si nécessaire. <span style="color:#e65100; font-weight:600;">Les champs modifiables sont indiqués ci-dessous en orange.</span> Si vous modifiez des informations, vous devez <strong>IMPÉRATIVEMENT</strong> soumettre à nouveau le formulaire afin de mettre à jour votre réservation. À défaut de soumission, aucune modification ne sera prise en compte.';                        texte.style.background = '#f0fff4';
                         texte.style.padding = '12px 16px';
@@ -760,6 +759,7 @@
         }
         
         function populateFormWithExistingData(data) {
+            valoresOriginaisCompletos = Object.assign({}, data); // ← adicionar esta linha
             const camposBloqueados = ['reference_agence', 'email'];
             // Remover todos os lápis existentes
             document.querySelectorAll('.edit-icon').forEach(icon => icon.remove());
