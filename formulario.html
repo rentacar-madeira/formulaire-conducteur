@@ -322,12 +322,17 @@
             <h2 style="color:#2C5F8D; font-size:18px; margin-bottom:16px;">📋 Confirmation avant envoi</h2>
             <div id="modalResume" style="background:#f8f9fa; border-radius:8px; padding:16px; margin-bottom:20px; font-size:13px; line-height:1.8;"></div>
             <div style="background:#fff3e0; border-left:4px solid #e65100; padding:12px 16px; border-radius:4px; margin-bottom:16px; font-size:12px; color:#e65100;">
-                ⚠️ Vérifiez attentivement votre adresse email. En cas d'erreur, contactez-nous au <strong>+351 291 147 790</strong>.
+                ⚠️ Vérifiez attentivement votre adresse email. En cas d'erreur, veuillez revenir en arrière et corriger avant de soumettre.
             </div>
             <div style="margin-bottom:16px;">
                 <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Confirmez votre adresse email *</label>
                 <input type="email" id="confirmEmailInput" placeholder="Saisissez à nouveau votre email" style="width:100%; padding:10px 14px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; font-family:'Inter',sans-serif; box-sizing:border-box;">
-                <div id="confirmEmailError" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">⚠️ L'email ne correspond pas. Veuillez vérifier.</div>
+                <div id="confirmEmailError" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">⚠️ L'email ne correspond pas. Veuillez vérifier et corriger.</div>
+            </div>
+            <div id="confirmAgenceSection" style="display:none; margin-bottom:16px;">
+                <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Confirmez l'email agence *</label>
+                <input type="email" id="confirmAgenceInput" placeholder="Saisissez à nouveau l'email agence" style="width:100%; padding:10px 14px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; font-family:'Inter',sans-serif; box-sizing:border-box;">
+                <div id="confirmAgenceError" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">⚠️ L'email agence ne correspond pas. Veuillez vérifier et corriger.</div>
             </div>
             <div style="margin-bottom:20px; padding:12px; border:2px solid #e0e0e0; border-radius:8px;">
                 <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-weight:normal;">
@@ -336,7 +341,7 @@
                 </label>
             </div>
             <div style="display:flex; gap:12px;">
-                <button onclick="closeConfirmModal()" style="flex:1; padding:12px; background:#fff5f5; color:#dc3545; border:2px solid #dc3545; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">✕ Corriger</button>
+                <button onclick="closeConfirmModal('email')" style="flex:1; padding:12px; background:#fff5f5; color:#dc3545; border:2px solid #dc3545; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">✕ Corriger</button>
                 <button onclick="confirmAndSubmit()" style="flex:1; padding:12px; background:#f0fff4; color:#2e7d32; border:2px solid #2e7d32; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">✅ Confirmer et envoyer</button>
             </div>
         </div>
@@ -1138,24 +1143,40 @@
             const dp = document.getElementById('date_prise').value;
             const dr = document.getElementById('date_restitution').value;
             const jours = document.getElementById('daysCount').textContent;
+            const emailAgence = document.getElementById('email_agence').value;
+            const emailAgenceSend = document.getElementById('email_agence_send').checked;
             document.getElementById('modalResume').innerHTML = `
                 <div style="margin-bottom:6px;">📌 <strong>Référence :</strong> ${ref}</div>
                 <div style="margin-bottom:6px;">👤 <strong>Nom :</strong> ${nom}</div>
-                <div style="margin-bottom:6px; color:#e65100;">📧 <strong>Email :</strong> ${email}</div>
+                <div style="margin-bottom:6px; color:#e65100;">📧 <strong>Email personnel :</strong> ${email}</div>
+                ${emailAgence && emailAgenceSend ? `<div style="margin-bottom:6px; color:#e65100;">📧 <strong>Email agence :</strong> ${emailAgence}</div>` : ''}
                 <div style="margin-bottom:6px;">📅 <strong>Période :</strong> ${dp} → ${dr} (${jours} jour(s))</div>
             `;
             document.getElementById('confirmEmailInput').value = '';
             document.getElementById('confirmEmailError').style.display = 'none';
             document.getElementById('confirmEmailCheck').checked = false;
+            const agenceSection = document.getElementById('confirmAgenceSection');
+            document.getElementById('confirmAgenceInput').value = '';
+            document.getElementById('confirmAgenceError').style.display = 'none';
+            agenceSection.style.display = (emailAgence && emailAgenceSend) ? 'block' : 'none';
             document.getElementById('confirmModal').style.display = 'flex';
         }
 
-        function closeConfirmModal() {
+function closeConfirmModal(fieldId) {
             document.getElementById('confirmModal').style.display = 'none';
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = false;
             submitBtn.style.opacity = '1';
             submitBtn.innerHTML = '✅ Soumettre';
+            if (fieldId) {
+                const el = document.getElementById(fieldId);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                    el.focus();
+                    el.style.borderColor = '#dc3545';
+                    el.style.background = '#fff5f5';
+                }
+            }
         }
 
         function confirmAndSubmit() {
@@ -1163,6 +1184,12 @@
             const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
             const checked = document.getElementById('confirmEmailCheck').checked;
             if (email !== confirmEmail) { document.getElementById('confirmEmailError').style.display = 'block'; return; }
+            const emailAgence = document.getElementById('email_agence').value.trim();
+            const emailAgenceSend = document.getElementById('email_agence_send').checked;
+            if (emailAgence && emailAgenceSend) {
+                const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
+                if (emailAgence !== confirmAgence) { document.getElementById('confirmAgenceError').style.display = 'block'; return; }
+            }
             if (!checked) { alert('⚠️ Veuillez cocher la case de confirmation.'); return; }
             document.getElementById('confirmModal').style.display = 'none';
             proceedWithSubmit();
