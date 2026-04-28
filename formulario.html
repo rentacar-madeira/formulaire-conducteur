@@ -1272,6 +1272,18 @@ function closeConfirmModal(fieldId, fieldId2) {
     submitBtn.style.opacity = '1';
     submitBtn.innerHTML = '✅ Soumettre';
 
+    // Limpar todos os contornos vermelhos dos campos do formulário
+    document.querySelectorAll('input, textarea').forEach(input => {
+        if (input.classList.contains('error')) {
+            input.classList.remove('error');
+            input.style.borderColor = isExistingClientData ? '#ffb74d' : '';
+            input.style.background = '';
+        }
+    });
+    document.getElementById('indicatif_box').style.borderColor = selectedIndicatif ? '#2C5F8D' : '#e0e0e0';
+    document.getElementById('rgpd_error').style.display = 'none';
+    document.getElementById('accuracy_error').style.display = 'none';
+
     // Limpar contornos anteriores
     const emailEl = document.getElementById('email');
     emailEl.style.borderColor = '';
