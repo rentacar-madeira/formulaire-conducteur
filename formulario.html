@@ -921,6 +921,11 @@
 
         function closeCalendar() { document.getElementById('calendarOverlay').classList.remove('active'); }
 
+        function showAlert(msg) {
+            document.getElementById('genericModalMsg').innerHTML = msg.replace(/\n/g, '<br>');
+            document.getElementById('genericModal').style.display = 'flex';
+        }
+
         function populateSelects() {
             const monthSel = document.getElementById('calMonthSelect');
             const yearSel = document.getElementById('calYearSelect');
