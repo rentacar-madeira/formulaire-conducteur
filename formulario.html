@@ -1305,15 +1305,14 @@ if (hasError) {
     const btn = document.getElementById('modalCorrigerBtn');
     const emailField = btn.getAttribute('data-email-error') || null;
     const agenceField = btn.getAttribute('data-agence-error') || null;
-
     if (emailField || agenceField) {
         btn.removeAttribute('data-email-error');
         btn.removeAttribute('data-agence-error');
         closeConfirmModal(emailField, agenceField);
         return;
     }
-
     closeConfirmModal(null, null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
         
         function clearForm() { if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) clearFormSilent(); }
