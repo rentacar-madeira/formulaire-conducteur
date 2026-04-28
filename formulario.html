@@ -98,9 +98,6 @@
             style="background:rgba(255,255,255,0.15); color:white; border:2px solid rgba(255,255,255,0.6); border-radius:8px; padding:10px 24px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">
             📋 Ma réservation
         </button>
-        <div style="font-size:11px; color:rgba(255,255,255,0.75); margin-top:6px;">
-            Imprimer / sauvegarder votre réservation confirmée
-        </div>
     </div>
 </div>
         <div class="form-content">
@@ -1399,10 +1396,9 @@ function getPdfTitle() {
 function showReservationInfo() {
     const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
     const msg = '📋 Ce document correspond à votre réservation confirmée par le loueur.\n\n' +
-        (valoresOriginaisCompletos._pendente 
-            ? '⚠️ Une demande de modification est en attente de traitement.\nLe document affiché reflète les données AVANT modification.\n\n'
-            : '') +
-        'Cliquez sur OK pour ouvrir l\'aperçu imprimable.';
+        const msg = valoresOriginaisCompletos._pendente
+    ? '📋 Ce document correspond à votre réservation confirmée par le loueur.\n\nToutes modifications "en attente de confirmation du loueur" ne seront pas à jour sur ce document. Une fois traitée par le loueur, la réservation sera mise à jour lorsque vous ouvrez à nouveau le lien reçu par email.\n\nCliquez sur OK pour ouvrir l\'aperçu imprimable et/ou sauvegardable en PDF.'
+    : '📋 Ce document correspond à votre réservation confirmée par le loueur.\n\nCliquez sur OK pour ouvrir l\'aperçu imprimable et/ou sauvegardable en PDF.';
     
     if (isMobile || true) {
         if (confirm(msg)) {
