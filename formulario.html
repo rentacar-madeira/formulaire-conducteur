@@ -98,9 +98,6 @@
                     style="background:rgba(255,255,255,0.15); color:white; border:2px solid rgba(255,255,255,0.6); border-radius:8px; padding:10px 24px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">
                     📋 Ma réservation
                 </button>
-                <div style="font-size:11px; color:rgba(255,255,255,0.75); margin-top:6px;">
-                    Imprimer / sauvegarder votre réservation confirmée
-                </div>
             </div>
         </div>
         <div class="form-content">
@@ -656,7 +653,7 @@
         document.getElementById('searchBtn').addEventListener('click', async function() {
             const ref = document.getElementById('reference_agence').value.trim();
             const email = document.getElementById('email').value.trim();
-            if (!ref || !email) { alert('⚠️ Veuillez remplir la référence agence et l\'adresse email.'); return; }
+            if (!ref || !email) { showAlert('⚠️ Veuillez remplir la référence agence et l\'adresse email.'); return; }
             document.getElementById('ref_incompatible').style.display = 'none';
             document.getElementById('email_incompatible').style.display = 'none';
             document.getElementById('both_found_msg').style.display = 'none';
@@ -667,7 +664,7 @@
                 const data = await response.json();
                 if (data.success) {
                     document.getElementById('both_found_msg').style.display = 'block';
-                    alert('✅ Référence et email reconnus.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.');
+                    showAlert('✅ Référence et email reconnus.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.');
                 } else {
                     const [refResp, emailResp] = await Promise.all([
                         fetch(GOOGLE_SHEETS_URL + '?action=checkRef&ref=' + encodeURIComponent(ref)),
@@ -677,9 +674,9 @@
                     const emailData = await emailResp.json();
                     if (refData.exists && !emailData.exists) { document.getElementById('email').value = ''; document.getElementById('email_incompatible').style.display = 'block'; }
                     else if (!refData.exists && emailData.exists) { document.getElementById('reference_agence').value = ''; document.getElementById('ref_incompatible').style.display = 'block'; }
-                    else { alert('❌ Aucun dossier trouvé avec cette référence et cet email.\n\nSi vous remplissez ce formulaire pour la première fois, veuillez sélectionner "Remplir le formulaire".'); }
+                    else { showAlert('❌ Aucun dossier trouvé avec cette référence et cet email.\n\nSi vous remplissez ce formulaire pour la première fois, veuillez sélectionner "Remplir le formulaire".'); }
                 }
-            } catch (error) { alert('❌ Erreur lors de la recherche. Veuillez réessayer.'); }
+            } catch (error) { showAlert('❌ Erreur lors de la recherche. Veuillez réessayer.'); }
             finally { this.innerHTML = '🔍 RECHERCHER'; this.disabled = false; }
         });
         
@@ -754,8 +751,8 @@
                     searchBtn.disabled = true; searchBtn.style.opacity = '0.4'; searchBtn.style.cursor = 'not-allowed'; searchBtn.innerHTML = '✅ Données chargées';
                     const effacerBtn = document.getElementById('effacerBtn');
                     effacerBtn.disabled = true; effacerBtn.style.opacity = '0.4'; effacerBtn.style.cursor = 'not-allowed';
-                } else { alert('❌ Impossible de récupérer les données du client.'); }
-            } catch (error) { alert('❌ Erreur lors de la récupération des données.'); }
+                } else { showAlert('❌ Impossible de récupérer les données du client.'); }
+            } catch (error) { showAlert('❌ Erreur lors de la récupération des données.'); }
         }
         
         function populateFormWithExistingData(data) {
@@ -1005,7 +1002,7 @@
                 const prise = document.getElementById('date_prise').value;
                 if (prise && prise.length === 10) {
                     const dp = parseDateString(prise);
-                    if (dp && date < dp) { alert('⚠️ La date de restitution doit être égale ou postérieure à la date de prise en charge.'); return; }
+                    if (dp && date < dp) { showAlert('⚠️ La date de restitution doit être égale ou postérieure à la date de prise en charge.'); return; }
                     if (dp && date.toDateString() === dp.toDateString()) document.getElementById('same_date_warning').style.display = 'block';
                     else document.getElementById('same_date_warning').style.display = 'none';
                 }
@@ -1020,22 +1017,22 @@
             }
             if (currentInputId === 'date_emission_id') {
                 const prise = document.getElementById('date_prise').value;
-                if (prise && prise.length === 10) { const dp = parseDateString(prise); if (dp && date >= dp) { alert("⚠️ La date d'émission de la pièce d'identité doit être antérieure à la date de prise en charge."); return; } }
+                if (prise && prise.length === 10) { const dp = parseDateString(prise); if (dp && date >= dp) { showAlert("⚠️ La date d'émission de la pièce d'identité doit être antérieure à la date de prise en charge."); return; } }
             }
             if (currentInputId === 'date_emission_permis') {
                 const prise = document.getElementById('date_prise').value; const restitution = document.getElementById('date_restitution').value;
-                if (prise && prise.length === 10) { const dp = parseDateString(prise); if (dp && date >= dp) { alert("⚠️ La date d'émission du permis de conduire doit être antérieure à la date de prise en charge."); return; } }
-                if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date >= dr) { alert("⚠️ La date d'émission du permis de conduire doit être antérieure à la date de restitution."); return; } }
+                if (prise && prise.length === 10) { const dp = parseDateString(prise); if (dp && date >= dp) { showAlert("⚠️ La date d'émission du permis de conduire doit être antérieure à la date de prise en charge."); return; } }
+                if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date >= dr) { showAlert("⚠️ La date d'émission du permis de conduire doit être antérieure à la date de restitution."); return; } }
             }
             if (currentInputId === 'date_expiration_id') {
                 const emission = document.getElementById('date_emission_id').value; const restitution = document.getElementById('date_restitution').value;
-                if (emission && emission.length === 10) { const de = parseDateString(emission); if (de && date <= de) { alert("⚠️ La date d'expiration doit être postérieure à la date d'émission."); return; } }
-                if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date <= dr) { alert("⚠️ La date d'expiration du document doit être postérieure à la date de restitution."); return; } }
+                if (emission && emission.length === 10) { const de = parseDateString(emission); if (de && date <= de) { showAlert("⚠️ La date d'expiration doit être postérieure à la date d'émission."); return; } }
+                if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date <= dr) { showAlert("⚠️ La date d'expiration du document doit être postérieure à la date de restitution."); return; } }
             }
             if (currentInputId === 'date_expiration_permis') {
                 const emission = document.getElementById('date_emission_permis').value; const restitution = document.getElementById('date_restitution').value;
-                if (emission && emission.length === 10) { const de = parseDateString(emission); if (de && date <= de) { alert("⚠️ La date d'expiration doit être postérieure à la date d'émission."); return; } }
-                if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date <= dr) { alert("⚠️ La date d'expiration du permis doit être postérieure à la date de restitution."); return; } }
+                if (emission && emission.length === 10) { const de = parseDateString(emission); if (de && date <= de) { showAlert("⚠️ La date d'expiration doit être postérieure à la date d'émission."); return; } }
+                if (restitution && restitution.length === 10) { const dr = parseDateString(restitution); if (dr && date <= dr) { showAlert("⚠️ La date d'expiration du permis doit être postérieure à la date de restitution."); return; } }
             }
             const valorAnterior = input.value;
             input.value = dateStr;
@@ -1292,7 +1289,7 @@ function closeConfirmModal(fieldId, fieldId2) {
                     emailError = true;
                 }
                 const checked = document.getElementById('confirmEmailCheck').checked;
-                if (!checked) { alert('⚠️ Veuillez cocher la case de confirmation.'); return; }
+                if (!checked) { showAlert('⚠️ Veuillez cocher la case de confirmation.'); return; }
             }
 
             const emailAgence = document.getElementById('email_agence').value.trim();
@@ -1394,7 +1391,7 @@ function closeConfirmModal(fieldId, fieldId2) {
         let formSubmitted = false;
         
         function exportToPDF() {
-            if (!formSubmitted) { showAlert("⚠️ Veuillez d'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF."); return; }
+            if (!formSubmitted) { showshowAlert("⚠️ Veuillez d'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF."); return; }
             document.getElementById('print-voucher').innerHTML = generateVoucher();
             document.title = getPdfTitle(); window.print();
         }
@@ -1445,7 +1442,7 @@ function closeConfirmModal(fieldId, fieldId2) {
         async function submitToSheets() {
             const submitBtn = document.getElementById('submitBtn');
             const hasEmpty = highlightEmptyFields();
-            if (hasEmpty) { showAlert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).'); return; }
+            if (hasEmpty) { showshowAlert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).'); return; }
             submitBtn.disabled = true; submitBtn.style.opacity = '0.7'; submitBtn.innerHTML = '<span class="spinner"></span> Vérification...';
             if (clientType === 'nouveau') { openConfirmModal(); return; }
             if (isExistingClientData) { openConfirmModification(); return; }
@@ -1464,19 +1461,19 @@ function closeConfirmModal(fieldId, fieldId2) {
                     if (refData.exists && emailData.exists) {
                         const searchResp = await fetch(GOOGLE_SHEETS_URL + '?action=search&ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email)); await searchResp.json();
                         switchToModifierMode(true, true); document.getElementById('both_found_msg').style.display = 'block';
-                        alert('⚠️ Vos informations existent déjà dans notre système.\n\nUn lien de modification a été envoyé à votre adresse email.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.'); return;
+                        showAlert('⚠️ Vos informations existent déjà dans notre système.\n\nUn lien de modification a été envoyé à votre adresse email.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.'); return;
                     } else if (refData.exists && !emailData.exists) {
                         switchToModifierMode(true, false); document.getElementById('email_incompatible').style.display = 'block';
-                        alert("⚠️ Cette référence existe déjà dans notre système mais l'email ne correspond pas.\n\nVeuillez corriger votre email et cliquer sur \"Rechercher\"."); return;
+                        showAlert("⚠️ Cette référence existe déjà dans notre système mais l'email ne correspond pas.\n\nVeuillez corriger votre email et cliquer sur \"Rechercher\"."); return;
                     } else if (!refData.exists && emailData.exists) {
                         switchToModifierMode(false, true); document.getElementById('ref_incompatible').style.display = 'block';
-                        alert("⚠️ Cet email existe déjà dans notre système mais la référence ne correspond pas.\n\nVeuillez corriger votre référence et cliquer sur \"Rechercher\"."); return;
+                        showAlert("⚠️ Cet email existe déjà dans notre système mais la référence ne correspond pas.\n\nVeuillez corriger votre référence et cliquer sur \"Rechercher\"."); return;
                     }
                 } catch(e) {}
             }
             const validId = validateExpirationDate('date_expiration_id', 'error_expiration_id');
             const validPermis = validateExpirationDate('date_expiration_permis', 'error_expiration_permis');
-            if (!validId || !validPermis) { alert("⚠️ Attention: Les dates d'expiration des documents doivent être postérieures à la date de restitution du véhicule."); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
+            if (!validId || !validPermis) { showAlert("⚠️ Attention: Les dates d'expiration des documents doivent être postérieures à la date de restitution du véhicule."); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             if (!document.getElementById('rgpd_consent').checked) { document.getElementById('rgpd_error').style.display = 'block'; document.getElementById('rgpd_consent').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             document.getElementById('rgpd_error').style.display = 'none';
             if (!document.getElementById('accuracy_consent').checked) { document.getElementById('accuracy_error').style.display = 'block'; document.getElementById('accuracy_consent').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
@@ -1486,7 +1483,7 @@ function closeConfirmModal(fieldId, fieldId2) {
                     document.getElementById('rgpd_agence_error').style.display = 'block'; 
                     document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' }); 
                     submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; 
-                    alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).');
+                    showAlert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).');
                     return; 
                 }
             }
@@ -1504,7 +1501,7 @@ function closeConfirmModal(fieldId, fieldId2) {
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
                     submitBtn.innerHTML = '✅ Soumettre';
-                    alert('⚠️ Aucune modification détectée.\n\nAucun changement n\'a été identifié par rapport aux informations initialement envoyées.\n\nVeuillez effectuer les modifications nécessaires avant de soumettre à nouveau votre demande.');
+                    showAlert('⚠️ Aucune modification détectée.\n\nAucun changement n\'a été identifié par rapport aux informations initialement envoyées.\n\nVeuillez effectuer les modifications nécessaires avant de soumettre à nouveau votre demande.');
                     return;
                 }
             }
@@ -1518,7 +1515,7 @@ function closeConfirmModal(fieldId, fieldId2) {
                         submitBtn.disabled = false;
                         submitBtn.style.opacity = '1';
                         submitBtn.innerHTML = '✅ Soumettre';
-                        alert('⚠️ Impossible de soumettre de nouvelles modifications.\n\nUne demande de modification est déjà en attente de confirmation par le loueur.\n\nVeuillez réessayer plus tard en rouvrant le lien reçu par email pour vérifier l\'état de votre réservation.');
+                        showAlert('⚠️ Impossible de soumettre de nouvelles modifications.\n\nUne demande de modification est déjà en attente de confirmation par le loueur.\n\nVeuillez réessayer plus tard en rouvrant le lien reçu par email pour vérifier l\'état de votre réservation.');
                         return;
                     }
                 } catch(e) {}
@@ -1548,7 +1545,7 @@ function closeConfirmModal(fieldId, fieldId2) {
                 document.getElementById('pdf_hint').style.color = '#2e7d32';
                 const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre boîte mail SPAM.\n\nVoulez-vous imprimer / sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Imprimer / sauvegarder plus tard via le bouton PDF');
                 if (savePDF) { document.getElementById('print-voucher').innerHTML = generateVoucher(); document.title = getPdfTitle(); window.print(); }
-            } catch (error) { alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.'); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; }
+            } catch (error) { showAlert('❌ Erreur lors de l\'envoi. Veuillez réessayer.'); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; }
             finally { if (!formSubmitted) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; } }
         }
     </script>
