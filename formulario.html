@@ -1271,8 +1271,6 @@ function closeConfirmModal(fieldId, fieldId2) {
     submitBtn.disabled = false;
     submitBtn.style.opacity = '1';
     submitBtn.innerHTML = '✅ Soumettre';
-
-    // Limpar todos os contornos vermelhos dos campos do formulário
     document.querySelectorAll('input, textarea').forEach(input => {
         if (input.classList.contains('error')) {
             input.classList.remove('error');
@@ -1283,15 +1281,12 @@ function closeConfirmModal(fieldId, fieldId2) {
     document.getElementById('indicatif_box').style.borderColor = selectedIndicatif ? '#2C5F8D' : '#e0e0e0';
     document.getElementById('rgpd_error').style.display = 'none';
     document.getElementById('accuracy_error').style.display = 'none';
-
-    // Limpar contornos anteriores dos emails
     const emailEl = document.getElementById('email');
     emailEl.style.borderColor = '';
     emailEl.style.background = '';
     const agenceEl = document.getElementById('email_agence');
     agenceEl.style.borderColor = '';
     agenceEl.style.background = '';
-
     if (fieldId && !isExistingClientData) {
         const el = document.getElementById(fieldId);
         if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); el.style.borderColor = '#dc3545'; el.style.background = '#fff5f5'; }
@@ -1304,54 +1299,46 @@ function closeConfirmModal(fieldId, fieldId2) {
     }
 }
 
-        function confirmAndSubmit() {
-            const email = document.getElementById('email').value.trim();
-            const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
-            let hasError = false;
-            document.getElementById('confirmEmailError').style.display = 'none';
-document.getElementById('confirmAgenceError').style.display = 'none';
-
-let emailError = false;
-let agenceError = false;
-
-// Só verificar email principal se o campo estiver visível
-if (confirmEmailParent.style.display !== 'none') {
-    const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
-    if (email !== confirmEmail) {
-        document.getElementById('confirmEmailError').style.display = 'block';
-        hasError = true;
-        emailError = true;
-    }
-    const checked = document.getElementById('confirmEmailCheck').checked;
-    if (!checked) { alert('⚠️ Veuillez cocher la case de confirmation.'); return; }
-}
-
-const emailAgence = document.getElementById('email_agence').value.trim();
-const emailAgenceSend = document.getElementById('email_agence_send').checked;
-if (emailAgence && emailAgenceSend) {
-    const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
-    if (emailAgence !== confirmAgence) {
-        document.getElementById('confirmAgenceError').style.display = 'block';
-        hasError = true;
-        agenceError = true;
-    }
-}
-
-if (hasError) {
-    // Não fechar o modal — mostrar erros inline e transformar o botão Corriger
-    document.getElementById('modalCorrigerBtn').setAttribute('data-email-error', emailError ? 'email' : '');
-    document.getElementById('modalCorrigerBtn').setAttribute('data-agence-error', agenceError ? 'email_agence' : '');
-    return;
-}
-
-            // Restaurar campos
-            confirmEmailParent.style.display = 'block';
-            document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
-            document.getElementById('confirmModal').style.display = 'none';
-            proceedWithSubmit();
+function confirmAndSubmit() {
+    const email = document.getElementById('email').value.trim();
+    const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
+    let hasError = false;
+    document.getElementById('confirmEmailError').style.display = 'none';
+    document.getElementById('confirmAgenceError').style.display = 'none';
+    let emailError = false;
+    let agenceError = false;
+    if (confirmEmailParent.style.display !== 'none') {
+        const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
+        if (email !== confirmEmail) {
+            document.getElementById('confirmEmailError').style.display = 'block';
+            hasError = true;
+            emailError = true;
         }
+        const checked = document.getElementById('confirmEmailCheck').checked;
+        if (!checked) { showAlert('⚠️ Veuillez cocher la case de confirmation.'); return; }
+    }
+    const emailAgence = document.getElementById('email_agence').value.trim();
+    const emailAgenceSend = document.getElementById('email_agence_send').checked;
+    if (emailAgence && emailAgenceSend) {
+        const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
+        if (emailAgence !== confirmAgence) {
+            document.getElementById('confirmAgenceError').style.display = 'block';
+            hasError = true;
+            agenceError = true;
+        }
+    }
+    if (hasError) {
+        document.getElementById('modalCorrigerBtn').setAttribute('data-email-error', emailError ? 'email' : '');
+        document.getElementById('modalCorrigerBtn').setAttribute('data-agence-error', agenceError ? 'email_agence' : '');
+        return;
+    }
+    confirmEmailParent.style.display = 'block';
+    document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
+    document.getElementById('confirmModal').style.display = 'none';
+    proceedWithSubmit();
+}
 
-        function handleCorrigerClick() {
+function handleCorrigerClick() {
     const btn = document.getElementById('modalCorrigerBtn');
     const emailField = btn.getAttribute('data-email-error') || null;
     const agenceField = btn.getAttribute('data-agence-error') || null;
