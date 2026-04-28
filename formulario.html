@@ -1259,26 +1259,36 @@ function closeConfirmModal(fieldId, fieldId2) {
             const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
             let hasError = false;
             document.getElementById('confirmEmailError').style.display = 'none';
-            document.getElementById('confirmAgenceError').style.display = 'none';
+document.getElementById('confirmAgenceError').style.display = 'none';
 
-            // Só verificar email principal se o campo estiver visível
-            if (confirmEmailParent.style.display !== 'none') {
-                const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
-                if (email !== confirmEmail) { document.getElementById('confirmEmailError').style.display = 'block'; hasError = true; }
-                const checked = document.getElementById('confirmEmailCheck').checked;
-                if (!checked) { alert('⚠️ Veuillez cocher la case de confirmation.'); return; }
-            }
+let emailError = false;
+let agenceError = false;
 
-            const emailAgence = document.getElementById('email_agence').value.trim();
-            const emailAgenceSend = document.getElementById('email_agence_send').checked;
-            if (emailAgence && emailAgenceSend) {
-                const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
-                if (emailAgence !== confirmAgence) { document.getElementById('confirmAgenceError').style.display = 'block'; hasError = true; }
-            }
-            if (hasError) {
-    if (document.getElementById('confirmAgenceError').style.display === 'block') {
-        closeConfirmModal(null, 'email_agence');
+// Só verificar email principal se o campo estiver visível
+if (confirmEmailParent.style.display !== 'none') {
+    const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
+    if (email !== confirmEmail) {
+        document.getElementById('confirmEmailError').style.display = 'block';
+        hasError = true;
+        emailError = true;
     }
+    const checked = document.getElementById('confirmEmailCheck').checked;
+    if (!checked) { alert('⚠️ Veuillez cocher la case de confirmation.'); return; }
+}
+
+const emailAgence = document.getElementById('email_agence').value.trim();
+const emailAgenceSend = document.getElementById('email_agence_send').checked;
+if (emailAgence && emailAgenceSend) {
+    const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
+    if (emailAgence !== confirmAgence) {
+        document.getElementById('confirmAgenceError').style.display = 'block';
+        hasError = true;
+        agenceError = true;
+    }
+}
+
+if (hasError) {
+    closeConfirmModal(emailError ? 'email' : null, agenceError ? 'email_agence' : null);
     return;
 }
 
