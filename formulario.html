@@ -1242,6 +1242,15 @@ function closeConfirmModal(fieldId, fieldId2) {
     submitBtn.disabled = false;
     submitBtn.style.opacity = '1';
     submitBtn.innerHTML = '✅ Soumettre';
+
+    // Limpar contornos anteriores
+    const emailEl = document.getElementById('email');
+    emailEl.style.borderColor = '';
+    emailEl.style.background = '';
+    const agenceEl = document.getElementById('email_agence');
+    agenceEl.style.borderColor = '';
+    agenceEl.style.background = '';
+
     if (fieldId && !isExistingClientData) {
         const el = document.getElementById(fieldId);
         if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); el.style.borderColor = '#dc3545'; el.style.background = '#fff5f5'; }
