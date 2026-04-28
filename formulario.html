@@ -326,12 +326,12 @@
             </div>
             <div style="margin-bottom:16px;">
                 <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Confirmez votre adresse email *</label>
-                <input type="email" id="confirmEmailInput" placeholder="Saisissez à nouveau votre email" style="width:100%; padding:10px 14px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; font-family:'Inter',sans-serif; box-sizing:border-box;">
+                <input type="email" id="confirmEmailInput" placeholder="Saisissez à nouveau votre email" style="width:100%; padding:10px 14px; border:2px solid #ffb74d; border-radius:8px; font-size:14px; font-family:'Inter',sans-serif; box-sizing:border-box;">
                 <div id="confirmEmailError" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">⚠️ L'email ne correspond pas. Veuillez vérifier et corriger.</div>
             </div>
             <div id="confirmAgenceSection" style="display:none; margin-bottom:16px;">
                 <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Confirmez l'email agence *</label>
-                <input type="email" id="confirmAgenceInput" placeholder="Saisissez à nouveau l'email agence" style="width:100%; padding:10px 14px; border:2px solid #e0e0e0; border-radius:8px; font-size:14px; font-family:'Inter',sans-serif; box-sizing:border-box;">
+                <input type="email" id="confirmAgenceInput" placeholder="Saisissez à nouveau l'email agence" style="width:100%; padding:10px 14px; border:2px solid #7986cb; border-radius:8px; font-size:14px; font-family:'Inter',sans-serif; box-sizing:border-box;">
                 <div id="confirmAgenceError" style="display:none; color:#dc3545; font-size:12px; margin-top:4px; font-weight:500;">⚠️ L'email agence ne correspond pas. Veuillez vérifier et corriger.</div>
             </div>
             <div style="margin-bottom:20px; padding:12px; border:2px solid #e0e0e0; border-radius:8px;">
@@ -1145,12 +1145,29 @@
             const jours = document.getElementById('daysCount').textContent;
             const emailAgence = document.getElementById('email_agence').value;
             const emailAgenceSend = document.getElementById('email_agence_send').checked;
+            const tel = document.getElementById('telephone').value;
+            const adr = document.getElementById('adresse_complete').value.replace(/\n/g, ', ');
+            const ndoc = document.getElementById('numero_document').value;
+            const nperm = document.getElementById('numero_permis').value;
+            const eid = document.getElementById('date_emission_id').value;
+            const expid = document.getElementById('date_expiration_id').value;
+            const epm = document.getElementById('date_emission_permis').value;
+            const exppm = document.getElementById('date_expiration_permis').value || 'SANS INFO';
+
             document.getElementById('modalResume').innerHTML = `
-                <div style="margin-bottom:6px;">📌 <strong>Référence :</strong> ${ref}</div>
-                <div style="margin-bottom:6px;">👤 <strong>Nom :</strong> ${nom}</div>
-                <div style="margin-bottom:6px; color:#e65100;">📧 <strong>Email personnel :</strong> ${email}</div>
-                ${emailAgence && emailAgenceSend ? `<div style="margin-bottom:6px; color:#e65100;">📧 <strong>Email agence :</strong> ${emailAgence}</div>` : ''}
-                <div style="margin-bottom:6px;">📅 <strong>Période :</strong> ${dp} → ${dr} (${jours} jour(s))</div>
+                <div style="margin-bottom:4px;">📌 <strong>Référence :</strong> ${ref}</div>
+                <div style="margin-bottom:4px;">👤 <strong>Nom :</strong> ${nom}</div>
+                <div style="margin-bottom:4px;">📍 <strong>Adresse :</strong> ${adr}</div>
+                <div style="margin-bottom:4px;">📞 <strong>Téléphone :</strong> ${tel}</div>
+                <div style="margin-bottom:4px; color:#e65100;">📧 <strong>Email personnel :</strong> ${email}</div>
+                ${emailAgence && emailAgenceSend ? `<div style="margin-bottom:4px; color:#7986cb;">📧 <strong>Email agence :</strong> ${emailAgence}</div>` : ''}
+                <hr style="border:none; border-top:1px solid #e0e0e0; margin:8px 0;">
+                <div style="margin-bottom:4px;">🪪 <strong>Pièce d'identité :</strong> ${ndoc} — Émission: ${eid} — Expiration: ${expid}</div>
+                <div style="margin-bottom:4px;">🚘 <strong>Permis :</strong> ${nperm} — Émission: ${epm} — Expiration: ${exppm}</div>
+                <hr style="border:none; border-top:1px solid #e0e0e0; margin:8px 0;">
+                <div style="margin-bottom:4px;">📅 <strong>Prise en charge :</strong> ${dp}</div>
+                <div style="margin-bottom:4px;">📅 <strong>Restitution :</strong> ${dr}</div>
+                <div style="margin-bottom:4px;">⏱️ <strong>Durée :</strong> ${jours} jour(s)</div>
             `;
             document.getElementById('confirmEmailInput').value = '';
             document.getElementById('confirmEmailError').style.display = 'none';
@@ -1183,13 +1200,25 @@ function closeConfirmModal(fieldId) {
             const email = document.getElementById('email').value.trim();
             const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
             const checked = document.getElementById('confirmEmailCheck').checked;
-            if (email !== confirmEmail) { document.getElementById('confirmEmailError').style.display = 'block'; return; }
+            let hasError = false;
+            // Reset erros
+            document.getElementById('confirmEmailError').style.display = 'none';
+            document.getElementById('confirmAgenceError').style.display = 'none';
+            
+            if (email !== confirmEmail) { 
+                document.getElementById('confirmEmailError').style.display = 'block';
+                hasError = true;
+            }
             const emailAgence = document.getElementById('email_agence').value.trim();
             const emailAgenceSend = document.getElementById('email_agence_send').checked;
             if (emailAgence && emailAgenceSend) {
                 const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
-                if (emailAgence !== confirmAgence) { document.getElementById('confirmAgenceError').style.display = 'block'; return; }
+                if (emailAgence !== confirmAgence) { 
+                    document.getElementById('confirmAgenceError').style.display = 'block';
+                    hasError = true;
+                }
             }
+            if (hasError) return;
             if (!checked) { alert('⚠️ Veuillez cocher la case de confirmation.'); return; }
             document.getElementById('confirmModal').style.display = 'none';
             proceedWithSubmit();
