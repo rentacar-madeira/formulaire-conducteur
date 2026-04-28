@@ -1179,58 +1179,109 @@
             document.getElementById('confirmModal').style.display = 'flex';
         }
 
+function openConfirmModification() {
+            const emailAgence = document.getElementById('email_agence').value;
+            const emailAgenceSend = document.getElementById('email_agence_send').checked;
+
+            // Construir resumo das alterações
+            const camposModificaveis = [
+                { id: 'nom_complet', label: '👤 Nom complet' },
+                { id: 'adresse_complete', label: '📍 Adresse' },
+                { id: 'telephone_numero', label: '📞 Téléphone' },
+                { id: 'numero_document', label: '🪪 Nº Document' },
+                { id: 'date_emission_id', label: '🪪 Émission ID' },
+                { id: 'date_expiration_id', label: '🪪 Expiration ID' },
+                { id: 'numero_permis', label: '🚘 Nº Permis' },
+                { id: 'date_emission_permis', label: '🚘 Émission Permis' },
+                { id: 'date_expiration_permis', label: '🚘 Expiration Permis' },
+                { id: 'date_prise', label: '📅 Prise en charge' },
+                { id: 'date_restitution', label: '📅 Restitution' }
+            ];
+
+            let resumeHTML = '';
+            let hasModif = false;
+
+            camposModificaveis.forEach(campo => {
+                const el = document.getElementById(campo.id);
+                if (!el) return;
+                const valAtual = el.value.trim();
+                const valOriginal = (valoresOriginais[campo.id] || '').toString().trim();
+                const modificado = valAtual !== valOriginal;
+                if (modificado) hasModif = true;
+                resumeHTML += `<div style="margin-bottom:4px; ${modificado ? 'color:#e65100; font-weight:600;' : ''}">
+                    ${campo.label} : ${valAtual || '-'} ${modificado ? `<span style="font-size:11px;">(était: ${valOriginal || '-'})</span>` : ''}
+                </div>`;
+            });
+
+            if (emailAgence && emailAgenceSend) {
+                resumeHTML += `<hr style="border:none; border-top:1px solid #e0e0e0; margin:8px 0;">
+                <div style="margin-bottom:4px; color:#7986cb; font-weight:600;">📧 Email agence ajouté : ${emailAgence}</div>`;
+            }
+
+            document.getElementById('modalResume').innerHTML = resumeHTML;
+
+            // Mostrar/esconder campo confirmação email agence
+            document.getElementById('confirmEmailInput').closest('div').previousElementSibling.style.display = 'none'; // esconder label email principal
+            document.getElementById('confirmEmailInput').parentElement.style.display = 'none'; // esconder campo email principal
+            document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'none'; // esconder checkbox
+
+            const agenceSection = document.getElementById('confirmAgenceSection');
+            document.getElementById('confirmAgenceInput').value = '';
+            document.getElementById('confirmAgenceError').style.display = 'none';
+            agenceSection.style.display = (emailAgence && emailAgenceSend) ? 'block' : 'none';
+
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+        
 function closeConfirmModal(fieldId, fieldId2) {
             document.getElementById('confirmModal').style.display = 'none';
+            const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
+            confirmEmailParent.style.display = 'block';
+            document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = false;
             submitBtn.style.opacity = '1';
             submitBtn.innerHTML = '✅ Soumettre';
             if (fieldId) {
                 const el = document.getElementById(fieldId);
-                if (el) {
-                    el.scrollIntoView({ behavior: 'smooth' });
-                    el.focus();
-                    el.style.borderColor = '#dc3545';
-                    el.style.background = '#fff5f5';
-                }
+                if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); el.style.borderColor = '#dc3545'; el.style.background = '#fff5f5'; }
             }
             if (fieldId2) {
                 const emailAgenceSend = document.getElementById('email_agence_send').checked;
                 const emailAgence = document.getElementById('email_agence').value.trim();
                 if (emailAgenceSend && emailAgence) {
                     const el2 = document.getElementById(fieldId2);
-                    if (el2) {
-                        el2.style.borderColor = '#dc3545';
-                        el2.style.background = '#fff5f5';
-                    }
+                    if (el2) { el2.style.borderColor = '#dc3545'; el2.style.background = '#fff5f5'; }
                 }
             }
         }
 
         function confirmAndSubmit() {
             const email = document.getElementById('email').value.trim();
-            const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
-            const checked = document.getElementById('confirmEmailCheck').checked;
+            const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
             let hasError = false;
-            // Reset erros
             document.getElementById('confirmEmailError').style.display = 'none';
             document.getElementById('confirmAgenceError').style.display = 'none';
-            
-            if (email !== confirmEmail) { 
-                document.getElementById('confirmEmailError').style.display = 'block';
-                hasError = true;
+
+            // Só verificar email principal se o campo estiver visível
+            if (confirmEmailParent.style.display !== 'none') {
+                const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
+                if (email !== confirmEmail) { document.getElementById('confirmEmailError').style.display = 'block'; hasError = true; }
+                const checked = document.getElementById('confirmEmailCheck').checked;
+                if (!checked) { alert('⚠️ Veuillez cocher la case de confirmation.'); return; }
             }
+
             const emailAgence = document.getElementById('email_agence').value.trim();
             const emailAgenceSend = document.getElementById('email_agence_send').checked;
             if (emailAgence && emailAgenceSend) {
                 const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
-                if (emailAgence !== confirmAgence) { 
-                    document.getElementById('confirmAgenceError').style.display = 'block';
-                    hasError = true;
-                }
+                if (emailAgence !== confirmAgence) { document.getElementById('confirmAgenceError').style.display = 'block'; hasError = true; }
             }
             if (hasError) return;
-            if (!checked) { alert('⚠️ Veuillez cocher la case de confirmation.'); return; }
+
+            // Restaurar campos
+            confirmEmailParent.style.display = 'block';
+            document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
             document.getElementById('confirmModal').style.display = 'none';
             proceedWithSubmit();
         }
@@ -1302,9 +1353,12 @@ function getPdfTitle() {
             const hasEmpty = highlightEmptyFields();
             if (hasEmpty) { alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).'); return; }
             submitBtn.disabled = true; submitBtn.style.opacity = '0.7'; submitBtn.innerHTML = '<span class="spinner"></span> Vérification...';
-            // Mostrar modal de confirmação apenas para novos clientes
             if (clientType === 'nouveau') {
                 openConfirmModal();
+                return;
+            }
+            if (isExistingClientData) {
+                openConfirmModification();
                 return;
             }
             await proceedWithSubmit();
