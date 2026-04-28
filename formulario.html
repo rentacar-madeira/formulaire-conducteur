@@ -925,19 +925,35 @@
             document.getElementById('genericModalMsg').innerHTML = msg.replace(/\n/g, '<br>');
             document.getElementById('genericModal').style.display = 'flex';
         }
-
-        function populateSelects() {
-            const monthSel = document.getElementById('calMonthSelect');
-            const yearSel = document.getElementById('calYearSelect');
-            const today = new Date(); const curYear = today.getFullYear();
-            const selYear = currentCalendarDate.getFullYear(); const selMonth = currentCalendarDate.getMonth();
-            const allowPast = ALLOW_PAST.includes(currentInputId);
-            monthSel.innerHTML = '';
-            MONTHS_FR.forEach((m, i) => { const opt = document.createElement('option'); opt.value = i; opt.textContent = m; if (i === selMonth) opt.selected = true; monthSel.appendChild(opt); });
-            yearSel.innerHTML = '';
-            const startYear = allowPast ? curYear - 50 : curYear; const endYear = curYear + 30;
-            for (let y = startYear; y <= endYear; y++) { const opt = document.createElement('option'); opt.value = y; opt.textContent = y; if (y === selYear) opt.selected = true; yearSel.appendChild(opt); }
+        
+        function showConfirm(msg, onOk) {
+            document.getElementById('genericModalMsg').innerHTML = msg;
+            const modal = document.getElementById('genericModal');
+            const btnArea = modal.querySelector('div:last-child');
+            btnArea.innerHTML = `
+                <button onclick="document.getElementById('genericModal').style.display='none'" style="padding:12px 24px; background:white; color:#2C5F8D; border:2px solid #2C5F8D; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; font-size:14px; margin-right:12px;">Plus tard</button>
+                <button id="genericModalOkBtn" style="padding:12px 24px; background:#2C5F8D; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; font-size:14px;">🖨️ Ouvrir PDF</button>
+            `;
+            document.getElementById('genericModalOkBtn').onclick = function() {
+                document.getElementById('genericModal').style.display = 'none';
+                btnArea.innerHTML = `<button onclick="document.getElementById('genericModal').style.display='none'" style="padding:12px 40px; background:#2C5F8D; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; font-size:14px;">OK</button>`;
+                onOk();
+            };
+            modal.style.display = 'flex';
         }
+        
+        function populateSelects() {
+                    const monthSel = document.getElementById('calMonthSelect');
+                    const yearSel = document.getElementById('calYearSelect');
+                    const today = new Date(); const curYear = today.getFullYear();
+                    const selYear = currentCalendarDate.getFullYear(); const selMonth = currentCalendarDate.getMonth();
+                    const allowPast = ALLOW_PAST.includes(currentInputId);
+                    monthSel.innerHTML = '';
+                    MONTHS_FR.forEach((m, i) => { const opt = document.createElement('option'); opt.value = i; opt.textContent = m; if (i === selMonth) opt.selected = true; monthSel.appendChild(opt); });
+                    yearSel.innerHTML = '';
+                    const startYear = allowPast ? curYear - 50 : curYear; const endYear = curYear + 30;
+                    for (let y = startYear; y <= endYear; y++) { const opt = document.createElement('option'); opt.value = y; opt.textContent = y; if (y === selYear) opt.selected = true; yearSel.appendChild(opt); }
+                }
 
         function changeMonthSelect(val) {
             currentCalendarDate.setMonth(parseInt(val));
@@ -1208,153 +1224,157 @@
             document.getElementById('confirmModal').style.display = 'flex';
         }
 
-function openConfirmModification() {
-            const emailAgence = document.getElementById('email_agence').value;
-            const emailAgenceSend = document.getElementById('email_agence_send').checked;
-
-            // Construir resumo das alterações
-            const camposModificaveis = [
-                { id: 'nom_complet', label: '👤 Nom complet' },
-                { id: 'adresse_complete', label: '📍 Adresse' },
-                { id: 'telephone_numero', label: '📞 Téléphone' },
-                { id: 'numero_document', label: '🪪 Nº Document' },
-                { id: 'date_emission_id', label: '🪪 Émission ID' },
-                { id: 'date_expiration_id', label: '🪪 Expiration ID' },
-                { id: 'numero_permis', label: '🚘 Nº Permis' },
-                { id: 'date_emission_permis', label: '🚘 Émission Permis' },
-                { id: 'date_expiration_permis', label: '🚘 Expiration Permis' },
-                { id: 'date_prise', label: '📅 Prise en charge' },
-                { id: 'date_restitution', label: '📅 Restitution' }
-            ];
-
-            let resumeHTML = '';
-            let hasModif = false;
-
-            camposModificaveis.forEach(campo => {
-                const el = document.getElementById(campo.id);
-                if (!el) return;
-                const valAtual = el.value.trim();
-                const valOriginal = (valoresOriginais[campo.id] || '').toString().trim();
-                const modificado = valAtual !== valOriginal;
-                if (modificado) hasModif = true;
-                resumeHTML += `<div style="margin-bottom:4px; ${modificado ? 'color:#e65100; font-weight:600;' : ''}">
-                    ${campo.label} : ${valAtual || '-'} ${modificado ? `<span style="font-size:11px;">(était: ${valOriginal || '-'})</span>` : ''}
-                </div>`;
+        function openConfirmModification() {
+                    const emailAgence = document.getElementById('email_agence').value;
+                    const emailAgenceSend = document.getElementById('email_agence_send').checked;
+        
+                    // Construir resumo das alterações
+                    const camposModificaveis = [
+                        { id: 'nom_complet', label: '👤 Nom complet' },
+                        { id: 'adresse_complete', label: '📍 Adresse' },
+                        { id: 'telephone_numero', label: '📞 Téléphone' },
+                        { id: 'numero_document', label: '🪪 Nº Document' },
+                        { id: 'date_emission_id', label: '🪪 Émission ID' },
+                        { id: 'date_expiration_id', label: '🪪 Expiration ID' },
+                        { id: 'numero_permis', label: '🚘 Nº Permis' },
+                        { id: 'date_emission_permis', label: '🚘 Émission Permis' },
+                        { id: 'date_expiration_permis', label: '🚘 Expiration Permis' },
+                        { id: 'date_prise', label: '📅 Prise en charge' },
+                        { id: 'date_restitution', label: '📅 Restitution' }
+                    ];
+        
+                    let resumeHTML = '';
+                    let hasModif = false;
+        
+                    camposModificaveis.forEach(campo => {
+                        const el = document.getElementById(campo.id);
+                        if (!el) return;
+                        const valAtual = el.value.trim();
+                        const valOriginal = (valoresOriginais[campo.id] || '').toString().trim();
+                        const modificado = valAtual !== valOriginal;
+                        if (modificado) hasModif = true;
+                        resumeHTML += `<div style="margin-bottom:4px; ${modificado ? 'color:#e65100; font-weight:600;' : ''}">
+                            ${campo.label} : ${valAtual || '-'} ${modificado ? `<span style="font-size:11px;">(était: ${valOriginal || '-'})</span>` : ''}
+                        </div>`;
+                    });
+        
+                    if (emailAgence && emailAgenceSend) {
+                        resumeHTML += `<hr style="border:none; border-top:1px solid #e0e0e0; margin:8px 0;">
+                        <div style="margin-bottom:4px; color:#7986cb; font-weight:600;">📧 Email agence ajouté : ${emailAgence}</div>`;
+                    }
+        
+                    document.getElementById('modalResume').innerHTML = resumeHTML;
+        
+                    // Mostrar/esconder campo confirmação email agence
+                    document.getElementById('confirmEmailInput').closest('div').previousElementSibling.style.display = 'none'; // esconder label email principal
+                    document.getElementById('confirmEmailInput').parentElement.style.display = 'none'; // esconder campo email principal
+                    document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'none'; // esconder checkbox
+        
+                    const agenceSection = document.getElementById('confirmAgenceSection');
+                    document.getElementById('confirmAgenceInput').value = '';
+                    document.getElementById('confirmAgenceError').style.display = 'none';
+                    agenceSection.style.display = (emailAgence && emailAgenceSend) ? 'block' : 'none';
+        
+                    document.getElementById('confirmModal').style.display = 'flex';
+                }
+                
+        function closeConfirmModal(fieldId, fieldId2) {
+            document.getElementById('confirmModal').style.display = 'none';
+            const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
+            confirmEmailParent.style.display = 'block';
+            document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.innerHTML = '✅ Soumettre';
+            document.querySelectorAll('input, textarea').forEach(input => {
+                if (input.classList.contains('error')) {
+                    input.classList.remove('error');
+                    input.style.borderColor = isExistingClientData ? '#ffb74d' : '';
+                    input.style.background = '';
+                }
             });
-
-            if (emailAgence && emailAgenceSend) {
-                resumeHTML += `<hr style="border:none; border-top:1px solid #e0e0e0; margin:8px 0;">
-                <div style="margin-bottom:4px; color:#7986cb; font-weight:600;">📧 Email agence ajouté : ${emailAgence}</div>`;
+            document.getElementById('indicatif_box').style.borderColor = selectedIndicatif ? '#2C5F8D' : '#e0e0e0';
+            document.getElementById('rgpd_error').style.display = 'none';
+            document.getElementById('accuracy_error').style.display = 'none';
+            const emailEl = document.getElementById('email');
+            emailEl.style.borderColor = '';
+            emailEl.style.background = '';
+            const agenceEl = document.getElementById('email_agence');
+            agenceEl.style.borderColor = '';
+            agenceEl.style.background = '';
+            if (fieldId && !isExistingClientData) {
+                const el = document.getElementById(fieldId);
+                if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); el.style.borderColor = '#dc3545'; el.style.background = '#fff5f5'; }
             }
-
-            document.getElementById('modalResume').innerHTML = resumeHTML;
-
-            // Mostrar/esconder campo confirmação email agence
-            document.getElementById('confirmEmailInput').closest('div').previousElementSibling.style.display = 'none'; // esconder label email principal
-            document.getElementById('confirmEmailInput').parentElement.style.display = 'none'; // esconder campo email principal
-            document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'none'; // esconder checkbox
-
-            const agenceSection = document.getElementById('confirmAgenceSection');
-            document.getElementById('confirmAgenceInput').value = '';
+            const emailAgenceSend = document.getElementById('email_agence_send').checked;
+            const emailAgence = document.getElementById('email_agence').value.trim();
+            if (fieldId2 && emailAgenceSend && emailAgence) {
+                const el2 = document.getElementById(fieldId2);
+                if (el2) { el2.scrollIntoView({ behavior: 'smooth' }); el2.focus(); el2.style.borderColor = '#dc3545'; el2.style.background = '#fff5f5'; }
+            }
+        }
+        
+        function confirmAndSubmit() {
+            const email = document.getElementById('email').value.trim();
+            const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
+            let hasError = false;
+            document.getElementById('confirmEmailError').style.display = 'none';
             document.getElementById('confirmAgenceError').style.display = 'none';
-            agenceSection.style.display = (emailAgence && emailAgenceSend) ? 'block' : 'none';
-
-            document.getElementById('confirmModal').style.display = 'flex';
+            let emailError = false;
+            let agenceError = false;
+            if (confirmEmailParent.style.display !== 'none') {
+                const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
+                if (email !== confirmEmail) {
+                    document.getElementById('confirmEmailError').style.display = 'block';
+                    hasError = true;
+                    emailError = true;
+                }
+                const checked = document.getElementById('confirmEmailCheck').checked;
+                if (!checked) { showAlert('⚠️ Veuillez cocher la case de confirmation.'); return; }
+            }
+            const emailAgence = document.getElementById('email_agence').value.trim();
+            const emailAgenceSend = document.getElementById('email_agence_send').checked;
+            if (emailAgence && emailAgenceSend) {
+                const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
+                if (emailAgence !== confirmAgence) {
+                    document.getElementById('confirmAgenceError').style.display = 'block';
+                    hasError = true;
+                    agenceError = true;
+                }
+            }
+            if (hasError) {
+                document.getElementById('modalCorrigerBtn').setAttribute('data-email-error', emailError ? 'email' : '');
+                document.getElementById('modalCorrigerBtn').setAttribute('data-agence-error', agenceError ? 'email_agence' : '');
+                return;
+            }
+            confirmEmailParent.style.display = 'block';
+            document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
+            document.getElementById('confirmModal').style.display = 'none';
+            proceedWithSubmit();
         }
         
-function closeConfirmModal(fieldId, fieldId2) {
-    document.getElementById('confirmModal').style.display = 'none';
-    const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
-    confirmEmailParent.style.display = 'block';
-    document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = false;
-    submitBtn.style.opacity = '1';
-    submitBtn.innerHTML = '✅ Soumettre';
-    document.querySelectorAll('input, textarea').forEach(input => {
-        if (input.classList.contains('error')) {
-            input.classList.remove('error');
-            input.style.borderColor = isExistingClientData ? '#ffb74d' : '';
-            input.style.background = '';
+        function handleCorrigerClick() {
+            const btn = document.getElementById('modalCorrigerBtn');
+            const emailField = btn.getAttribute('data-email-error') || null;
+            const agenceField = btn.getAttribute('data-agence-error') || null;
+            if (emailField || agenceField) {
+                btn.removeAttribute('data-email-error');
+                btn.removeAttribute('data-agence-error');
+                closeConfirmModal(emailField, agenceField);
+                return;
+            }
+            closeConfirmModal(null, null);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    });
-    document.getElementById('indicatif_box').style.borderColor = selectedIndicatif ? '#2C5F8D' : '#e0e0e0';
-    document.getElementById('rgpd_error').style.display = 'none';
-    document.getElementById('accuracy_error').style.display = 'none';
-    const emailEl = document.getElementById('email');
-    emailEl.style.borderColor = '';
-    emailEl.style.background = '';
-    const agenceEl = document.getElementById('email_agence');
-    agenceEl.style.borderColor = '';
-    agenceEl.style.background = '';
-    if (fieldId && !isExistingClientData) {
-        const el = document.getElementById(fieldId);
-        if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); el.style.borderColor = '#dc3545'; el.style.background = '#fff5f5'; }
-    }
-    const emailAgenceSend = document.getElementById('email_agence_send').checked;
-    const emailAgence = document.getElementById('email_agence').value.trim();
-    if (fieldId2 && emailAgenceSend && emailAgence) {
-        const el2 = document.getElementById(fieldId2);
-        if (el2) { el2.scrollIntoView({ behavior: 'smooth' }); el2.focus(); el2.style.borderColor = '#dc3545'; el2.style.background = '#fff5f5'; }
-    }
-}
-
-function confirmAndSubmit() {
-    const email = document.getElementById('email').value.trim();
-    const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
-    let hasError = false;
-    document.getElementById('confirmEmailError').style.display = 'none';
-    document.getElementById('confirmAgenceError').style.display = 'none';
-    let emailError = false;
-    let agenceError = false;
-    if (confirmEmailParent.style.display !== 'none') {
-        const confirmEmail = document.getElementById('confirmEmailInput').value.trim();
-        if (email !== confirmEmail) {
-            document.getElementById('confirmEmailError').style.display = 'block';
-            hasError = true;
-            emailError = true;
-        }
-        const checked = document.getElementById('confirmEmailCheck').checked;
-        if (!checked) { showAlert('⚠️ Veuillez cocher la case de confirmation.'); return; }
-    }
-    const emailAgence = document.getElementById('email_agence').value.trim();
-    const emailAgenceSend = document.getElementById('email_agence_send').checked;
-    if (emailAgence && emailAgenceSend) {
-        const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
-        if (emailAgence !== confirmAgence) {
-            document.getElementById('confirmAgenceError').style.display = 'block';
-            hasError = true;
-            agenceError = true;
-        }
-    }
-    if (hasError) {
-        document.getElementById('modalCorrigerBtn').setAttribute('data-email-error', emailError ? 'email' : '');
-        document.getElementById('modalCorrigerBtn').setAttribute('data-agence-error', agenceError ? 'email_agence' : '');
-        return;
-    }
-    confirmEmailParent.style.display = 'block';
-    document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
-    document.getElementById('confirmModal').style.display = 'none';
-    proceedWithSubmit();
-}
-
-function handleCorrigerClick() {
-    const btn = document.getElementById('modalCorrigerBtn');
-    const emailField = btn.getAttribute('data-email-error') || null;
-    const agenceField = btn.getAttribute('data-agence-error') || null;
-    if (emailField || agenceField) {
-        btn.removeAttribute('data-email-error');
-        btn.removeAttribute('data-agence-error');
-        closeConfirmModal(emailField, agenceField);
-        return;
-    }
-    closeConfirmModal(null, null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
         
-        function clearForm() { if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) clearFormSilent(); }
-        
+                
+            function clearForm() {
+            showConfirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?', function() {
+                clearFormSilent();
+            });
+        }
+                
         function highlightEmptyFields() {
             let hasEmpty = false;
             document.querySelectorAll('input[required], textarea[required]').forEach(input => {
@@ -1399,15 +1419,15 @@ function handleCorrigerClick() {
             return `<div style="font-family:'Inter',sans-serif; max-width:100%; margin:0; color:#1a1a1a;"><div style="background:linear-gradient(135deg,#2C5F8D,#1a3a5c); color:white; padding:24px 32px; border-radius:12px 12px 0 0; text-align:center;"><div style="font-size:22px; font-weight:700; letter-spacing:-0.5px;">🚗 Formulaire du Conducteur — Location de Voiture</div></div><div style="background:#e8f4fd; padding:14px 32px; display:flex; justify-content:space-between; align-items:center;"><span style="font-size:16px; font-weight:700; color:#2C5F8D; border-left:4px solid #2C5F8D; padding-left:12px;">${nom}</span><span style="font-size:20px; color:#000000 !important;">Réf. <strong style="color:#000000;">${ref}</strong></span></div><div style="border:1px solid #e0e0e0; border-top:none; border-radius:0 0 12px 12px; padding:24px 32px;"><div style="margin-bottom:20px;"><div style="font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px; padding-bottom:4px; border-bottom:2px solid #e8f4fd;">📅 Période de Location</div><div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;"><div style="background:#f8f9fa; padding:10px 14px; border-radius:8px;"><div style="font-size:10px; color:#888; margin-bottom:2px;">Prise en charge</div><div style="font-weight:600; font-size:14px;">${dp}</div></div><div style="background:#f8f9fa; padding:10px 14px; border-radius:8px;"><div style="font-size:10px; color:#888; margin-bottom:2px;">Restitution</div><div style="font-weight:600; font-size:14px;">${dr}</div></div><div style="background:#e8f4fd; padding:10px 14px; border-radius:8px;"><div style="font-size:10px; color:#2C5F8D; margin-bottom:2px;">Durée</div><div style="font-weight:700; font-size:14px; color:#2C5F8D;">${jours} jour(s)</div></div></div></div><div style="margin-bottom:20px;"><div style="font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px; padding-bottom:4px; border-bottom:2px solid #e8f4fd;">👤 Informations Personnelles</div><div style="background:#f8f9fa; padding:10px 14px; border-radius:8px;"><div style="margin-bottom:8px;"><div style="font-size:11px; color:#888; margin-bottom:2px;">🔸 Adresse</div><div style="font-size:13px;">${adr}</div></div><div style="margin-bottom:8px;"><div style="font-size:11px; color:#888; margin-bottom:2px;">🔸 Téléphone</div><div style="font-size:13px;">${tel}</div></div><div><div style="font-size:11px; color:#888; margin-bottom:2px;">🔸 E-mail</div><div style="font-size:13px;">${email}</div>${document.getElementById('email_agence').value ? `<div style="font-size:11px; color:#888; margin-top:8px; margin-bottom:2px;">🔸 E-mail agence</div><div style="font-size:13px;">${document.getElementById('email_agence').value}</div>` : ''}${document.getElementById('email_agence_send').checked ? `<div style="font-size:11px; color:#2e7d32; margin-top:4px;">✅ Informations transmises à l'agence</div>` : ''}</div></div></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;"><div style="background:#f8f9fa; padding:14px; border-radius:8px;"><div style="font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px;">🪪 Pièce d'Identité</div><div style="font-size:11px; color:#888; margin-bottom:2px;">🔸 Numéro</div><div style="font-size:13px; margin-bottom:8px;">${ndoc}</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"><div><div style="font-size:11px; color:#888; margin-bottom:2px;">🔸 Émission</div><div style="font-size:13px;">${eid}</div></div><div><div style="font-size:11px; color:#888; margin-bottom:2px;">🔸 Expiration</div><div style="font-size:13px;">${expid}</div></div></div></div><div style="background:#f8f9fa; padding:14px; border-radius:8px;"><div style="font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#2C5F8D; margin-bottom:10px;">🚘 Permis de Conduire</div><div style="font-size:11px; color:#888; margin-bottom:2px;">🔸 Numéro</div><div style="font-size:13px; margin-bottom:8px;">${nperm}</div><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"><div><div style="font-size:11px; color:#888; margin-bottom:2px;">🔸 Émission</div><div style="font-size:13px;">${epm}</div></div><div><div style="font-size:11px; color:#888; margin-bottom:2px;">🔸 Expiration</div><div style="font-size:13px;">${exppm}</div></div></div></div></div><div style="background:#fff3cd; border-left:4px solid #ffc107; padding:12px 16px; border-radius:4px; font-size:11px; color:#856404; margin-bottom:12px;">Ces informations ont été transmises au prestataire de location. En cas d'erreur, vous pouvez modifier vos informations de deux façons : en sélectionnant <strong>"Modifier le formulaire"</strong> sur le formulaire en ligne, ou en utilisant le lien personnel reçu par email lors de votre première soumission.<br><br><a href=https://rentacar-madeira.github.io/formulaire-conducteur/formulario.html style="color:#856404;">https://rentacar-madeira.github.io/formulaire-conducteur/formulario.html</a></div><div style="border:1px solid #e0e0e0; border-radius:6px; padding:12px 16px; font-size:10px; color:#555; line-height:1.6;"><div style="font-weight:700; margin-bottom:6px; font-size:11px;">✅ Déclarations du conducteur</div><div style="margin-bottom:6px;">☑ Je confirme avoir lu et accepté que mes données personnelles (nom, adresse, contacts, pièce d'identité et permis de conduire) soient utilisées exclusivement dans le cadre de ma réservation de location de voiture — notamment par la société de location et le réceptif local — et ce, à des fins strictement opérationnelles. Ces données ne seront en aucun cas utilisées à des fins commerciales ou partagées avec des tiers extérieurs à la prestation.</div><div>☑ Je certifie sur l'honneur que toutes les informations fournies dans ce formulaire sont exactes, complètes et conformes à mes documents officiels. Je comprends que toute information inexacte ou incomplète pourra entraîner le refus de la mise à disposition du véhicule lors de la remise des clés. Les informations transmises devront correspondre en tout point aux documents présentés au moment de la prise en charge du véhicule.</div></div><div style="margin-top:16px; padding-top:12px; border-top:1px solid #e0e0e0; font-size:10px; color:#aaa;">Émis le ${today}</div></div></div>`;
         }
 
-function getPdfTitle() {
-            const ref = document.getElementById('reference_agence').value || 'Ref';
-            const nom = document.getElementById('nom_complet').value || 'Client';
-            const today = new Date().toLocaleDateString('fr-FR').replace(/\//g, '.');
-            const suffix = isExistingClientData ? ' Modification' : '';
-            return 'Ref. ' + ref + ' - ' + nom + ' - Formulaire du Conducteur - Location de Voiture - ' + today + suffix;
-        }
+        function getPdfTitle() {
+                    const ref = document.getElementById('reference_agence').value || 'Ref';
+                    const nom = document.getElementById('nom_complet').value || 'Client';
+                    const today = new Date().toLocaleDateString('fr-FR').replace(/\//g, '.');
+                    const suffix = isExistingClientData ? ' Modification' : '';
+                    return 'Ref. ' + ref + ' - ' + nom + ' - Formulaire du Conducteur - Location de Voiture - ' + today + suffix;
+                }
 
-        let formSubmitted = false;
+                let formSubmitted = false;
 
         function exportToPDF() {
     if (!formSubmitted) { alert("⚠️ Veuillez d'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF."); return; }
@@ -1415,68 +1435,68 @@ function getPdfTitle() {
     document.title = getPdfTitle(); window.print();
 }
 
-function showReservationInfo() {
-    const pendente = valoresOriginaisCompletos._pendente;
-    let html = '<p style="margin-bottom:12px;">Ce document correspond à votre réservation <strong>confirmée par le loueur</strong>.</p>';
-    if (pendente) {
-        html += '<div style="background:#fff3e0; border-left:4px solid #e65100; padding:10px 14px; border-radius:4px; margin-bottom:12px; font-size:12px; color:#e65100;">⚠️ Toutes modifications <strong>"en attente de confirmation du loueur"</strong> ne seront pas à jour sur ce document. Une fois traitée par le loueur, la réservation sera mise à jour lorsque vous ouvrez à nouveau le lien reçu par email.</div>';
-    }
-    html += '<p style="color:#888; font-size:12px;">Cliquez sur <strong>Ouvrir l\'aperçu</strong> pour imprimer et/ou sauvegarder en PDF.</p>';
-    document.getElementById('reservationModalMsg').innerHTML = html;
-    document.getElementById('reservationModal').style.display = 'flex';
-}
-
-function confirmarImpressaoReservation() {
-    document.getElementById('reservationModal').style.display = 'none';
-    document.getElementById('print-voucher').innerHTML = generateVoucherOriginal();
-    document.title = getPdfTitle() + ' (confirmé)';
-    window.print();
-}
-
-function generateVoucherOriginal() {
-    const d = valoresOriginaisCompletos;
-
-    // Guardar valores actuais dos campos
-    const camposGuardar = ['reference_agence','email','date_prise','date_restitution',
-        'nom_complet','adresse_complete','numero_document','date_emission_id',
-        'date_expiration_id','numero_permis','date_emission_permis','date_expiration_permis'];
-    const valoresActuais = {};
-    camposGuardar.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) valoresActuais[id] = el.value;
-    });
-    const telActual = document.getElementById('telephone').value;
-    const diasActual = document.getElementById('daysCount').textContent;
-
-    // Substituir temporariamente com dados originais
-    camposGuardar.forEach(id => {
-        const el = document.getElementById(id);
-        if (el && d[id]) el.value = d[id];
-    });
-    document.getElementById('telephone').value = d.telephone || '';
-
-    // Calcular dias originais
-    if (d.date_prise && d.date_restitution) {
-        const p1 = d.date_prise.split('/'); const p2 = d.date_restitution.split('/');
-        const d1 = new Date(p1[2], parseInt(p1[1])-1, p1[0]);
-        const d2 = new Date(p2[2], parseInt(p2[1])-1, p2[0]);
-        const diff = d2 - d1;
-        document.getElementById('daysCount').textContent = diff === 0 ? '1' : String(Math.ceil(Math.abs(diff) / (1000*60*60*24)));
-    }
-
-    // Gerar voucher com dados originais
-    const html = generateVoucher();
-
-    // Restaurar valores actuais
-    camposGuardar.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = valoresActuais[id];
-    });
-    document.getElementById('telephone').value = telActual;
-    document.getElementById('daysCount').textContent = diasActual;
-
-    return html;
-}
+        function showReservationInfo() {
+            const pendente = valoresOriginaisCompletos._pendente;
+            let html = '<p style="margin-bottom:12px;">Ce document correspond à votre réservation <strong>confirmée par le loueur</strong>.</p>';
+            if (pendente) {
+                html += '<div style="background:#fff3e0; border-left:4px solid #e65100; padding:10px 14px; border-radius:4px; margin-bottom:12px; font-size:12px; color:#e65100;">⚠️ Toutes modifications <strong>"en attente de confirmation du loueur"</strong> ne seront pas à jour sur ce document. Une fois traitée par le loueur, la réservation sera mise à jour lorsque vous ouvrez à nouveau le lien reçu par email.</div>';
+            }
+            html += '<p style="color:#888; font-size:12px;">Cliquez sur <strong>Ouvrir l\'aperçu</strong> pour imprimer et/ou sauvegarder en PDF.</p>';
+            document.getElementById('reservationModalMsg').innerHTML = html;
+            document.getElementById('reservationModal').style.display = 'flex';
+        }
+        
+        function confirmarImpressaoReservation() {
+            document.getElementById('reservationModal').style.display = 'none';
+            document.getElementById('print-voucher').innerHTML = generateVoucherOriginal();
+            document.title = getPdfTitle() + ' (confirmé)';
+            window.print();
+        }
+        
+        function generateVoucherOriginal() {
+            const d = valoresOriginaisCompletos;
+        
+            // Guardar valores actuais dos campos
+            const camposGuardar = ['reference_agence','email','date_prise','date_restitution',
+                'nom_complet','adresse_complete','numero_document','date_emission_id',
+                'date_expiration_id','numero_permis','date_emission_permis','date_expiration_permis'];
+            const valoresActuais = {};
+            camposGuardar.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) valoresActuais[id] = el.value;
+            });
+            const telActual = document.getElementById('telephone').value;
+            const diasActual = document.getElementById('daysCount').textContent;
+        
+            // Substituir temporariamente com dados originais
+            camposGuardar.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && d[id]) el.value = d[id];
+            });
+            document.getElementById('telephone').value = d.telephone || '';
+        
+            // Calcular dias originais
+            if (d.date_prise && d.date_restitution) {
+                const p1 = d.date_prise.split('/'); const p2 = d.date_restitution.split('/');
+                const d1 = new Date(p1[2], parseInt(p1[1])-1, p1[0]);
+                const d2 = new Date(p2[2], parseInt(p2[1])-1, p2[0]);
+                const diff = d2 - d1;
+                document.getElementById('daysCount').textContent = diff === 0 ? '1' : String(Math.ceil(Math.abs(diff) / (1000*60*60*24)));
+            }
+        
+            // Gerar voucher com dados originais
+            const html = generateVoucher();
+        
+            // Restaurar valores actuais
+            camposGuardar.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = valoresActuais[id];
+            });
+            document.getElementById('telephone').value = telActual;
+            document.getElementById('daysCount').textContent = diasActual;
+        
+            return html;
+        }
         async function submitToSheets() {
             const submitBtn = document.getElementById('submitBtn');
             const hasEmpty = highlightEmptyFields();
@@ -1505,19 +1525,18 @@ function generateVoucherOriginal() {
                     if (refData.exists && emailData.exists) {
                         const searchResp = await fetch(GOOGLE_SHEETS_URL + '?action=search&ref=' + encodeURIComponent(ref) + '&email=' + encodeURIComponent(email)); await searchResp.json();
                         switchToModifierMode(true, true); document.getElementById('both_found_msg').style.display = 'block';
-                        alert('⚠️ Vos informations existent déjà dans notre système.\n\nUn lien de modification a été envoyé à votre adresse email.\n\nVeuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.'); return;
-                    } else if (refData.exists && !emailData.exists) {
+                        showAlert('⚠️ Vos informations existent déjà dans notre système.<br><br>Un lien de modification a été envoyé à votre adresse email.<br><br>Veuillez vérifier votre boîte de réception / SPAM et cliquer sur le lien pour continuer.'); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return;                    } else if (refData.exists && !emailData.exists) {
                         switchToModifierMode(true, false); document.getElementById('email_incompatible').style.display = 'block';
-                        alert("⚠️ Cette référence existe déjà dans notre système mais l'email ne correspond pas.\n\nVeuillez corriger votre email et cliquer sur \"Rechercher\"."); return;
+                        showAlert("⚠️ Cette référence existe déjà dans notre système mais l'email ne correspond pas.<br><br>Veuillez corriger votre email et cliquer sur Rechercher."); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return;
                     } else if (!refData.exists && emailData.exists) {
                         switchToModifierMode(false, true); document.getElementById('ref_incompatible').style.display = 'block';
-                        alert("⚠️ Cet email existe déjà dans notre système mais la référence ne correspond pas.\n\nVeuillez corriger votre référence et cliquer sur \"Rechercher\"."); return;
+                        showAlert("⚠️ Cet email existe déjà dans notre système mais la référence ne correspond pas.<br><br>Veuillez corriger votre référence et cliquer sur Rechercher."); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return;
                     }
                 } catch(e) {}
             }
             const validId = validateExpirationDate('date_expiration_id', 'error_expiration_id');
             const validPermis = validateExpirationDate('date_expiration_permis', 'error_expiration_permis');
-            if (!validId || !validPermis) { alert("⚠️ Attention: Les dates d'expiration des documents doivent être postérieures à la date de restitution du véhicule."); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
+            if (!validId || !validPermis) { showAlert("⚠️ Attention: Les dates d'expiration des documents doivent être postérieures à la date de restitution du véhicule."); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             if (!document.getElementById('rgpd_consent').checked) { document.getElementById('rgpd_error').style.display = 'block'; document.getElementById('rgpd_consent').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
             document.getElementById('rgpd_error').style.display = 'none';
             if (!document.getElementById('accuracy_consent').checked) { document.getElementById('accuracy_error').style.display = 'block'; document.getElementById('accuracy_consent').scrollIntoView({ behavior: 'smooth' }); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; return; }
@@ -1527,7 +1546,7 @@ function generateVoucherOriginal() {
                     document.getElementById('rgpd_agence_error').style.display = 'block'; 
                     document.getElementById('rgpd_agence').scrollIntoView({ behavior: 'smooth' }); 
                     submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; 
-                    alert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).');
+                    showAlert('⚠️ Veuillez remplir tous les champs obligatoires (marqués en rouge).'); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre';
                     return; 
                 }
             }
@@ -1545,7 +1564,7 @@ function generateVoucherOriginal() {
                     submitBtn.disabled = false;
                     submitBtn.style.opacity = '1';
                     submitBtn.innerHTML = '✅ Soumettre';
-                    alert('⚠️ Aucune modification détectée.\n\nAucun changement n\'a été identifié par rapport aux informations initialement envoyées.\n\nVeuillez effectuer les modifications nécessaires avant de soumettre à nouveau votre demande.');
+                    showAlert('⚠️ Aucune modification détectée.<br><br>Aucun changement n\'a été identifié par rapport aux informations initialement envoyées.<br><br>Veuillez effectuer les modifications nécessaires avant de soumettre à nouveau votre demande.');
                     return;
                 }
             }
@@ -1559,7 +1578,7 @@ function generateVoucherOriginal() {
                         submitBtn.disabled = false;
                         submitBtn.style.opacity = '1';
                         submitBtn.innerHTML = '✅ Soumettre';
-                        alert('⚠️ Impossible de soumettre de nouvelles modifications.\n\nUne demande de modification est déjà en attente de confirmation par le loueur.\n\nVeuillez réessayer plus tard en rouvrant le lien reçu par email pour vérifier l\'état de votre réservation.');
+                        showAlert('⚠️ Impossible de soumettre de nouvelles modifications.<br><br>Une demande de modification est déjà en attente de confirmation par le loueur.<br><br>Veuillez réessayer plus tard en rouvrant le lien reçu par email pour vérifier l\'état de votre réservation.');
                         return;
                     }
                 } catch(e) {}
@@ -1587,9 +1606,12 @@ function generateVoucherOriginal() {
                 pdfBtn.style.background = '#e8f4fd'; pdfBtn.style.color = '#2C5F8D'; pdfBtn.style.border = '2px solid #2C5F8D';
                 document.getElementById('pdf_hint').textContent = '✅ Formulaire envoyé — vous pouvez maintenant sauvegarder';
                 document.getElementById('pdf_hint').style.color = '#2e7d32';
-                const savePDF = confirm('✅ Formulaire envoyé avec succès!\n\n📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre boîte mail SPAM.\n\nVoulez-vous imprimer / sauvegarder une copie PDF maintenant?\n\n• OK — Ouvrir l\'aperçu PDF\n• Annuler — Imprimer / sauvegarder plus tard via le bouton PDF');
-                if (savePDF) { document.getElementById('print-voucher').innerHTML = generateVoucher(); document.title = getPdfTitle(); window.print(); }
-            } catch (error) { alert('❌ Erreur lors de l\'envoi. Veuillez réessayer.'); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; }
+                showConfirm('✅ Formulaire envoyé avec succès!<br><br>📧 Un récapitulatif a été envoyé à votre adresse email. Si vous ne le trouvez pas, veuillez vérifier votre boîte mail SPAM.<br><br>Voulez-vous imprimer / sauvegarder une copie PDF maintenant?', function() {
+                document.getElementById('print-voucher').innerHTML = generateVoucher();
+                document.title = getPdfTitle();
+                window.print();
+            });
+            } catch (error) { showAlert('❌ Erreur lors de l\'envoi. Veuillez réessayer.'); submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; }
             finally { if (!formSubmitted) { submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.innerHTML = '✅ Soumettre'; } }
         }
     </script>
