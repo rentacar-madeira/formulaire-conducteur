@@ -1234,27 +1234,25 @@ function openConfirmModification() {
         }
         
 function closeConfirmModal(fieldId, fieldId2) {
-            document.getElementById('confirmModal').style.display = 'none';
-            const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
-            confirmEmailParent.style.display = 'block';
-            document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = '1';
-            submitBtn.innerHTML = '✅ Soumettre';
-            if (fieldId) {
-                const el = document.getElementById(fieldId);
-                if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); el.style.borderColor = '#dc3545'; el.style.background = '#fff5f5'; }
-            }
-            if (fieldId2) {
-                const emailAgenceSend = document.getElementById('email_agence_send').checked;
-                const emailAgence = document.getElementById('email_agence').value.trim();
-                if (emailAgenceSend && emailAgence) {
-                    const el2 = document.getElementById(fieldId2);
-                    if (el2) { el2.style.borderColor = '#dc3545'; el2.style.background = '#fff5f5'; }
-                }
-            }
-        }
+    document.getElementById('confirmModal').style.display = 'none';
+    const confirmEmailParent = document.getElementById('confirmEmailInput').parentElement;
+    confirmEmailParent.style.display = 'block';
+    document.getElementById('confirmEmailCheck').parentElement.parentElement.style.display = 'block';
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = false;
+    submitBtn.style.opacity = '1';
+    submitBtn.innerHTML = '✅ Soumettre';
+    if (fieldId && !isExistingClientData) {
+        const el = document.getElementById(fieldId);
+        if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); el.style.borderColor = '#dc3545'; el.style.background = '#fff5f5'; }
+    }
+    const emailAgenceSend = document.getElementById('email_agence_send').checked;
+    const emailAgence = document.getElementById('email_agence').value.trim();
+    if (fieldId2 && emailAgenceSend && emailAgence) {
+        const el2 = document.getElementById(fieldId2);
+        if (el2) { el2.scrollIntoView({ behavior: 'smooth' }); el2.focus(); el2.style.borderColor = '#dc3545'; el2.style.background = '#fff5f5'; }
+    }
+}
 
         function confirmAndSubmit() {
             const email = document.getElementById('email').value.trim();
@@ -1277,7 +1275,12 @@ function closeConfirmModal(fieldId, fieldId2) {
                 const confirmAgence = document.getElementById('confirmAgenceInput').value.trim();
                 if (emailAgence !== confirmAgence) { document.getElementById('confirmAgenceError').style.display = 'block'; hasError = true; }
             }
-            if (hasError) return;
+            if (hasError) {
+    if (document.getElementById('confirmAgenceError').style.display === 'block') {
+        closeConfirmModal(null, 'email_agence');
+    }
+    return;
+}
 
             // Restaurar campos
             confirmEmailParent.style.display = 'block';
