@@ -714,6 +714,7 @@
 
                     // Verificar se tem alteração pendente
                     const pendData = { pendente: data.pendente };
+                    valoresOriginaisCompletos._pendente = data.pendente;
 
                     if (pendData.pendente) {
                         document.querySelectorAll('.form-section').forEach(s => s.classList.add('locked'));
