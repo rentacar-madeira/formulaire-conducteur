@@ -647,6 +647,39 @@
                 unlockSection('personalInfoSection');
                 unlockSection('idDocSection');
                 unlockSection('licenseSection');
+        
+                // Verificar datas de expiração quando datas de aluguer mudam
+                const expId = document.getElementById('date_expiration_id').value;
+                const expPermis = document.getElementById('date_expiration_permis').value;
+                const dr = parseDateString(dateRestitution);
+        
+                if (expId && expId.length === 10 && dr) {
+                    const expIdDate = parseDateString(expId);
+                    if (expIdDate && expIdDate <= dr) {
+                        document.getElementById('date_expiration_id').style.borderColor = '#dc3545';
+                        document.getElementById('date_expiration_id').style.background = '#fff5f5';
+                        document.getElementById('error_expiration_id').classList.add('show');
+                        showAlert('⚠️ Attention : La date d\'expiration de votre pièce d\'identité est antérieure ou égale à la nouvelle date de restitution.<br><br>Veuillez vérifier et corriger la date d\'expiration.');
+                    } else if (expId) {
+                        document.getElementById('date_expiration_id').style.borderColor = isExistingClientData ? '#ffb74d' : '';
+                        document.getElementById('date_expiration_id').style.background = '';
+                        document.getElementById('error_expiration_id').classList.remove('show');
+                    }
+                }
+        
+                if (expPermis && expPermis.length === 10 && dr) {
+                    const expPermisDate = parseDateString(expPermis);
+                    if (expPermisDate && expPermisDate <= dr) {
+                        document.getElementById('date_expiration_permis').style.borderColor = '#dc3545';
+                        document.getElementById('date_expiration_permis').style.background = '#fff5f5';
+                        document.getElementById('error_expiration_permis').classList.add('show');
+                        showAlert('⚠️ Attention : La date d\'expiration de votre permis de conduire est antérieure ou égale à la nouvelle date de restitution.<br><br>Veuillez vérifier et corriger la date d\'expiration.');
+                    } else if (expPermis) {
+                        document.getElementById('date_expiration_permis').style.borderColor = isExistingClientData ? '#ffb74d' : '';
+                        document.getElementById('date_expiration_permis').style.background = '';
+                        document.getElementById('error_expiration_permis').classList.remove('show');
+                    }
+                }
             }
         }
         
