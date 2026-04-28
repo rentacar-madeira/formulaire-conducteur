@@ -341,7 +341,7 @@
                 </label>
             </div>
             <div style="display:flex; gap:12px;">
-                <button onclick="closeConfirmModal('email')" style="flex:1; padding:12px; background:#fff5f5; color:#dc3545; border:2px solid #dc3545; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">✕ Corriger</button>
+                <button id="modalCorrigerBtn" onclick="handleCorrigerClick()" style="flex:1; padding:12px; background:#fff5f5; color:#dc3545; border:2px solid #dc3545; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">✕ Corriger</button>
                 <button onclick="confirmAndSubmit()" style="flex:1; padding:12px; background:#f0fff4; color:#2e7d32; border:2px solid #2e7d32; border-radius:8px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">✅ Confirmer et envoyer</button>
             </div>
         </div>
@@ -1288,7 +1288,9 @@ if (emailAgence && emailAgenceSend) {
 }
 
 if (hasError) {
-    closeConfirmModal(emailError ? 'email' : null, agenceError ? 'email_agence' : null);
+    // Não fechar o modal — mostrar erros inline e transformar o botão Corriger
+    document.getElementById('modalCorrigerBtn').setAttribute('data-email-error', emailError ? 'email' : '');
+    document.getElementById('modalCorrigerBtn').setAttribute('data-agence-error', agenceError ? 'email_agence' : '');
     return;
 }
 
@@ -1298,6 +1300,21 @@ if (hasError) {
             document.getElementById('confirmModal').style.display = 'none';
             proceedWithSubmit();
         }
+
+        function handleCorrigerClick() {
+    const btn = document.getElementById('modalCorrigerBtn');
+    const emailField = btn.getAttribute('data-email-error') || null;
+    const agenceField = btn.getAttribute('data-agence-error') || null;
+
+    if (emailField || agenceField) {
+        btn.removeAttribute('data-email-error');
+        btn.removeAttribute('data-agence-error');
+        closeConfirmModal(emailField, agenceField);
+        return;
+    }
+
+    closeConfirmModal(null, null);
+}
         
         function clearForm() { if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) clearFormSilent(); }
         
