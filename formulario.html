@@ -1163,7 +1163,7 @@
                 ${emailAgence && emailAgenceSend ? `<div style="margin-bottom:4px; color:#7986cb;">📧 <strong>Email agence :</strong> ${emailAgence}</div>` : ''}
                 <hr style="border:none; border-top:1px solid #e0e0e0; margin:8px 0;">
                 <div style="margin-bottom:4px;">🪪 <strong>Pièce d'identité :</strong> ${ndoc} — Émission: ${eid} — Expiration: ${expid}</div>
-                <div style="margin-bottom:4px;">🚘 <strong>Permis :</strong> ${nperm} — Émission: ${epm} — Expiration: ${exppm}</div>
+                <div style="margin-bottom:4px;">🚘 <strong>Permis de conduire :</strong> ${nperm} — Émission: ${epm} — Expiration: ${exppm}</div>
                 <hr style="border:none; border-top:1px solid #e0e0e0; margin:8px 0;">
                 <div style="margin-bottom:4px;">📅 <strong>Prise en charge :</strong> ${dp}</div>
                 <div style="margin-bottom:4px;">📅 <strong>Restitution :</strong> ${dr}</div>
@@ -1179,7 +1179,7 @@
             document.getElementById('confirmModal').style.display = 'flex';
         }
 
-function closeConfirmModal(fieldId) {
+function closeConfirmModal(fieldId, fieldId2) {
             document.getElementById('confirmModal').style.display = 'none';
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = false;
@@ -1192,6 +1192,17 @@ function closeConfirmModal(fieldId) {
                     el.focus();
                     el.style.borderColor = '#dc3545';
                     el.style.background = '#fff5f5';
+                }
+            }
+            if (fieldId2) {
+                const emailAgenceSend = document.getElementById('email_agence_send').checked;
+                const emailAgence = document.getElementById('email_agence').value.trim();
+                if (emailAgenceSend && emailAgence) {
+                    const el2 = document.getElementById(fieldId2);
+                    if (el2) {
+                        el2.style.borderColor = '#dc3545';
+                        el2.style.background = '#fff5f5';
+                    }
                 }
             }
         }
