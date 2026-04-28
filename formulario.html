@@ -79,6 +79,43 @@
         .btn-secondary:hover { background: #f0f4f8; }
         .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: white; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 600px) {
+            .form-content { padding: 16px; }
+            .header { padding: 24px 16px; }
+            .header h1 { font-size: 22px; }
+            
+            #datesSection > div[style*="grid-template-columns: 1fr 1fr"],
+            #idDocSection > div[style*="grid-template-columns: 1fr 1fr"],
+            #licenseSection > div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .ref-email-row {
+                grid-template-columns: 1fr !important;
+            }
+            
+            #personalInfoSection div[style*="grid-template-columns: 1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr !important;
+            }
+            .button-group > div {
+                width: 100%;
+            }
+            .button-group .btn,
+            #effacerBtn, #pdfBtn, #submitBtn {
+                height: auto !important;
+                padding: 16px !important;
+                width: 100%;
+            }
+            
+            .date-input input {
+                font-size: 14px;
+                padding-right: 44px;
+            }
+        }
         @media print {
             @page { size: A4; margin: 0; }
             body > * { display: none !important; }
