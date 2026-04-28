@@ -1456,7 +1456,7 @@ function closeConfirmModal(fieldId, fieldId2) {
             const pendente = valoresOriginaisCompletos._pendente;
             let html = '<p style="margin-bottom:12px;">Ce document correspond à votre réservation <strong>confirmée par le loueur</strong>.</p>';
             if (pendente) {
-                html += '<div style="background:#fff3e0; border-left:4px solid #e65100; padding:10px 14px; border-radius:4px; margin-bottom:12px; font-size:12px; color:#e65100;">⚠️ Toutes modifications <strong>"en attente de confirmation du loueur"</strong> ne seront pas à jour sur ce document. Une fois traitée par le loueur, la réservation sera mise à jour lorsque vous ouvrez à nouveau le lien reçu par email.</div>';
+                html += '<div style="background:#fff3e0; border-left:4px solid #e65100; padding:10px 14px; border-radius:4px; margin-bottom:12px; font-size:12px; color:#e65100;">⚠️ Les modifications <strong>« en attente de confirmation du loueur »</strong> ne sont pas visibles dans ce document. Une fois confirmées, la réservation sera mise à jour lorsque vous rouvrirez le lien reçu par e-mail.</div>';
             }
             html += '<p style="color:#888; font-size:12px;">Cliquez sur <strong>Ouvrir l\'aperçu</strong> pour imprimer et/ou sauvegarder en PDF.</p>';
             document.getElementById('reservationModalMsg').innerHTML = html;
