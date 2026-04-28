@@ -90,9 +90,19 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚗 Formulaire de Conducteur</h1>
-            <p>Location de Voiture - Informations du Conducteur</p>
+    <h1>🚗 Formulaire de Conducteur</h1>
+    <p>Location de Voiture - Informations du Conducteur</p>
+    <div id="maReservationBtnWrapper" style="display:none; margin-top:16px;">
+        <button type="button" id="maReservationBtn" onclick="showReservationInfo()"
+            title="Afficher et imprimer / sauvegarder votre réservation confirmée par le loueur (avant toute modification en attente)"
+            style="background:rgba(255,255,255,0.15); color:white; border:2px solid rgba(255,255,255,0.6); border-radius:8px; padding:10px 24px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif;">
+            📋 Ma réservation
+        </button>
+        <div style="font-size:11px; color:rgba(255,255,255,0.75); margin-top:6px;">
+            Imprimer / sauvegarder votre réservation confirmée
         </div>
+    </div>
+</div>
         <div class="form-content">
             <form id="driverForm">
                 <div class="client-type-section">
@@ -369,6 +379,7 @@
         let clientType = null;
         let isExistingClientData = false;
         let valoresOriginais = {};
+        let valoresOriginaisCompletos = {}; // ← adicionar aqui
         
         document.addEventListener('DOMContentLoaded', function() {
             initializeClientTypeSelection();
@@ -691,10 +702,10 @@
                     const pendData = { pendente: data.pendente };
 
                     if (pendData.pendente) {
-                        // Bloquear tudo — modo consulta
                         document.querySelectorAll('.form-section').forEach(s => s.classList.add('locked'));
-                        document.getElementById('refEmailSection').classList.remove('locked');
-
+                        document.getElementById('maReservationBtnWrapper').style.display = 'block'; // ← adicionar
+                        const texte = document.getElementById('texte_instructions');
+                        
                         // Mostrar mensagem de pendente
                         const texte = document.getElementById('texte_instructions');
                         texte.innerHTML = '⏳ <strong>Status de la modification : EN ATTENTE de traitement par le loueur.</strong><br>Une fois votre demande traitée, vous pourrez à nouveau modifier votre réservation.';
@@ -719,6 +730,7 @@
                     } else {
                         // Concluído — pode modificar novamente
                         unlockAllSections();
+                        document.getElementById('maReservationBtnWrapper').style.display = 'block'; // ← adicionar
                         const texte = document.getElementById('texte_instructions');
                         texte.innerHTML = '✅ <strong>Status de vos données : CONFIRMÉ par le loueur.</strong><br>Vous pouvez apporter des modifications si nécessaire. <span style="color:#e65100; font-weight:600;">Les champs modifiables sont indiqués ci-dessous en orange.</span> Si vous modifiez des informations, vous devez <strong>IMPÉRATIVEMENT</strong> soumettre à nouveau le formulaire afin de mettre à jour votre réservation. À défaut de soumission, aucune modification ne sera prise en compte.';                        texte.style.background = '#f0fff4';
                         texte.style.padding = '12px 16px';
@@ -750,6 +762,7 @@
         }
         
         function populateFormWithExistingData(data) {
+            valoresOriginaisCompletos = Object.assign({}, data); // ← adicionar esta linha
             const camposBloqueados = ['reference_agence', 'email'];
             // Remover todos os lápis existentes
             document.querySelectorAll('.edit-icon').forEach(icon => icon.remove());
@@ -1381,11 +1394,72 @@ function getPdfTitle() {
         let formSubmitted = false;
 
         function exportToPDF() {
-            if (!formSubmitted) { alert("⚠️ Veuillez d'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF."); return; }
-            document.getElementById('print-voucher').innerHTML = generateVoucher();
-            document.title = getPdfTitle(); window.print();
+    if (!formSubmitted) { alert("⚠️ Veuillez d'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF."); return; }
+    document.getElementById('print-voucher').innerHTML = generateVoucher();
+    document.title = getPdfTitle(); window.print();
+}
+
+function showReservationInfo() {
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    const msg = '📋 Ce document correspond à votre réservation confirmée par le loueur.\n\n' +
+        (valoresOriginaisCompletos._pendente 
+            ? '⚠️ Une demande de modification est en attente de traitement.\nLe document affiché reflète les données AVANT modification.\n\n'
+            : '') +
+        'Cliquez sur OK pour ouvrir l\'aperçu imprimable.';
+    
+    if (isMobile || true) {
+        if (confirm(msg)) {
+            document.getElementById('print-voucher').innerHTML = generateVoucherOriginal();
+            document.title = getPdfTitle() + ' (confirmé)';
+            window.print();
         }
-        
+    }
+}
+
+function generateVoucherOriginal() {
+    const d = valoresOriginaisCompletos;
+
+    // Guardar valores actuais dos campos
+    const camposGuardar = ['reference_agence','email','date_prise','date_restitution',
+        'nom_complet','adresse_complete','numero_document','date_emission_id',
+        'date_expiration_id','numero_permis','date_emission_permis','date_expiration_permis'];
+    const valoresActuais = {};
+    camposGuardar.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) valoresActuais[id] = el.value;
+    });
+    const telActual = document.getElementById('telephone').value;
+    const diasActual = document.getElementById('daysCount').textContent;
+
+    // Substituir temporariamente com dados originais
+    camposGuardar.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && d[id]) el.value = d[id];
+    });
+    document.getElementById('telephone').value = d.telephone || '';
+
+    // Calcular dias originais
+    if (d.date_prise && d.date_restitution) {
+        const p1 = d.date_prise.split('/'); const p2 = d.date_restitution.split('/');
+        const d1 = new Date(p1[2], parseInt(p1[1])-1, p1[0]);
+        const d2 = new Date(p2[2], parseInt(p2[1])-1, p2[0]);
+        const diff = d2 - d1;
+        document.getElementById('daysCount').textContent = diff === 0 ? '1' : String(Math.ceil(Math.abs(diff) / (1000*60*60*24)));
+    }
+
+    // Gerar voucher com dados originais
+    const html = generateVoucher();
+
+    // Restaurar valores actuais
+    camposGuardar.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = valoresActuais[id];
+    });
+    document.getElementById('telephone').value = telActual;
+    document.getElementById('daysCount').textContent = diasActual;
+
+    return html;
+}
         async function submitToSheets() {
             const submitBtn = document.getElementById('submitBtn');
             const hasEmpty = highlightEmptyFields();
