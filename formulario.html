@@ -705,9 +705,6 @@
                         document.querySelectorAll('.form-section').forEach(s => s.classList.add('locked'));
                         document.getElementById('maReservationBtnWrapper').style.display = 'block'; // ← adicionar
                         const texte = document.getElementById('texte_instructions');
-                        
-                        // Mostrar mensagem de pendente
-                        const texte = document.getElementById('texte_instructions');
                         texte.innerHTML = '⏳ <strong>Status de la modification : EN ATTENTE de traitement par le loueur.</strong><br>Une fois votre demande traitée, vous pourrez à nouveau modifier votre réservation.';
                         texte.style.color = '#e65100';
                         texte.style.background = '#fff3e0';
