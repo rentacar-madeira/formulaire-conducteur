@@ -790,7 +790,7 @@
                         document.querySelectorAll('.form-section').forEach(s => s.classList.add('locked'));
                         document.getElementById('maReservationBtnWrapper').style.display = 'block'; // ← adicionar
                         const texte = document.getElementById('texte_instructions');
-                        texte.innerHTML = '⏳ <strong>Status de la modification : EN ATTENTE de traitement par le loueur.</strong><br>Une fois votre demande traitée, vous pourrez à nouveau modifier votre réservation.';
+                        texte.innerHTML = '⏳ <strong>Status de vos informations : EN ATTENTE de traitement par le loueur.</strong><br>Il n\'est pas encore possible d\'enregistrer une nouvelle modification. Une fois vos informations traitées par le loueur, vous pourrez à nouveau modifier votre réservation via ce même lien.';                            
                         texte.style.color = '#e65100';
                         texte.style.background = '#fff3e0';
                         texte.style.padding = '12px 16px';
@@ -1617,7 +1617,7 @@ function closeConfirmModal(fieldId, fieldId2) {
                         submitBtn.disabled = false;
                         submitBtn.style.opacity = '1';
                         submitBtn.innerHTML = '✅ Soumettre';
-                        showAlert('⚠️ Impossible de soumettre de nouvelles modifications.\n\nUne demande de modification est déjà en attente de confirmation par le loueur.\n\nVeuillez réessayer plus tard en rouvrant le lien reçu par email pour vérifier l\'état de votre réservation.');
+                        showAlert('⚠️ Impossible de soumettre de nouvelles modifications pour le moment.\n\nVos informations sont en attente de traitement par le loueur.\n\nVeuillez réessayer plus tard en rouvrant le lien reçu par email pour vérifier l\'état de votre réservation.');                        
                         return;
                     }
                 } catch(e) {}
