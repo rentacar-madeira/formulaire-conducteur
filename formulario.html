@@ -1425,9 +1425,9 @@ function closeConfirmModal(fieldId, fieldId2) {
         }
         
         function clearForm() {
-            showConfirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?', function() {
+            if (confirm('Êtes-vous sûr(e) de vouloir effacer tous les champs du formulaire ?')) {
                 clearFormSilent();
-            });
+            }
         }
         
         function highlightEmptyFields() {
@@ -1484,7 +1484,7 @@ function closeConfirmModal(fieldId, fieldId2) {
         let formSubmitted = false;
         
         function exportToPDF() {
-            if (!formSubmitted) { showshowAlert("⚠️ Veuillez d'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF."); return; }
+            if (!formSubmitted) { showAlert("⚠️ Veuillez d'abord envoyer le formulaire au prestataire avant de sauvegarder une copie PDF."); return; }
             document.getElementById('print-voucher').innerHTML = generateVoucher();
             document.title = getPdfTitle(); window.print();
         }
